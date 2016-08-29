@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+
+	<Button
+	    android:id="@+id/start30FeetTrainingButton"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="30 Feet"
+	/>	
+	<Button
+	    android:id="@+id/start40FeetTrainingButton"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="40 Feet"
+	/>	
+	<Button
+	    android:id="@+id/start50FeetTrainingButton"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="50 Feet"
+	/>	
+	<Button
+	    android:id="@+id/start211To201TrainingButton"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="211 to 201"
+	/>	
+	<Button
+	    android:id="@+id/startElevatorTo208TrainingButton"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Elevator to 208"
+	/>	
+	<Button
+	    android:id="@+id/finishTrainingButton"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Finish Training"
+	/>
+	<EditText
+	    android:id="@+id/stepLengthEditText"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:singleLine="true"
+	/>
+</LinearLayout>

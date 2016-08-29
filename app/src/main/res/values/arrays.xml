@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string-array name="typeArray">
+        <item>Landmark</item>
+        <item>Metric</item>
+    </string-array>
+	<string-array name="modeArray">
+        <item>Automatic</item>
+        <item>Manual</item>
+    </string-array>
+	<string-array name="maxDistanceArray">
+        <item>No Max</item>
+        <item>50 Feet</item>
+        <item>30 Feet</item>
+        <item>All Landmarks</item>
+    </string-array>
+	<string-array name="roomArray">
+        <item>J1</item>
+        <item>109</item>
+        <item>118</item>
+        <item>129</item>
+        <item>131</item>
+        <item>206</item>
+        <item>208</item>
+        <item>223</item>
+        <item>231A</item>
+        <item>240A</item>
+        <item>242A</item>
+        <item>251</item>
+        <item>259</item>
+        <item>260</item>
+    </string-array>
+</resources>

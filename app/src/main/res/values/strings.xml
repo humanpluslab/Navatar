@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Navatar</string>
+    <string name="modelsDirectory">/sdcard/Navatar/models/</string>
+	<string name="taskSpinerLabel">Select a task:</string>
+    <string name="buildingSpinerLabel">Select a building:</string>
+    <string name="userNameEditTextLabel">Type user name:</string>
+    <string name="selectBuildingButtonLabel">Confirm Selected Building</string>
+    <string name="startRoomEditTextLabel">Type start room:</string>
+    <string name="endRoomEditTextLabel">Type end room:</string>
+    <string name="startNavigationButtonLabel">Start Navigation</string>
+    <string name="startTrainingButtonLabel">Start Training</string>
+	<string name="typeSpinerLabel">Navigation Type:</string>
+	<string name="modeSpinerLabel">Navigation Mode:</string>
+	<string name="maxDistanceSpinerLabel">Maximum Distance:</string>
+	<string name="fromSpinerLabel">From Room:</string>
+	<string name="toSpinerLabel">To Room:</string>
+	<string name="start_navigation">Start Navigation</string>
+	<string name="map_service_name">Map Service</string>
+	<string name="sensing_service_name">Sensing Service</string>
+	<string name="pf_service_name">PF Service</string>
+	<string name="mapSpinerLabel">Map Selection</string>
+</resources>
