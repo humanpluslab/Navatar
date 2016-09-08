@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
@@ -27,10 +28,10 @@ public class NavigationSelectionActivity extends Activity {
   private Spinner typeSpinner, modeSpinner, maxDistanceSpinner, fromRoomSpinner, toRoomSpinner;
   private Button startNavigationButton;
 
-  private ArrayAdapter<?> typeArrayAdapter, modeArrayAdapter, maxDistanceArrayAdapter;
+ // private ArrayAdapter<?> typeArrayAdapter, modeArrayAdapter, maxDistanceArrayAdapter;
   private ArrayAdapter<LandmarkWrapper> roomArrayAdapter;
   private String userName = "";
-  private String typeItemSelected, modeItemSelected, maxDistanceItemSelected;
+//  private String typeItemSelected, modeItemSelected, maxDistanceItemSelected;
   private LandmarkWrapper fromRoomItemSelected, toRoomItemSelected;
 
   private MapService mapService;
@@ -45,14 +46,14 @@ public class NavigationSelectionActivity extends Activity {
     startService(mapIntent);
     bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
 
-    typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
+ /*   typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
     modeSpinner = (Spinner) findViewById(R.id.modeSpinner);
-    maxDistanceSpinner = (Spinner) findViewById(R.id.maxDistanceSpinner);
+    maxDistanceSpinner = (Spinner) findViewById(R.id.maxDistanceSpinner);*/
     fromRoomSpinner = (Spinner) findViewById(R.id.fromSpinner);
     toRoomSpinner = (Spinner) findViewById(R.id.toSpinner);
     startNavigationButton = (Button) findViewById(R.id.startNavigationButton);
 
-    typeArrayAdapter =
+   /* typeArrayAdapter =
         ArrayAdapter.createFromResource(this, R.array.typeArray,
             android.R.layout.simple_spinner_item);
     typeArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -68,7 +69,7 @@ public class NavigationSelectionActivity extends Activity {
         ArrayAdapter.createFromResource(this, R.array.maxDistanceArray,
             android.R.layout.simple_spinner_item);
     maxDistanceArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    maxDistanceSpinner.setAdapter(maxDistanceArrayAdapter);
+    maxDistanceSpinner.setAdapter(maxDistanceArrayAdapter);*/
 
     // roomArrayAdapter = ArrayAdapter.createFromResource(
     // this, R.array.roomArray, android.R.layout.simple_spinner_item);
@@ -88,9 +89,9 @@ public class NavigationSelectionActivity extends Activity {
     // Listeners:
     // ****************
 
-    typeSpinner.setOnItemSelectedListener(typeSpinnerItemSelected);
+/*    typeSpinner.setOnItemSelectedListener(typeSpinnerItemSelected);
     modeSpinner.setOnItemSelectedListener(modeSpinnerItemSelected);
-    maxDistanceSpinner.setOnItemSelectedListener(maxDistanceSpinnerItemSelected);
+    maxDistanceSpinner.setOnItemSelectedListener(maxDistanceSpinnerItemSelected);*/
     startNavigationButton.setOnClickListener(startNavigationButtonClickListener);
 
     Bundle extras = getIntent().getExtras();
@@ -100,6 +101,7 @@ public class NavigationSelectionActivity extends Activity {
     }
   }
 
+/*
   OnItemSelectedListener typeSpinnerItemSelected = new OnItemSelectedListener() {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
       typeItemSelected = typeSpinner.getItemAtPosition(position).toString();
@@ -123,6 +125,7 @@ public class NavigationSelectionActivity extends Activity {
 
     public void onNothingSelected(AdapterView<?> arg0) {}
   };
+*/
 
   OnItemSelectedListener fromRoomSpinnerItemSelected = new OnItemSelectedListener() {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -146,13 +149,19 @@ public class NavigationSelectionActivity extends Activity {
     }
   };
 
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+  unbindService(mMapConnection);
+  }
+
   private void startNavigation() {
     Intent myIntent = new Intent(this, NavigationActivity.class);
     myIntent.putExtra("com.Navatar.userName", userName);
     myIntent.putExtra("com.Navatar.stepLength", stepLength);
-    myIntent.putExtra("com.Navatar.type", typeItemSelected);
+/*    myIntent.putExtra("com.Navatar.type", typeItemSelected);
     myIntent.putExtra("com.Navatar.mode", modeItemSelected);
-    myIntent.putExtra("com.Navatar.maxDistance", maxDistanceItemSelected);
+    myIntent.putExtra("com.Navatar.maxDistance", maxDistanceItemSelected);*/
     myIntent.putExtra("com.Navatar.fromRoom", fromRoomItemSelected.getLandmark());
     myIntent.putExtra("com.Navatar.toRoom", toRoomItemSelected.getLandmark());
     startActivity(myIntent);

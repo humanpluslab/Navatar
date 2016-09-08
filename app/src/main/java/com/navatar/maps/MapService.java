@@ -21,13 +21,22 @@ public class MapService extends Service {
   @Override
   public void onCreate() {
     maps = new ArrayList<BuildingMapWrapper>();
-    String filename = "scrugham_engineering_mines_minimap.nvm";
-    try {
-      maps.add(BuildingMapWrapper.readFrom(navatarPath + "/" + "maps/" + filename));
-    } catch (IOException e) {
-      Toast.makeText(getApplicationContext(), "Could not load map " + filename, Toast.LENGTH_LONG)
-          .show();
-    }
+/*    String[] filename = {"scrugham_engineering_mines_minimap.nvm","davidson_mathematics_and_science_minimap.nvm","ansari_business_building_minimap.nvm"};
+    for(int i=0;i<=filename.length;i++) {
+      try {
+        maps.add(BuildingMapWrapper.readFrom(navatarPath + "/" + "maps/" + "University_of_Nevada_Reno/" + filename[i]));
+      } catch (IOException e) {
+        Toast.makeText(getApplicationContext(), "Could not load map " + filename, Toast.LENGTH_LONG)
+                .show();
+      }
+    }*/
+      String filename = "scrugham_engineering_mines_minimap.nvm";
+      try {
+          maps.add(BuildingMapWrapper.readFrom(navatarPath + "/" + "maps/" + "maps/University_of_Nevada_Reno/" + filename));
+      } catch (IOException e) {
+          Toast.makeText(getApplicationContext(), "Could not load map " + filename, Toast.LENGTH_LONG)
+                  .show();
+      }
   }
 
   @Override

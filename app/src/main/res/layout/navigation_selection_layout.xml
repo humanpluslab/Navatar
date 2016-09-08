@@ -4,7 +4,7 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent">
 
-	<TextView  
+	<!--<TextView
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content" 
 	    android:text="@string/typeSpinerLabel"
@@ -51,7 +51,7 @@
 	<ImageView
 	    android:layout_width="fill_parent"
 	    android:layout_height="13dp"
-	    android:contentDescription="TODO"/>
+	    android:contentDescription="TODO"/>-->
 
 	<TextView  
 	    android:layout_width="wrap_content" 
