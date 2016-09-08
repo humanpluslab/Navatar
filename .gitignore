@@ -44,7 +44,12 @@ captures/
 *.jks
 
 # map files
-*.nvm
+# *.nvm
+
+#google-services json
+
+google-services.json
+
 
 #OSX
 .DS_Store
