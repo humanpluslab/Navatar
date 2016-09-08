@@ -14,6 +14,7 @@ import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.IBinder;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -27,7 +28,7 @@ public class MapSelectActivity extends Activity {
   private ArrayAdapter<String> mapArrayAdapter,campusArrayAdapter;
   private ArrayList<String> maplist;
   private MapService mapService;
-  Intent mapIntent;
+  private Intent mapIntent;
   @Override
   protected void onDestroy() {
     super.onDestroy();
@@ -40,31 +41,35 @@ public class MapSelectActivity extends Activity {
     setTitle("Map_Selection");
     setContentView(R.layout.map_select);
     mapSelectTextView = (TextView)findViewById(R.id.tvmapselect);
+
     mapSpinner = (Spinner) findViewById(R.id.mapSpinner);
+
     mapSpinner.setVisibility(View.GONE);
+
     mapSelectTextView.setVisibility(View.GONE);
+
     mapIntent= new Intent(this, MapService.class);
+
     campusSpinner = (Spinner)findViewById(R.id.campusSpinner);
+
     campusArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
             new ArrayList<String>());
     campusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
     ArrayList<String> campuslist = new ArrayList<String>();
-//    String 			sNavatarPath = Environment.getExternalStorageDirectory().getPath()+"/Navatar"+"/maps";
-//    File folder = new File(sNavatarPath);
-//    File[] listOfFiles = folder.listFiles();
+
     try {
-        String[] campusNames = getAssets().list("maps");
+
+      String[] campusNames = getAssets().list("maps");
       campuslist.add("Select a campus");
       for (int i=0;i<campusNames.length;i++){
         campuslist.add(campusNames[i].replaceAll("_"," "));
+        Log.i("NavatarLogs",campusNames[i]);
       }
 
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-
 
     campusArrayAdapter.addAll(campuslist);
     campusSpinner.setAdapter(campusArrayAdapter);
@@ -86,33 +91,9 @@ public class MapSelectActivity extends Activity {
         mapSelectTextView.setVisibility(View.VISIBLE);
         mapSpinner.setVisibility(View.VISIBLE);
         mapArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        try {
-          String[] mapfilesInteral = getAssets().list("maps/"+campusName);
-          if(mapfilesInteral.length<1)
-              return;
-          String[] mapfilesShow = new String[mapfilesInteral.length];
-
-          for(int i=0;i<mapfilesInteral.length;i++)
-            mapfilesShow[i]=mapfilesInteral[i].replaceAll("_"," ");
-          mapArrayAdapter.addAll(mapfilesShow);
-          mapSpinner.setAdapter(mapArrayAdapter);
-          mapSpinner.setOnItemSelectedListener(mapSpinnerItemSelected);
-
-      } catch (IOException e) {
-          e.printStackTrace();
-        }
-
-//        if(campusName.equalsIgnoreCase("maps/University of_Nevada_Reno")){
-//
-//
-//
-//          startService(mapIntent);
-//          bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
-//
-//
-//
-//
-//        }
+        mapIntent.putExtra("path",campusName);
+        startService(mapIntent);
+        bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
       }
     }
 
@@ -139,12 +120,16 @@ public class MapSelectActivity extends Activity {
   private ServiceConnection mMapConnection = new ServiceConnection() {
     @Override
     public void onServiceConnected(ComponentName className, IBinder service) {
+
       MapService.MapBinder binder = (MapService.MapBinder) service;
       mapService = binder.getService();
       maplist = new ArrayList<String>();
       maplist.add("Select a map");
-      for (BuildingMapWrapper map : mapService.maps())
-        maplist.add(map.getName());
+      Log.i("NavatarLogs","Found " + mapService.maps().size() + " maps");
+      for (BuildingMapWrapper map : mapService.maps()){
+        maplist.add(map.getName().replaceAll("_"," "));
+        Log.i("NavatarLogs","Found map :" + map.getName());
+      }
       mapArrayAdapter.clear();
       mapArrayAdapter.addAll(maplist);
     }

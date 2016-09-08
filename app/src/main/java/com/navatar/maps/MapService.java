@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.navatar.maps.particles.ParticleState;
+import com.navatar.protobufs.BuildingMapProto;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
 import android.os.Environment;
 import android.os.IBinder;
+import android.util.Log;
 import android.widget.Toast;
 
 public class MapService extends Service {
@@ -21,26 +23,27 @@ public class MapService extends Service {
   @Override
   public void onCreate() {
     maps = new ArrayList<BuildingMapWrapper>();
-/*    String[] filename = {"scrugham_engineering_mines_minimap.nvm","davidson_mathematics_and_science_minimap.nvm","ansari_business_building_minimap.nvm"};
-    for(int i=0;i<=filename.length;i++) {
+      if(navatarPath.equalsIgnoreCase(""))
+          return;
+
       try {
-        maps.add(BuildingMapWrapper.readFrom(navatarPath + "/" + "maps/" + "University_of_Nevada_Reno/" + filename[i]));
-      } catch (IOException e) {
-        Toast.makeText(getApplicationContext(), "Could not load map " + filename, Toast.LENGTH_LONG)
-                .show();
-      }
-    }*/
-      String filename = "scrugham_engineering_mines_minimap.nvm";
-      try {
-          maps.add(BuildingMapWrapper.readFrom(navatarPath + "/" + "maps/" + "maps/University_of_Nevada_Reno/" + filename));
-      } catch (IOException e) {
-          Toast.makeText(getApplicationContext(), "Could not load map " + filename, Toast.LENGTH_LONG)
-                  .show();
-      }
+        Log.i("NavatarLogs","navatar path =" + navatarPath);
+
+      String[] mapFiles = getAssets().list(navatarPath);
+        Log.i("NavatarLogs","Start parsing maps :" + mapFiles.length + "found.");
+      int i =0;
+
+      while(i++<mapFiles.length)
+        maps.add(new BuildingMapWrapper(BuildingMapProto.BuildingMap.parseFrom(getAssets().open(mapFiles[i]))));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
   }
 
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
+    navatarPath = "maps/"+intent.getStringExtra("path");
     return START_STICKY;
   }
 
