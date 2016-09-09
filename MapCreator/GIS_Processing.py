@@ -15,12 +15,7 @@ import re
 # Data base connection to ArcGIS Server containing floor maps for buildings
 database_conn = "ehsprod2.ehs.unr.edu.sde"
 # The current building to process
-buildings = ["sde.BUILDING.scrugham_engineering_mines"]
-# Flag to keep or delete the generated output GIS file.
-# output_gis_delete=0 - Do not delete the GIS file,
-# output_gis_delete=1 - Delete the GIS file
-output_gis_delete = 1
-
+buildings = ["sde.BUILDING.ansari_business_building"]
 
 ############################  CONSTANTS  ####################################
 # Output location to create the intermediate files and output protobuffer files
@@ -142,8 +137,7 @@ try:
                             arcpy.SpatialJoin_analysis(doors_temp, fds_path + os.sep + 'rooms_temp', DRFeatureClass,
                                                        "#", "#", "#",
                                                        "CLOSEST")
-                            if output_gis_delete == 1:
-                                arcpy.Delete_management(DRFeatureClass)
+                            arcpy.Delete_management(DRFeatureClass)
                             arcpy.Delete_management(fds_path + os.sep + 'rooms_temp')
                             arcpy.Delete_management(doors_temp)
 

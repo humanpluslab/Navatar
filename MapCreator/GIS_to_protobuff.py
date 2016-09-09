@@ -2,7 +2,7 @@
  Name:         GISToXml.py
  Purpose:      Create XML file from GIS files
  Author:       Rohit Patil
- Created       11/04/2016
+ Created       8/31/2016
  Python:       2.7
 -------------------------------- '''
 # Import the required python modules
@@ -11,18 +11,22 @@ import os
 import sys
 
 # Import proto buffer module
-import libs.BuildingMapProto_pb2
+import BuildingMapProto_pb2
+
+current_working_dir = os.getcwd()
 
 ############################  VARIABLES  ####################################
-# Set the input location for GIS database that contains the extracted GIS features
-# and output location for the protobuff file
-current_working_dir = os.getcwd()
-outputPath = current_working_dir + os.sep + "\Output"
+# Set the input path for GIS database that contains the extracted GIS features
+inputGISFile = current_working_dir + os.sep + "Output\\temp.gdb"
 
+# Set the output path for saving the protobuf map file.
+os.chdir("..")
+outputPath = os.getcwd() + os.sep + "maps\University_of_Nevada_Reno"
+os.chdir(current_working_dir)
 
 ############################  CONSTANTS  ####################################
 # Set the path and name of the GIS database created in Step 1
-arcpy.env.workspace = outputPath + os.sep + "temp.gdb"
+arcpy.env.workspace = inputGISFile
 
 # set arcpy environment variable for overwriting database outputs
 arcpy.env.overwriteOutput = True
@@ -30,7 +34,7 @@ arcpy.env.overwriteOutput = True
 try:
     # loop through all the GIS files with required features extracted
     for fds in arcpy.ListDatasets("*", "Feature"):
-        building_map = libs.BuildingMapProto_pb2.BuildingMap()
+        building_map = BuildingMapProto_pb2.BuildingMap()
         # Create a protobuf file for building
         protobuff_file = outputPath + os.sep + fds
         building_map.name = fds
@@ -133,9 +137,9 @@ try:
     f.close()
 
     # Code to read the protobuf file for testing
-    #f = open(protobuff_file, "rb")
-    #building_map.ParseFromString(f.read())
-    #f.close()
+    f = open(protobuff_file, "rb")
+    building_map.ParseFromString(f.read())
+    f.close()
 
     print "********************************Processing complete.......************************************************"
     os.chdir("c:")
