@@ -44,7 +44,7 @@ captures/
 *.jks
 
 # map files
-*.nvm
+#*.nvm
 
 #OSX
 .DS_Store
