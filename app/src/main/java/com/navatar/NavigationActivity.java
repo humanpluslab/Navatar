@@ -105,10 +105,10 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       fromRoom = (Landmark) extras.get("com.Navatar.fromRoom");
       toRoom = (Landmark) extras.get("com.Navatar.toRoom");
 
-      if (mode.equalsIgnoreCase("Automatic"))
+      /*if (mode.equalsIgnoreCase("Automatic"))
         isAutomatic = true;
       else
-        isAutomatic = false;
+        isAutomatic = false;*/
       getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
     viewUserName = (EditText) findViewById(R.id.viewUsername);
@@ -147,7 +147,11 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     bindService(sensingIntent, sensingConnection, BIND_AUTO_CREATE);
 
     // Bind with map service
-    bindService(new Intent(this, MapService.class), mapConnection, BIND_AUTO_CREATE);
+
+    Intent mapIntent = new Intent(this, MapService.class);
+    startService(mapIntent);
+    bindService(mapIntent, mapConnection, BIND_AUTO_CREATE);
+
 
     tv = new TextView(this);
     tv.setText("" + stepCounter);
@@ -250,6 +254,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     tts.shutdown();
     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     super.onDestroy();
+    unbindService(mapConnection);
   }
 
   @Override
