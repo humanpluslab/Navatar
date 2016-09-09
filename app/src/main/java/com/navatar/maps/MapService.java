@@ -45,21 +45,23 @@ public class MapService extends Service {
     @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
 
-    if(intent.hasExtra("path")){
-        navatarPath = "maps/"+intent.getStringExtra("path");
-        pendingIntent = intent.getParcelableExtra("pendingIntent");
-        loadMapsFromPath();
-        try {
-            Intent mapListSendbackIntent = new Intent();
-            ArrayList<String> mapList = new ArrayList<>();
-            for (BuildingMapWrapper map : maps) {
+    if(intent!=null){
+        if(intent.hasExtra("path")){
+            navatarPath = "maps/"+intent.getStringExtra("path");
+            pendingIntent = intent.getParcelableExtra("pendingIntent");
+            loadMapsFromPath();
+            try {
+                Intent mapListSendbackIntent = new Intent();
+                ArrayList<String> mapList = new ArrayList<>();
+                for (BuildingMapWrapper map : maps) {
                     mapList.add(map.getName().replaceAll("_"," "));
-            }
-            mapListSendbackIntent.putExtra("maps",mapList);
-            pendingIntent.send(this,100,mapListSendbackIntent);
+                }
+                mapListSendbackIntent.putExtra("maps",mapList);
+                pendingIntent.send(this,100,mapListSendbackIntent);
 
-        } catch (PendingIntent.CanceledException e) {
-            e.printStackTrace();
+            } catch (PendingIntent.CanceledException e) {
+                e.printStackTrace();
+            }
         }
     }
     return START_STICKY;
@@ -68,7 +70,7 @@ public class MapService extends Service {
   @Override
   public IBinder onBind(Intent arg0) {
 
-      Log.i("NavatarLogs","Service Bound...");
+
       return binder;
   }
 
