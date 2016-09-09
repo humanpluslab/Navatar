@@ -147,7 +147,11 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     bindService(sensingIntent, sensingConnection, BIND_AUTO_CREATE);
 
     // Bind with map service
-    bindService(new Intent(this, MapService.class), mapConnection, BIND_AUTO_CREATE);
+
+    Intent mapIntent = new Intent(this, MapService.class);
+    startService(mapIntent);
+    bindService(mapIntent, mapConnection, BIND_AUTO_CREATE);
+
 
     tv = new TextView(this);
     tv.setText("" + stepCounter);
