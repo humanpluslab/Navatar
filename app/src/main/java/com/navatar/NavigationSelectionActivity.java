@@ -101,6 +101,8 @@ public class NavigationSelectionActivity extends Activity {
     }
   }
 
+  
+
 /*
   OnItemSelectedListener typeSpinnerItemSelected = new OnItemSelectedListener() {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -152,7 +154,7 @@ public class NavigationSelectionActivity extends Activity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
-  unbindService(mMapConnection);
+    unbindService(mMapConnection);
   }
 
   private void startNavigation() {
