@@ -1823,6 +1823,7 @@ video {
 
 			footer {
 				margin: 3em 0 0 0;
+				font-size: small;
 			}
 
 				footer > p {
