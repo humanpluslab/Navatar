@@ -1,8 +1,10 @@
 package com.navatar;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -22,6 +24,7 @@ import android.widget.Spinner;
 import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.LandmarkWrapper;
 import com.navatar.maps.MapService;
+import com.navatar.protobufs.LandmarkProto;
 
 public class NavigationSelectionActivity extends Activity {
   private float stepLength = 0.0f;
@@ -36,7 +39,8 @@ public class NavigationSelectionActivity extends Activity {
 
   private MapService mapService;
   private BuildingMapWrapper map;
-
+  private ArrayList<LandmarkWrapper>rooms;
+  private LandmarkWrapper dummyLandmarkWrapper;
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setTitle("Navigation");
@@ -74,9 +78,15 @@ public class NavigationSelectionActivity extends Activity {
     // roomArrayAdapter = ArrayAdapter.createFromResource(
     // this, R.array.roomArray, android.R.layout.simple_spinner_item);
 
+    rooms = new ArrayList<LandmarkWrapper>();
+    LandmarkProto.Landmark dummyLandmark=LandmarkProto.Landmark.getDefaultInstance();
+    dummyLandmarkWrapper= new LandmarkWrapper(dummyLandmark);
+    dummyLandmarkWrapper.setName("Select Room");
+    rooms.add(dummyLandmarkWrapper);
     roomArrayAdapter =
         new ArrayAdapter<LandmarkWrapper>(this, R.layout.room_layout,
-            new ArrayList<LandmarkWrapper>());
+            rooms);
+
     roomArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     fromRoomSpinner.setPrompt("Choose from location");
     toRoomSpinner.setPrompt("choose detination location");
@@ -175,17 +185,16 @@ public class NavigationSelectionActivity extends Activity {
     public void onServiceConnected(ComponentName className, IBinder service) {
       MapService.MapBinder binder = (MapService.MapBinder) service;
       mapService = binder.getService();
-      ArrayList<LandmarkWrapper> rooms = new ArrayList<LandmarkWrapper>();
       map = mapService.getActiveMap();
-      rooms.addAll(map.destinations());
-      Collections.sort(rooms, new Comparator<LandmarkWrapper>() {
+      rooms.clear();
+      rooms.add(dummyLandmarkWrapper);
+      List<LandmarkWrapper> t_rooms=map.destinations();
+      Collections.sort(t_rooms, new Comparator<LandmarkWrapper>() {
         public int compare(LandmarkWrapper lhs, LandmarkWrapper rhs) {
           return lhs.toString().compareToIgnoreCase(rhs.toString());
-
         }
       });
-      roomArrayAdapter.clear();
-      roomArrayAdapter.addAll(rooms);
+      rooms.addAll(t_rooms);
     }
 
     @Override
