@@ -50,7 +50,7 @@
         android:clickable="false"
         android:ems="10"
         android:longClickable="false"
-        android:text="15dp"
+        android:textSize="15dp"
         android:enabled="false"/>
 
     <TextView

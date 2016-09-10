@@ -67,7 +67,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
   private ParticleFilter pf;
   private Handler handler;
-  private TextView tv, viewDirection;
+  private TextView viewDirection;
   private InputHandler inputHandler;
 
   private boolean monitorSteps = false;
@@ -151,11 +151,6 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     startService(mapIntent);
     bindService(mapIntent, mapConnection, BIND_AUTO_CREATE);
 
-
-    tv = new TextView(this);
-    tv.setText("" + stepCounter);
-    // setContentView(tv);
-
     compassReadingArray = new double[COMPASS_COUNTER_MAX];
     inputHandler = new InputHandler();
   }
@@ -196,8 +191,13 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
         + locationEstimate.getDirection() + "\" steps=\"" + stepCounter + "\" landmark=\""
         + lastStep.getlandmark().getType() + "\" command=\"" + navigationCommand + "\" isLeft=\""
         + lastStep.isFollowLeft() + "\" />\n");
-    viewStepCount.setText(String.valueOf(stepCounter));
-    viewDirection.setText(navigationCommand);
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        viewDirection.setText(navigationCommand);
+      }
+    });
+
 
     try {
       xmlOutput.writeFile(true);
@@ -289,7 +289,6 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
             + navigationCommand + "\" isLeft=\"" + lastStep.isFollowLeft() + "\" />\n");
         runOnUiThread(new Runnable() {
           public void run() {
-            viewStepCount.setText(String.valueOf(stepCounter));
             viewDirection.setText(navigationCommand);
           }
         });
@@ -327,7 +326,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       angle = -360.0 - angle;
     if (angle <= 45.0 && angle >= -45.0) {
       //TODO : commented the following line by jiwan
-      //monitorSteps = true;
+      monitorSteps = true;
 
       return path.getStep(pathIndex).getDirectionString();
     } else if (angle > 45.0 && angle <= 135.0) {
@@ -350,7 +349,6 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       Log.i("Navigation Activity", "Map service connected");
       startState = map.getRoomLocation(fromRoom.getName());
       pf = new ParticleFilter(navatarPath, userName, mapService.getActiveMap(), startState);
-      tv.setText("" + stepCounter + " " + orientation);
       endState = map.getRoomLocation(toRoom.getName());
       path = pathFinder.findPath(startState, fromRoom, endState, toRoom);
       directionGenerator = new Direction(map.getProtobufMap());
@@ -366,8 +364,13 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       } else {
         navigationCommand = "No path found.";
       }
-      viewStepCount.setText(String.valueOf(stepCounter));
-      viewDirection.setText(navigationCommand);
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          viewDirection.setText(navigationCommand);
+        }
+      });
+
       try {
         xmlOutput.writeFile(true);
       } catch (IOException e) {
@@ -439,14 +442,16 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
         }
         break;
       }
-      tv.setText("" + stepCounter + " " + orientation);
+
+      //TODO: commented by manju since it was freezing UI during step counting
+
       // it must be automatic and every 3 step <- we probably need to adjust it after some testing
-      if (isAutomatic && !hasChecked && (stepCounter % 3 == 2)) {
+   /* if (isAutomatic && !hasChecked && (stepCounter % 3 == 2)) {
         Thread execPathCorrection = new ExecutePathCorrection();
         execPathCorrection.setPriority(Thread.MAX_PRIORITY);
         handler.post(execPathCorrection);
         hasChecked = true;
-      }
+      }*/
     }
   }
 
