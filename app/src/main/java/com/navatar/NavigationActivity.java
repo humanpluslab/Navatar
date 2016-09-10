@@ -46,7 +46,6 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   private static final boolean WITH_COMPASS = true;
   private static final int COMPASS_COUNTER_MAX = 10;
 
-  private float stepLength = 0.0f;
   private TextToSpeech tts;
   private String userName = "";
   private String navatarPath = Environment.getExternalStorageDirectory().getPath() + "/Navatar";
@@ -100,7 +99,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
     //  userName = extras.getString("com.Navatar.userName");
-      stepLength = extras.getFloat("com.Navatar.stepLength");
+    //  stepLength = extras.getFloat("com.Navatar.stepLength");
       mode = extras.getString("com.Navatar.mode");
       fromRoom = (Landmark) extras.get("com.Navatar.fromRoom");
       toRoom = (Landmark) extras.get("com.Navatar.toRoom");
@@ -112,17 +111,17 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
     //viewUserName = (EditText) findViewById(R.id.viewUsername);
-    viewStepLength = (EditText) findViewById(R.id.viewStepLength);
+//    viewStepLength = (EditText) findViewById(R.id.viewStepLength);
     viewStepCount = (EditText) findViewById(R.id.viewStepCount);
     viewDirection = (TextView) findViewById(R.id.viewDirection);
    // viewUserName.setText(userName);
-    viewStepLength.setText(String.valueOf(stepLength));
+    //viewStepLength.setText(String.valueOf(stepLength));
 
     outputPerfect =
         new XmlFile(navatarPath + "/" + userName + "From" + fromRoom + "To" + toRoom
             + "FeetTraining.xml");
     outputPerfect.append("<rawData navigationFromTo=\"" + fromRoom + toRoom + "\" stepLength=\""
-        + stepLength + "\">\r\n");
+         + "\">\r\n");
 
     File dir = new File(navatarPath + "/Particles");
     if (!dir.exists())

@@ -2,13 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="25dp">
+    android:padding="25dp"
+    android:contentDescription="Select destination location"
+    >
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/toSpinerLabel"
+        android:contentDescription="Select your destination location from the dropdown below."
         android:textSize="25dp"
+
         />
     <Spinner
         android:id="@+id/toSpinner"

@@ -8,6 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Building"
+        android:contentDescription="Select the builiding from the dropdown below"
         android:textSize="25dp"/>
 
     <Spinner
