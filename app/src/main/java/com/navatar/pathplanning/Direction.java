@@ -144,13 +144,15 @@ public class Direction {
   }
 
   private String sideToFollow(double angle) {
-    String side;
+    String side = "right";
     if (angle >= 45f)
       side = "right";
     else if (angle <= -45f)
       side = "left";
-    else
-      side = "straight";
+    else{
+
+    }
+//      side = "straight";
     return side;
   }
 
@@ -176,9 +178,9 @@ public class Direction {
       else if (angle <= -45f)
         side = "left";
       else
-        side = "straight";
+        side = "right";
     } else
-      side = "straight";
+      side = "right";
 
     return side;
   }
@@ -241,6 +243,8 @@ public class Direction {
 
     switch (num) {
     case 1:
+      return "next";
+    case 0:
       return "next";
     case 2:
       return "2nd";
