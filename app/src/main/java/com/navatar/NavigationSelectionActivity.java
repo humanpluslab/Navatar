@@ -101,7 +101,6 @@ public class NavigationSelectionActivity extends Activity {
     }
   }
 
-  
 
 /*
   OnItemSelectedListener typeSpinnerItemSelected = new OnItemSelectedListener() {
