@@ -34,7 +34,8 @@ public class MapSelectActivity extends Activity {
   @Override
   protected void onDestroy() {
       super.onDestroy();
-    unbindService(mMapConnection);
+      if(mapService!=null)
+        getApplicationContext().unbindService(mMapConnection);
   }
 
   @Override

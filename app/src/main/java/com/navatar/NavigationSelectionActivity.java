@@ -113,6 +113,8 @@ public class NavigationSelectionActivity extends Activity {
   @Override
   protected void onDestroy() {
     super.onDestroy();
+    if(mapService!=null)
+      getApplicationContext().unbindService(mMapConnection);
     unbindService(mMapConnection);
   }
 
