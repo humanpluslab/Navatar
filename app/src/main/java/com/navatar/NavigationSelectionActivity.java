@@ -30,7 +30,7 @@ public class NavigationSelectionActivity extends Activity {
 
  // private ArrayAdapter<?> typeArrayAdapter, modeArrayAdapter, maxDistanceArrayAdapter;
   private ArrayAdapter<LandmarkWrapper> roomArrayAdapter;
-  private String userName = "";
+ // private String userName = "";
 //  private String typeItemSelected, modeItemSelected, maxDistanceItemSelected;
   private LandmarkWrapper fromRoomItemSelected, toRoomItemSelected;
 
@@ -78,7 +78,8 @@ public class NavigationSelectionActivity extends Activity {
         new ArrayAdapter<LandmarkWrapper>(this, R.layout.room_layout,
             new ArrayList<LandmarkWrapper>());
     roomArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
+    fromRoomSpinner.setPrompt("Choose from location");
+    toRoomSpinner.setPrompt("choose detination location");
     fromRoomSpinner.setAdapter(roomArrayAdapter);
     toRoomSpinner.setAdapter(roomArrayAdapter);
 
@@ -97,7 +98,7 @@ public class NavigationSelectionActivity extends Activity {
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
       stepLength = extras.getFloat("com.Navatar.stepLength");
-      userName = extras.getString("com.Navatar.userName");
+      //userName = extras.getString("com.Navatar.userName");
     }
   }
 
@@ -159,7 +160,7 @@ public class NavigationSelectionActivity extends Activity {
 
   private void startNavigation() {
     Intent myIntent = new Intent(this, NavigationActivity.class);
-    myIntent.putExtra("com.Navatar.userName", userName);
+    //myIntent.putExtra("com.Navatar.userName", userName);
     myIntent.putExtra("com.Navatar.stepLength", stepLength);
 /*    myIntent.putExtra("com.Navatar.type", typeItemSelected);
     myIntent.putExtra("com.Navatar.mode", modeItemSelected);

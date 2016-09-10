@@ -2,24 +2,31 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent"
+    android:padding = "25dp"
+    android:weightSum="1">
+<!--
 	    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Username" />
- 
+        android:text="Username"
+        android:textSize="20dp"/>
+
     <EditText
         android:id="@+id/viewUsername"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="false"
-        android:ems="10" 
-        android:longClickable="false"/>
+        android:ems="10"
+        android:longClickable="false"
+        android:text="15dp"/>
+-->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Step Length" />
+        android:text="Step Length"
+        android:textSize="20dp"/>
 
     <EditText
         android:id="@+id/viewStepLength"
@@ -27,12 +34,14 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:ems="10"
-        android:longClickable="false" />
+        android:longClickable="false"
+        android:textSize="15dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Number of Steps" />
+        android:text="Number of Steps"
+        android:textSize="20dp"/>
 
     <EditText
         android:id="@+id/viewStepCount"
@@ -40,18 +49,21 @@
         android:layout_height="wrap_content"
         android:clickable="false"
         android:ems="10"
-        android:longClickable="false" />
+        android:longClickable="false"
+        android:text="15dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Direction" />
+        android:text="Direction"
+        android:textSize="20dp"/>
 
-    <EditText
+    <TextView
         android:id="@+id/viewDirection"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:clickable="false"
         android:ems="10"
-        android:longClickable="false" />
+        android:longClickable="false"
+        android:textSize="15dp" />
 </LinearLayout>

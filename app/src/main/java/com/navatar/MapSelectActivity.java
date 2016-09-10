@@ -40,15 +40,8 @@ public class MapSelectActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setTitle("Map_Selection");
+    setTitle("Welcome to Navatar");
     setContentView(R.layout.map_select);
-    mapSelectTextView = (TextView)findViewById(R.id.tvmapselect);
-
-    mapSpinner = (Spinner) findViewById(R.id.mapSpinner);
-
-    mapSpinner.setVisibility(View.GONE);
-
-    mapSelectTextView.setVisibility(View.GONE);
 
     mapIntent= new Intent(this, MapService.class);
 
@@ -75,13 +68,10 @@ public class MapSelectActivity extends Activity {
     campusArrayAdapter.addAll(campuslist);
     campusSpinner.setAdapter(campusArrayAdapter);
     campusSpinner.setOnItemSelectedListener(campusSpinnerSelected);
-
     maplist = new ArrayList<String>();
     maplist.add(0,"Select Building");
     mapArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
             maplist);
-    mapSpinner.setAdapter(mapArrayAdapter);
-    mapSpinner.setOnItemSelectedListener(mapSpinnerItemSelected);
   }
 
 
@@ -91,8 +81,14 @@ public class MapSelectActivity extends Activity {
       if (position != 0) {
         String campusName = campusSpinner.getSelectedItem().toString();
         campusName=campusName.replaceAll(" ","_");
-        mapSelectTextView.setVisibility(View.VISIBLE);
-        mapSpinner.setVisibility(View.VISIBLE);
+        setContentView(R.layout.map_select_new);
+        setTitle("Select the building");
+        mapSelectTextView = (TextView)findViewById(R.id.tvmapselect);
+        mapSpinner = (Spinner) findViewById(R.id.mapSpinner);
+
+
+        mapSpinner.setAdapter(mapArrayAdapter);
+        mapSpinner.setOnItemSelectedListener(mapSpinnerItemSelected);
         mapArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mapIntent.putExtra("path",campusName);
         Intent defaultIntent = new Intent();

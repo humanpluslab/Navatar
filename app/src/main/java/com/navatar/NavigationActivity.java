@@ -52,7 +52,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   private String navatarPath = Environment.getExternalStorageDirectory().getPath() + "/Navatar";
   private int stepCounter = 0;
   private int orientation;
-  private EditText viewUserName, viewStepLength, viewStepCount, viewDirection;
+  private EditText viewUserName, viewStepLength, viewStepCount;
 
   // path planning variables
   private Step lastStep;
@@ -68,7 +68,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
   private ParticleFilter pf;
   private Handler handler;
-  private TextView tv;
+  private TextView tv, viewDirection;
   private InputHandler inputHandler;
 
   private boolean monitorSteps = false;
@@ -99,7 +99,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
-      userName = extras.getString("com.Navatar.userName");
+    //  userName = extras.getString("com.Navatar.userName");
       stepLength = extras.getFloat("com.Navatar.stepLength");
       mode = extras.getString("com.Navatar.mode");
       fromRoom = (Landmark) extras.get("com.Navatar.fromRoom");
@@ -111,11 +111,11 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
         isAutomatic = false;*/
       getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
-    viewUserName = (EditText) findViewById(R.id.viewUsername);
+    //viewUserName = (EditText) findViewById(R.id.viewUsername);
     viewStepLength = (EditText) findViewById(R.id.viewStepLength);
     viewStepCount = (EditText) findViewById(R.id.viewStepCount);
-    viewDirection = (EditText) findViewById(R.id.viewDirection);
-    viewUserName.setText(userName);
+    viewDirection = (TextView) findViewById(R.id.viewDirection);
+   // viewUserName.setText(userName);
     viewStepLength.setText(String.valueOf(stepLength));
 
     outputPerfect =

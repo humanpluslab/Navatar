@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent">
+	android:layout_height="fill_parent"
+	android:padding = "25dp">
 
 	<!--<TextView
 	    android:layout_width="wrap_content" 
@@ -57,6 +58,7 @@
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content" 
 	    android:text="@string/fromSpinerLabel"
+		android:textSize="25dp"
 	/>
 	<Spinner
 		android:id="@+id/fromSpinner"
@@ -68,32 +70,32 @@
 	    android:layout_width="fill_parent"
 	    android:layout_height="12dp"
 	/>
-
-	<TextView  
-	    android:layout_width="wrap_content" 
-	    android:layout_height="wrap_content" 
-	    android:text="@string/toSpinerLabel"
-	/>
+	<TextView
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="@string/toSpinerLabel"
+		android:textSize="25dp"
+		/>
 	<Spinner
 		android:id="@+id/toSpinner"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-	    android:prompt="@string/toSpinerLabel"
-	/>	
-	<ImageView
-	    android:layout_width="fill_parent"
-	    android:layout_height="12dp"
-	/>
+		android:prompt="@string/toSpinerLabel"
 
-	<Button
-	    android:id="@+id/startNavigationButton"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content"
-	    android:text="@string/start_navigation"
-	/>
+		/>
 	<ImageView
-	    android:layout_width="fill_parent"
-	    android:layout_height="12dp"
-	/>
+		android:layout_width="fill_parent"
+		android:layout_height="12dp"
+		/>
+	<Button
+		android:id="@+id/startNavigationButton"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:text="@string/start_navigation"
+		/>
+	<ImageView
+		android:layout_width="fill_parent"
+		android:layout_height="12dp"
+		/>
 
 </LinearLayout>
