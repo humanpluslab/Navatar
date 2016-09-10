@@ -33,7 +33,7 @@ public class MapSelectActivity extends Activity {
 
   @Override
   protected void onDestroy() {
-    super.onDestroy();
+      super.onDestroy();
     unbindService(mMapConnection);
   }
 
@@ -124,7 +124,6 @@ public class MapSelectActivity extends Activity {
         startActivity(intent);
       }
     }
-
     public void onNothingSelected(AdapterView<?> arg0) {}
   };
 
