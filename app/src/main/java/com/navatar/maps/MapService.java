@@ -62,6 +62,7 @@ public class MapService extends Service {
             } catch (PendingIntent.CanceledException e) {
                 e.printStackTrace();
             }
+
         }
     }
     return START_STICKY;
@@ -70,8 +71,7 @@ public class MapService extends Service {
   @Override
   public IBinder onBind(Intent arg0) {
 
-
-      return binder;
+        return binder;
   }
 
   public class MapBinder extends Binder {
@@ -80,6 +80,10 @@ public class MapService extends Service {
     }
   }
 
+  @Override
+  public void onDestroy(){
+
+  }
   public ArrayList<BuildingMapWrapper> maps() {
     return maps;
   }

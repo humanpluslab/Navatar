@@ -4,12 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.MapService;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -30,12 +31,16 @@ public class MapSelectActivity extends Activity {
   private ArrayList<String> maplist;
   private MapService mapService;
   private Intent mapIntent;
-
+  private PendingIntent pendingIntent;
+  private boolean pendingIntentHasReturned;
   @Override
   protected void onDestroy() {
       super.onDestroy();
       if(mapService!=null)
-        getApplicationContext().unbindService(mMapConnection);
+       unbindService(mMapConnection);
+
+      if(pendingIntent!=null)
+          pendingIntent.cancel();
   }
 
   @Override
@@ -73,6 +78,8 @@ public class MapSelectActivity extends Activity {
     maplist.add(0,"Select Building");
     mapArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
             maplist);
+    startService(mapIntent);
+    bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
   }
 
 
@@ -93,8 +100,8 @@ public class MapSelectActivity extends Activity {
         mapArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mapIntent.putExtra("path",campusName);
         Intent defaultIntent = new Intent();
-        PendingIntent apr = MapSelectActivity.this.createPendingResult(1,defaultIntent,PendingIntent.FLAG_ONE_SHOT);
-        mapIntent.putExtra("pendingIntent",apr);
+        pendingIntent = MapSelectActivity.this.createPendingResult(1,defaultIntent,PendingIntent.FLAG_ONE_SHOT);
+        mapIntent.putExtra("pendingIntent",pendingIntent);
         startService(mapIntent);
         bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
       }
@@ -113,8 +120,7 @@ public class MapSelectActivity extends Activity {
         maplist.add("Select a building");
         if(data.hasExtra("maps"))
            maplist.addAll((ArrayList<String>) data.getSerializableExtra("maps"));
-
-
+        pendingIntent = null;
     }
 
     OnItemSelectedListener mapSpinnerItemSelected = new OnItemSelectedListener() {
@@ -141,4 +147,6 @@ public class MapSelectActivity extends Activity {
       mapService = null;
     }
   };
+
+
 }

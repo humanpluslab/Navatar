@@ -241,7 +241,8 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   public void onDestroy() {
     super.onDestroy();
     if(mapService!=null)
-      getApplicationContext().unbindService(mapConnection);
+      unbindService(mapConnection);
+
     xmlOutput.append("</locations>");
     pf.finalize();
     try {
