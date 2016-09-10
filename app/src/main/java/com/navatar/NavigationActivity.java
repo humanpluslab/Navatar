@@ -170,11 +170,15 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     if (!navigationCommand.startsWith("Turn")) {
       pf.addTransition(new Transition(compassAverage, 0, timestamp, 0.0, lastStep.getlandmark()
           .getType(), lastStep.isFollowLeft()));
-      try {
-        pf.execute();
-      } catch (IOException e1) {
-        e1.printStackTrace();
-      }
+
+        //TODO : commented out by jiwan
+
+//      try {
+//        pf.execute();
+//      } catch (IOException e1) {
+//        e1.printStackTrace();
+//      }
+
       lastStep = path.getStep(++pathIndex);
     }
     ParticleState locationEstimate = pf.getSynchronizedLocationEstimate();
@@ -235,6 +239,8 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   }
 
   public void onDestroy() {
+    super.onDestroy();
+    unbindService(mapConnection);
     xmlOutput.append("</locations>");
     pf.finalize();
     try {
@@ -252,8 +258,6 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     }
     tts.shutdown();
     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    super.onDestroy();
-    unbindService(mapConnection);
   }
 
   @Override
@@ -301,8 +305,13 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
   private String getNextDirection() {
     monitorSteps = false;
-    if (pathIndex == path.getLength() - 1)
-      return path.getStep(pathIndex).getDirectionString();
+    if(path==null){
+      return "No Path Found";
+    }
+
+    if (pathIndex >= path.getLength() - 1)
+      return path.getStep(path.getLength() - 1).getDirectionString();
+
     double x1 = path.getStep(pathIndex).getParticleState().getX();
     double y1 = path.getStep(pathIndex).getParticleState().getY();
     double x2 = path.getStep(pathIndex + 1).getParticleState().getX();
@@ -315,7 +324,9 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     else if (angle < -180.0)
       angle = -360.0 - angle;
     if (angle <= 45.0 && angle >= -45.0) {
-      monitorSteps = true;
+      //TODO : commented the following line by jiwan
+      //monitorSteps = true;
+
       return path.getStep(pathIndex).getDirectionString();
     } else if (angle > 45.0 && angle <= 135.0) {
       return "Turn right";
@@ -396,6 +407,13 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       if (monitorSteps) {
         hasChecked = false;
         ++stepCounter;
+        //TODO see if this is right way to do it by Manju
+        runOnUiThread(new Runnable() {
+          public void run() {
+            viewStepCount.setText(String.valueOf(stepCounter));
+          }
+        });
+
         pf.addTransition(new Transition(compassAverage, 1, timestamp, 0.0, null, false));
         Thread execPF = pf.new ExecutePF();
         execPF.setPriority(Thread.MAX_PRIORITY);
@@ -444,7 +462,9 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
     @Override
     public void onLongPress(MotionEvent arg0) {
-      Vibrator vibrator = null;
+
+      /*Vibrator vibrator = null;
+
       try {
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
       } catch (Exception e) {}
@@ -453,15 +473,37 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
           vibrator.vibrate(100);
         } catch (Exception e) {}
       }
-      landmarkConfirmed(System.nanoTime());
+      landmarkConfirmed(System.nanoTime());*/
     }
 
-    @Override
+    /*@Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
       tts.speak("Repeating, " + navigationCommand, TextToSpeech.QUEUE_ADD, null);
       viewStepCount.setText(String.valueOf(stepCounter));
       viewDirection.setText("Repeating " + navigationCommand);
       return true;
+    }*/
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent event){
+
+      Vibrator vibrator = null;
+      try{
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+      }catch(Exception e){}
+      if(vibrator !=null){
+        try{vibrator.vibrate(200);}catch(Exception exp){}
+
+      }
+      navigationCommand = getNextDirection();
+      if(!navigationCommand.matches("(?i:Turn.*)")){
+        pathIndex++;
+      }
+      tts.speak(navigationCommand,TextToSpeech.QUEUE_ADD,null);
+      viewDirection.setText(navigationCommand);
+      return true;
+
     }
+
   }
 }

@@ -15,6 +15,7 @@ import android.os.IBinder;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -77,8 +78,9 @@ public class NavigationSelectionActivity extends Activity {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(position!=0) {
             fromRoomItemSelected = (LandmarkWrapper) fromRoomSpinner.getItemAtPosition(position);
-            setContentView(R.layout.navigation_selection_layout_new);
             setTitle("Select destination location");
+            getWindow().getDecorView().sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+            setContentView(R.layout.navigation_selection_layout_new);
             toRoomSpinner = (Spinner) findViewById(R.id.toSpinner);
             startNavigationButton = (Button) findViewById(R.id.startNavigationButton);
             startNavigationButton.setVisibility(View.GONE);
