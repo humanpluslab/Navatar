@@ -20,6 +20,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.LandmarkWrapper;
@@ -30,11 +31,7 @@ public class NavigationSelectionActivity extends Activity {
   private float stepLength = 0.0f;
   private Spinner typeSpinner, modeSpinner, maxDistanceSpinner, fromRoomSpinner, toRoomSpinner;
   private Button startNavigationButton;
-
- // private ArrayAdapter<?> typeArrayAdapter, modeArrayAdapter, maxDistanceArrayAdapter;
   private ArrayAdapter<LandmarkWrapper> roomArrayAdapter;
- // private String userName = "";
-//  private String typeItemSelected, modeItemSelected, maxDistanceItemSelected;
   private LandmarkWrapper fromRoomItemSelected, toRoomItemSelected;
 
   private MapService mapService;
@@ -43,41 +40,13 @@ public class NavigationSelectionActivity extends Activity {
   private LandmarkWrapper dummyLandmarkWrapper;
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setTitle("Navigation");
+    setTitle("Select starting location");
     setContentView(R.layout.navigation_selection_layout);
 
     Intent mapIntent = new Intent(this, MapService.class);
     startService(mapIntent);
     bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
-
- /*   typeSpinner = (Spinner) findViewById(R.id.typeSpinner);
-    modeSpinner = (Spinner) findViewById(R.id.modeSpinner);
-    maxDistanceSpinner = (Spinner) findViewById(R.id.maxDistanceSpinner);*/
     fromRoomSpinner = (Spinner) findViewById(R.id.fromSpinner);
-    toRoomSpinner = (Spinner) findViewById(R.id.toSpinner);
-    startNavigationButton = (Button) findViewById(R.id.startNavigationButton);
-
-   /* typeArrayAdapter =
-        ArrayAdapter.createFromResource(this, R.array.typeArray,
-            android.R.layout.simple_spinner_item);
-    typeArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    typeSpinner.setAdapter(typeArrayAdapter);
-
-    modeArrayAdapter =
-        ArrayAdapter.createFromResource(this, R.array.modeArray,
-            android.R.layout.simple_spinner_item);
-    modeArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    modeSpinner.setAdapter(modeArrayAdapter);
-
-    maxDistanceArrayAdapter =
-        ArrayAdapter.createFromResource(this, R.array.maxDistanceArray,
-            android.R.layout.simple_spinner_item);
-    maxDistanceArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    maxDistanceSpinner.setAdapter(maxDistanceArrayAdapter);*/
-
-    // roomArrayAdapter = ArrayAdapter.createFromResource(
-    // this, R.array.roomArray, android.R.layout.simple_spinner_item);
-
     rooms = new ArrayList<LandmarkWrapper>();
     LandmarkProto.Landmark dummyLandmark=LandmarkProto.Landmark.getDefaultInstance();
     dummyLandmarkWrapper= new LandmarkWrapper(dummyLandmark);
@@ -88,60 +57,35 @@ public class NavigationSelectionActivity extends Activity {
             rooms);
 
     roomArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    fromRoomSpinner.setPrompt("Choose from location");
-    toRoomSpinner.setPrompt("choose detination location");
     fromRoomSpinner.setAdapter(roomArrayAdapter);
-    toRoomSpinner.setAdapter(roomArrayAdapter);
+
 
     fromRoomSpinner.setOnItemSelectedListener(fromRoomSpinnerItemSelected);
-    toRoomSpinner.setOnItemSelectedListener(toRoomSpinnerItemSelected);
+
 
     // ****************
     // Listeners:
     // ****************
 
-/*    typeSpinner.setOnItemSelectedListener(typeSpinnerItemSelected);
-    modeSpinner.setOnItemSelectedListener(modeSpinnerItemSelected);
-    maxDistanceSpinner.setOnItemSelectedListener(maxDistanceSpinnerItemSelected);*/
-    startNavigationButton.setOnClickListener(startNavigationButtonClickListener);
-
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
       stepLength = extras.getFloat("com.Navatar.stepLength");
-      //userName = extras.getString("com.Navatar.userName");
     }
   }
 
-
-/*
-  OnItemSelectedListener typeSpinnerItemSelected = new OnItemSelectedListener() {
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-      typeItemSelected = typeSpinner.getItemAtPosition(position).toString();
-    }
-
-    public void onNothingSelected(AdapterView<?> arg0) {}
-  };
-
-  OnItemSelectedListener modeSpinnerItemSelected = new OnItemSelectedListener() {
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-      modeItemSelected = modeSpinner.getItemAtPosition(position).toString();
-    }
-
-    public void onNothingSelected(AdapterView<?> arg0) {}
-  };
-
-  OnItemSelectedListener maxDistanceSpinnerItemSelected = new OnItemSelectedListener() {
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-      maxDistanceItemSelected = maxDistanceSpinner.getItemAtPosition(position).toString();
-    }
-
-    public void onNothingSelected(AdapterView<?> arg0) {}
-  };
-*/
-
   OnItemSelectedListener fromRoomSpinnerItemSelected = new OnItemSelectedListener() {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-      fromRoomItemSelected = (LandmarkWrapper) fromRoomSpinner.getItemAtPosition(position);
+        if(position!=0) {
+            fromRoomItemSelected = (LandmarkWrapper) fromRoomSpinner.getItemAtPosition(position);
+            setContentView(R.layout.navigation_selection_layout_new);
+            setTitle("Select destination location");
+            toRoomSpinner = (Spinner) findViewById(R.id.toSpinner);
+            startNavigationButton = (Button) findViewById(R.id.startNavigationButton);
+            startNavigationButton.setVisibility(View.GONE);
+            toRoomSpinner.setAdapter(roomArrayAdapter);
+            toRoomSpinner.setOnItemSelectedListener(toRoomSpinnerItemSelected);
+            startNavigationButton.setOnClickListener(startNavigationButtonClickListener);
+        }
     }
 
     public void onNothingSelected(AdapterView<?> arg0) {}
@@ -149,7 +93,10 @@ public class NavigationSelectionActivity extends Activity {
 
   OnItemSelectedListener toRoomSpinnerItemSelected = new OnItemSelectedListener() {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-      toRoomItemSelected = (LandmarkWrapper) toRoomSpinner.getItemAtPosition(position);
+        if(position !=0) {
+            toRoomItemSelected = (LandmarkWrapper) toRoomSpinner.getItemAtPosition(position);
+            startNavigationButton.performClick();
+        }
     }
 
     public void onNothingSelected(AdapterView<?> arg0) {}
@@ -169,11 +116,7 @@ public class NavigationSelectionActivity extends Activity {
 
   private void startNavigation() {
     Intent myIntent = new Intent(this, NavigationActivity.class);
-    //myIntent.putExtra("com.Navatar.userName", userName);
     myIntent.putExtra("com.Navatar.stepLength", stepLength);
-/*    myIntent.putExtra("com.Navatar.type", typeItemSelected);
-    myIntent.putExtra("com.Navatar.mode", modeItemSelected);
-    myIntent.putExtra("com.Navatar.maxDistance", maxDistanceItemSelected);*/
     myIntent.putExtra("com.Navatar.fromRoom", fromRoomItemSelected.getLandmark());
     myIntent.putExtra("com.Navatar.toRoom", toRoomItemSelected.getLandmark());
     startActivity(myIntent);
