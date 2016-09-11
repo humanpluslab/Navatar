@@ -2,6 +2,8 @@ package com.navatar.maps;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import com.navatar.MapSelectActivity;
 import com.navatar.maps.particles.ParticleState;
 import com.navatar.pathplanning.Path;
 import com.navatar.protobufs.BuildingMapProto;

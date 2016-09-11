@@ -32,13 +32,13 @@ public class MapSelectActivity extends Activity {
   private MapService mapService;
   private Intent mapIntent;
   private PendingIntent pendingIntent;
-  private boolean pendingIntentHasReturned;
+  public static boolean ActivityDestryoed;
   @Override
   protected void onDestroy() {
+
       super.onDestroy();
       if(mapService!=null)
        unbindService(mMapConnection);
-
       if(pendingIntent!=null)
           pendingIntent.cancel();
   }
@@ -48,6 +48,7 @@ public class MapSelectActivity extends Activity {
     super.onCreate(savedInstanceState);
     setTitle("Welcome to Navatar");
     setContentView(R.layout.map_select);
+
 
     mapIntent= new Intent(this, MapService.class);
 
@@ -82,6 +83,11 @@ public class MapSelectActivity extends Activity {
     bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
   }
 
+  @Override
+  protected void onResume(){
+    super.onResume();
+
+  }
 
   public OnItemSelectedListener campusSpinnerSelected = new OnItemSelectedListener() {
     @Override
