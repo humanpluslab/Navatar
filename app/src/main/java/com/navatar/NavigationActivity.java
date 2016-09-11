@@ -166,13 +166,11 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       pf.addTransition(new Transition(compassAverage, 0, timestamp, 0.0, lastStep.getlandmark()
           .getType(), lastStep.isFollowLeft()));
 
-        //TODO : commented out by jiwan
-
-//      try {
-//        pf.execute();
-//      } catch (IOException e1) {
-//        e1.printStackTrace();
-//      }
+      try {
+        pf.execute();
+      } catch (IOException e1) {
+        e1.printStackTrace();
+      }
 
       lastStep = path.getStep(++pathIndex);
     }
@@ -325,9 +323,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     else if (angle < -180.0)
       angle = -360.0 - angle;
     if (angle <= 45.0 && angle >= -45.0) {
-      //TODO : commented the following line by jiwan
       monitorSteps = true;
-
       return path.getStep(pathIndex).getDirectionString();
     } else if (angle > 45.0 && angle <= 135.0) {
       return "Turn right";
@@ -443,15 +439,15 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
         break;
       }
 
-      //TODO: commented by manju since it was freezing UI during step counting
+      //TODO Manju: commented by manju since it was freezing UI during step counting
 
       // it must be automatic and every 3 step <- we probably need to adjust it after some testing
-   /* if (isAutomatic && !hasChecked && (stepCounter % 3 == 2)) {
+      if (isAutomatic && !hasChecked && (stepCounter % 3 == 2)) {
         Thread execPathCorrection = new ExecutePathCorrection();
         execPathCorrection.setPriority(Thread.MAX_PRIORITY);
         handler.post(execPathCorrection);
         hasChecked = true;
-      }*/
+      }
     }
   }
 
@@ -470,7 +466,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     @Override
     public void onLongPress(MotionEvent arg0) {
 
-      /*Vibrator vibrator = null;
+      Vibrator vibrator = null;
 
       try {
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -480,37 +476,17 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
           vibrator.vibrate(100);
         } catch (Exception e) {}
       }
-      landmarkConfirmed(System.nanoTime());*/
+      landmarkConfirmed(System.nanoTime());
     }
 
-    /*@Override
+    @Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
       tts.speak("Repeating, " + navigationCommand, TextToSpeech.QUEUE_ADD, null);
       viewStepCount.setText(String.valueOf(stepCounter));
       viewDirection.setText("Repeating " + navigationCommand);
       return true;
-    }*/
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent event){
-
-      Vibrator vibrator = null;
-      try{
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-      }catch(Exception e){}
-      if(vibrator !=null){
-        try{vibrator.vibrate(200);}catch(Exception exp){}
-
-      }
-      navigationCommand = getNextDirection();
-      if(!navigationCommand.matches("(?i:Turn.*)")){
-        pathIndex++;
-      }
-      tts.speak(navigationCommand,TextToSpeech.QUEUE_ADD,null);
-      viewDirection.setText(navigationCommand);
-      return true;
-
     }
+
 
   }
 }
