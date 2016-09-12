@@ -21,7 +21,7 @@
 					<img src="assets/images/campusaccess4all.png" height=50px vertical-align:bottom align="left">
 					<li><a href="#howitworks">How does it work?</a></li>
 					<li><a href="#contribute">Contribute</a></li>
-					<li><a href="#maps">Maps</a></li>
+					<li><a href="#video">Video</a></li>
 					<li><a href="#contact">Contact</a></li>
 				</ul>
 			</nav>
@@ -30,7 +30,7 @@
 			<div class="wrapper style1 first">
 				<article class="container" id="top">
 				
-				<h1 style="text-align: right">Navatar</h1>	
+				<h1 style="text-align: right; color:#ff9902">Navatar; Indoor Navigation <br/>for Blind Students</h1>	
 				
 						
 				
@@ -44,10 +44,10 @@
 					<header>
 						<h3>Blind students face significant challenges when attending college</h3>
 					</header>
-					<div class="container">
+<!-- 					<div class="container"> -->
 						
-					<p>Besides having accessible books, navigating campus environments can be quite a challenge. Though outdoor GPS   </p>
-					</div>
+					<p style="text-align: justify">Besides having accessible books, navigating campus environments can be quite a challenge for blind students. Though outdoor navigation can rely on GPS, indoor navigation must use different techniques. Indoor navigation systems for users who are blind typically rely upon expensive physical augmentation of the environment or expensive sensing equipment; consequently few systems have been implemented. It has been argued that because blind students currently rely on sighed guides to navigate them on a campus, this loss of independence is a reason why fewer blind students go to college. Navatar is a low cost indoor navigation that allows for localization and navigation by exploiting the physical characteristics of indoor environments, taking advantage of the unique sensing abilities of users who are blind, and minimalistic sensing achievable with low cost accelerometers available in smartphones. </p>
+<!-- 					</div> -->
 					
 				</article>
 			</div>
@@ -62,7 +62,8 @@
 								<section class="box style1">
 									<h3>User as sensor</h3>
 									<img src="assets/images/cane.png" height="100">
-									<p>Navatar seamlessly integrates with how blind users navigate familiar spaces as this includes the identification of known tactile landmarks. By having blind users confirm landmarks along their path, Navatar achieves a high localization accuracy at a low cost. </p> a;
+									<p>Current indoor navigation systems offer a high accuracy at a high cost to detect users veering from their path, but we argue that indoor environments are much more physically constrained. Navatar therefore uses a low cost dead reckoning localization technique using step counting but blind users are asked to confirm the presence of anticipated landmarks on their path.							
+										  </p>
 								</section>
 							</div>
 							<div class="4u 12u(mobile)">
@@ -72,14 +73,14 @@
 		<img src="assets/images/universal.svg" height="100">
 <!-- </svg> -->
 							
-									<p>Navatar has potential for large scale deployment as doesn't require extensive and expensive installation of sensors or beacons like other approaches (RFID/Bluetooth).  </p>
+									<p>Navatar has potential for large scale deployment as doesn't require extensive and expensive installation of sensors or beacons like other approaches (RFID/Bluetooth). Navatar seamlessly integrates with how blind users navigate familiar spaces as this includes the identification of known tactile landmarks. </p>
 								</section>
 							</div>
 							<div class="4u 12u(mobile)">
 								<section class="box style1">
 									<h3>Low Cost</h3>
 									<img src="assets/images/dollar.png" height="100">
-									<p>Navatar can run on any smartphone and Navatar can extract all information for navigation from indoor GIS maps, which most campuses environments seem to have available. Navatar is further open source, which keeps installation costs for campuses low and costs to students minimal as smartphone adoption is high among the blind population.</p>
+									<p>Navatar can run on any smartphone and Navatar can extract all information for navigation from indoor GIS maps, which most campuses environments already seem to have available. Navatar is further open source, which keeps installation costs for campuses low and costs to students minimal as smartphone adoption is high among the blind population.</p>
 								</section>
 							</div>
 							
@@ -90,13 +91,22 @@
 
 		<!-- What it is -->
 			<div class="wrapper style2">
-				<article id="applications">
+				<article id="contribute">
+					<header>
+						<h3>Contribute</h3>
+						
+					</header>
 				
-					<div class="container">
-					<iframe width="560" height="315" src="https://www.youtube.com/watch?v=Q07oHm3zh04" frameborder="0" allowfullscreen></iframe><br/>
+				<p style="text-align: justify">Currently Navatar is available for Android for a few buildings on the University of Nevada Campus with more maps coming in the Fall of 2017. Download the <a style="color:red" href="https://play.google.com/store/apps/details?id=com.navatar">Android app</a> </p>
+					<h4>Help us bring Navatar to any campus in the US! </h4>
+					<p style="text-align: justify">
+					There are two ways you can help: <br/> (1) 
+Fork Navatar on our <a  style="color:red" href=https://github.com/humanpluslab/Navatar>github repository</a> and expand it with new features. <br/>(2) Download our <a style="color:red" href="https://github.com/humanpluslab/Navatar/tree/master/MapCreator">MapCreator Python scripts</a> and use them to convert GIS maps for your campus to our Protobuf format and upload them to our <a href="https://github.com/humanpluslab/Navatar/tree/master/maps" style="color:red">repository </a>. Talk to your campus GIS person to get access to maps. Once they are uploaded they will become available in the next Android app update.
+							
+								</p>
+				
+				
 					
-					
-					</div>
 					
 				</article>
 			</div>
@@ -106,16 +116,24 @@
 
 		<!-- Portfolio -->
 			<div class="wrapper style3">
-				<article id="company">
+				<article id="video">
 					<header>
-						<h3>Contribute</h3>
-						<p>Help us bring navatar to any campus in the US</p>
+						<h3>Video</h3>
+						
 					</header>
 					
-					<div class="container">
-						TESTN
+			
+					<iframe width="560" height="315" src="https://www.youtube.com/embed/Q07oHm3zh04" frameborder="0" allowfullscreen></iframe><br/>
+					<h4> As featured in: </h4>
+						<a href="http://www.newscientist.com/article/mg21428625.700-robot-sensing-and-smartphones-help-blind-navigate.html"><img src="assets/images/NewScientist.gif" width="200px">   </a> 
+						<a href="http://technews.acm.org/archives.cfm?fo=2012-05-may/may-21-2012.html"><img src="assets/images/acm.jpg" width="200px">  </a> 
+						<a href="http://phys.org/news/2012-05-scientists-indoor.html"><img src="assets/images/PhysORG.png" width="200px"></a> 
+						<a href="http://www.gizmag.com/navitar-indoor-blind-navigation/22674/"><img src="assets/images/gizmag.png" width="200px">   </a> 
+						<a href="http://www.redorbit.com/news/technology/1112539355/indoor-navigation-system-gives-guide-dogs-a-rest/"><img src="assets/images/redOrbit.jpg" width="200px">     </a> 
+					</p>
+				
 
-					</div>
+					
 
 				</article>
 			</div>
@@ -124,7 +142,7 @@
 
 		<!-- Contact -->
 			<div class="wrapper style2">
-				<article id="contact" class="container 75%">
+				<article id="contact" class="container 100%">
 					<div>
 						<div class="row">
 							<div class="12u">
@@ -136,7 +154,8 @@
 						</div>
 					</div>
 					<footer>
-						<p>Navatar was developed by the University of Nevada, with gracious support from Google and the Partners for Sight Foundation</p>
+						<small>Navatar is a project from the <a style="color:red" href=www.unr.edu>University of Nevada</a>, with gracious support from <a href="google.com"  style="color:red" >Google</a> and the <a  style="color:red" href="partnersforsight.org">Partners for Sight Foundation</a></small><br/><br/>
+						Navatar was developed by Navid Fallah, Kostas, Bekris, Ilias Apostolopoulous, Rohit Patil, Jiwan Bhandari, Manju Palathingal.
 					</footer>
 				</article>
 			</div>
