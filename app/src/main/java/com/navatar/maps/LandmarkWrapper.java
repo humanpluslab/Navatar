@@ -3,8 +3,12 @@
  */
 package com.navatar.maps;
 
+import android.util.Log;
+
 import com.navatar.math.Constants;
 import com.navatar.protobufs.LandmarkProto.Landmark;
+
+import java.lang.reflect.Field;
 
 /**
  * Wrapper for the Tile protobuf.
@@ -47,8 +51,28 @@ public class LandmarkWrapper implements Comparable<LandmarkWrapper> {
     return 1;
   }
 
+
   @Override
   public String toString() {
-    return "Landmark: " + landmark.getName() + " Type: " + landmark.getType().toString() + "\n";
+    String t_string = "Room ";
+    t_string=(landmark.getName().length()>10)?(""):t_string;
+    return t_string+ landmark.getName().toString()+"\n";
   }
+
+  public void setName(String newName){
+
+    try{
+      Field f = landmark.getClass().getDeclaredField("name_");
+      f.setAccessible(true);
+      f.set(landmark,newName);
+      Log.i("NavatarLogs",(String)f.get(landmark));
+    }catch(NoSuchFieldException e){
+
+    }catch (IllegalAccessException e){
+    }
+  }
+
+
+
+
 }

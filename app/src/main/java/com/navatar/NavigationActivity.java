@@ -46,13 +46,12 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   private static final boolean WITH_COMPASS = true;
   private static final int COMPASS_COUNTER_MAX = 10;
 
-  private float stepLength = 0.0f;
   private TextToSpeech tts;
   private String userName = "";
   private String navatarPath = Environment.getExternalStorageDirectory().getPath() + "/Navatar";
   private int stepCounter = 0;
   private int orientation;
-  private EditText viewUserName, viewStepLength, viewStepCount, viewDirection;
+  private EditText viewUserName, viewStepLength, viewStepCount;
 
   // path planning variables
   private Step lastStep;
@@ -68,7 +67,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
   private ParticleFilter pf;
   private Handler handler;
-  private TextView tv;
+  private TextView viewDirection;
   private InputHandler inputHandler;
 
   private boolean monitorSteps = false;
@@ -99,30 +98,30 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
-      userName = extras.getString("com.Navatar.userName");
-      stepLength = extras.getFloat("com.Navatar.stepLength");
+    //  userName = extras.getString("com.Navatar.userName");
+    //  stepLength = extras.getFloat("com.Navatar.stepLength");
       mode = extras.getString("com.Navatar.mode");
       fromRoom = (Landmark) extras.get("com.Navatar.fromRoom");
       toRoom = (Landmark) extras.get("com.Navatar.toRoom");
 
-      if (mode.equalsIgnoreCase("Automatic"))
+      /*if (mode.equalsIgnoreCase("Automatic"))
         isAutomatic = true;
       else
-        isAutomatic = false;
+        isAutomatic = false;*/
       getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
     }
-    viewUserName = (EditText) findViewById(R.id.viewUsername);
-    viewStepLength = (EditText) findViewById(R.id.viewStepLength);
+    //viewUserName = (EditText) findViewById(R.id.viewUsername);
+//    viewStepLength = (EditText) findViewById(R.id.viewStepLength);
     viewStepCount = (EditText) findViewById(R.id.viewStepCount);
-    viewDirection = (EditText) findViewById(R.id.viewDirection);
-    viewUserName.setText(userName);
-    viewStepLength.setText(String.valueOf(stepLength));
+    viewDirection = (TextView) findViewById(R.id.viewDirection);
+   // viewUserName.setText(userName);
+    //viewStepLength.setText(String.valueOf(stepLength));
 
     outputPerfect =
         new XmlFile(navatarPath + "/" + userName + "From" + fromRoom + "To" + toRoom
             + "FeetTraining.xml");
     outputPerfect.append("<rawData navigationFromTo=\"" + fromRoom + toRoom + "\" stepLength=\""
-        + stepLength + "\">\r\n");
+         + "\">\r\n");
 
     File dir = new File(navatarPath + "/Particles");
     if (!dir.exists())
@@ -147,11 +146,10 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     bindService(sensingIntent, sensingConnection, BIND_AUTO_CREATE);
 
     // Bind with map service
-    bindService(new Intent(this, MapService.class), mapConnection, BIND_AUTO_CREATE);
 
-    tv = new TextView(this);
-    tv.setText("" + stepCounter);
-    // setContentView(tv);
+    Intent mapIntent = new Intent(this, MapService.class);
+    startService(mapIntent);
+    bindService(mapIntent, mapConnection, BIND_AUTO_CREATE);
 
     compassReadingArray = new double[COMPASS_COUNTER_MAX];
     inputHandler = new InputHandler();
@@ -167,11 +165,15 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     if (!navigationCommand.startsWith("Turn")) {
       pf.addTransition(new Transition(compassAverage, 0, timestamp, 0.0, lastStep.getlandmark()
           .getType(), lastStep.isFollowLeft()));
-      try {
-        pf.execute();
-      } catch (IOException e1) {
-        e1.printStackTrace();
-      }
+
+        //TODO : commented out by jiwan
+
+//      try {
+//        pf.execute();
+//      } catch (IOException e1) {
+//        e1.printStackTrace();
+//      }
+
       lastStep = path.getStep(++pathIndex);
     }
     ParticleState locationEstimate = pf.getSynchronizedLocationEstimate();
@@ -189,8 +191,13 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
         + locationEstimate.getDirection() + "\" steps=\"" + stepCounter + "\" landmark=\""
         + lastStep.getlandmark().getType() + "\" command=\"" + navigationCommand + "\" isLeft=\""
         + lastStep.isFollowLeft() + "\" />\n");
-    viewStepCount.setText(String.valueOf(stepCounter));
-    viewDirection.setText(navigationCommand);
+    runOnUiThread(new Runnable() {
+      @Override
+      public void run() {
+        viewDirection.setText(navigationCommand);
+      }
+    });
+
 
     try {
       xmlOutput.writeFile(true);
@@ -232,6 +239,10 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   }
 
   public void onDestroy() {
+    super.onDestroy();
+    if(mapService!=null)
+      unbindService(mapConnection);
+
     xmlOutput.append("</locations>");
     pf.finalize();
     try {
@@ -249,7 +260,6 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     }
     tts.shutdown();
     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-    super.onDestroy();
   }
 
   @Override
@@ -279,7 +289,6 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
             + navigationCommand + "\" isLeft=\"" + lastStep.isFollowLeft() + "\" />\n");
         runOnUiThread(new Runnable() {
           public void run() {
-            viewStepCount.setText(String.valueOf(stepCounter));
             viewDirection.setText(navigationCommand);
           }
         });
@@ -297,8 +306,13 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
   private String getNextDirection() {
     monitorSteps = false;
-    if (pathIndex == path.getLength() - 1)
-      return path.getStep(pathIndex).getDirectionString();
+    if(path==null){
+      return "No Path Found";
+    }
+
+    if (pathIndex >= path.getLength() - 1)
+      return path.getStep(path.getLength() - 1).getDirectionString();
+
     double x1 = path.getStep(pathIndex).getParticleState().getX();
     double y1 = path.getStep(pathIndex).getParticleState().getY();
     double x2 = path.getStep(pathIndex + 1).getParticleState().getX();
@@ -311,7 +325,9 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     else if (angle < -180.0)
       angle = -360.0 - angle;
     if (angle <= 45.0 && angle >= -45.0) {
+      //TODO : commented the following line by jiwan
       monitorSteps = true;
+
       return path.getStep(pathIndex).getDirectionString();
     } else if (angle > 45.0 && angle <= 135.0) {
       return "Turn right";
@@ -333,7 +349,6 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       Log.i("Navigation Activity", "Map service connected");
       startState = map.getRoomLocation(fromRoom.getName());
       pf = new ParticleFilter(navatarPath, userName, mapService.getActiveMap(), startState);
-      tv.setText("" + stepCounter + " " + orientation);
       endState = map.getRoomLocation(toRoom.getName());
       path = pathFinder.findPath(startState, fromRoom, endState, toRoom);
       directionGenerator = new Direction(map.getProtobufMap());
@@ -349,8 +364,13 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       } else {
         navigationCommand = "No path found.";
       }
-      viewStepCount.setText(String.valueOf(stepCounter));
-      viewDirection.setText(navigationCommand);
+      runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
+          viewDirection.setText(navigationCommand);
+        }
+      });
+
       try {
         xmlOutput.writeFile(true);
       } catch (IOException e) {
@@ -392,6 +412,13 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       if (monitorSteps) {
         hasChecked = false;
         ++stepCounter;
+        //TODO see if this is right way to do it by Manju
+        runOnUiThread(new Runnable() {
+          public void run() {
+            viewStepCount.setText(String.valueOf(stepCounter));
+          }
+        });
+
         pf.addTransition(new Transition(compassAverage, 1, timestamp, 0.0, null, false));
         Thread execPF = pf.new ExecutePF();
         execPF.setPriority(Thread.MAX_PRIORITY);
@@ -415,14 +442,16 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
         }
         break;
       }
-      tv.setText("" + stepCounter + " " + orientation);
+
+      //TODO: commented by manju since it was freezing UI during step counting
+
       // it must be automatic and every 3 step <- we probably need to adjust it after some testing
-      if (isAutomatic && !hasChecked && (stepCounter % 3 == 2)) {
+   /* if (isAutomatic && !hasChecked && (stepCounter % 3 == 2)) {
         Thread execPathCorrection = new ExecutePathCorrection();
         execPathCorrection.setPriority(Thread.MAX_PRIORITY);
         handler.post(execPathCorrection);
         hasChecked = true;
-      }
+      }*/
     }
   }
 
@@ -440,7 +469,9 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
     @Override
     public void onLongPress(MotionEvent arg0) {
-      Vibrator vibrator = null;
+
+      /*Vibrator vibrator = null;
+
       try {
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
       } catch (Exception e) {}
@@ -449,15 +480,37 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
           vibrator.vibrate(100);
         } catch (Exception e) {}
       }
-      landmarkConfirmed(System.nanoTime());
+      landmarkConfirmed(System.nanoTime());*/
     }
 
-    @Override
+    /*@Override
     public boolean onSingleTapConfirmed(MotionEvent event) {
       tts.speak("Repeating, " + navigationCommand, TextToSpeech.QUEUE_ADD, null);
       viewStepCount.setText(String.valueOf(stepCounter));
       viewDirection.setText("Repeating " + navigationCommand);
       return true;
+    }*/
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent event){
+
+      Vibrator vibrator = null;
+      try{
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+      }catch(Exception e){}
+      if(vibrator !=null){
+        try{vibrator.vibrate(200);}catch(Exception exp){}
+
+      }
+      navigationCommand = getNextDirection();
+      if(!navigationCommand.matches("(?i:Turn.*)")){
+        pathIndex++;
+      }
+      tts.speak(navigationCommand,TextToSpeech.QUEUE_ADD,null);
+      viewDirection.setText(navigationCommand);
+      return true;
+
     }
+
   }
 }

@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Random;
 
+
 import com.navatar.math.Distance;
 import com.navatar.protobufs.BuildingMapProto.BuildingMap;
 import com.navatar.protobufs.CoordinatesProto.Coordinates;

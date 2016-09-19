@@ -37,7 +37,7 @@ public class Direction {
     while ((currentStep = path.getStep(++stepIndex)) != null) {
 
       side = sideToFollow(path, stepIndex); // the side to follow based on the next step
-      if (side == "left")
+      if (side == "left ")
         currentStep.setFollowLeft(true);
       else
         currentStep.setFollowLeft(false);
@@ -119,10 +119,11 @@ public class Direction {
       StringBuilder directionStringBuilder = new StringBuilder();
       directionStringBuilder.append("Follow the wall ");
       directionStringBuilder.append("on your " + side);
-      directionStringBuilder.append("until you find " + getOrdinalnumber(landmarkList.size()));
+      directionStringBuilder.append(" until you find " + getOrdinalnumber(landmarkList.size()));
       directionStringBuilder.append(getLandMarkName(nextStep.getlandmark().getType()));
       currentStep.setDirectionString(directionStringBuilder.toString());
     }
+
     return path;
   }
 
@@ -144,13 +145,15 @@ public class Direction {
   }
 
   private String sideToFollow(double angle) {
-    String side;
+    String side = "right";
     if (angle >= 45f)
       side = "right";
     else if (angle <= -45f)
       side = "left";
-    else
-      side = "straight";
+    else{
+
+    }
+//      side = "straight";
     return side;
   }
 
@@ -176,9 +179,9 @@ public class Direction {
       else if (angle <= -45f)
         side = "left";
       else
-        side = "straight";
+        side = "right";
     } else
-      side = "straight";
+      side = "right";
 
     return side;
   }
@@ -241,6 +244,8 @@ public class Direction {
 
     switch (num) {
     case 1:
+      return "next";
+    case 0:
       return "next";
     case 2:
       return "2nd";

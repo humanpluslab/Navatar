@@ -14,6 +14,6 @@ public class TimeTestActivity extends Activity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_time_test);
+   // setContentView(R.layout.activity_time_test);
   }
 }
