@@ -4,4 +4,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':protobufs')
     compile project(':math')
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
 }
