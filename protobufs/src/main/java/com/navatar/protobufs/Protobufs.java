@@ -40,6 +40,7 @@ public class Protobufs {
     builder.redirectErrorStream(true);
     Process process = builder.start();
     printOutput(process);
+    // TODO: fix for windows
     builder.directory(new File("src/com/navatar/protobufs/"));
     if (os.startsWith("Windows"))
       builder.command("cmd", "/c", "protoc.exe", "--java_out=..\\..\\..\\..\\gen", "*Proto.proto");
