@@ -20,5 +20,29 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:layout_width="160dp"
+        android:layout_height="60dp"
+        android:text="Auto Locate"
+        android:id="@+id/button"
+        android:layout_gravity="center_horizontal" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="false"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/scrollView">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="[Geo-fence Log]"
+            android:id="@+id/textView"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal" />
+    </ScrollView>
+
 
 </LinearLayout>
