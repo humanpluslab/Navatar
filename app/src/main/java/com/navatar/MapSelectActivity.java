@@ -40,8 +40,8 @@ public class MapSelectActivity extends Activity {
   public static boolean ActivityDestryoed;
   private String[] campusNames;
 
-  // Get user location
-  private Button button;
+  // Geofencing
+  private Button autoLocateButton;
   private TextView textDebug;
   private static final int MAX_LOCATION_SAMPLES = 5;
   private static final int MIN_LOCATION_ACCURACY = 20;
@@ -79,6 +79,7 @@ public class MapSelectActivity extends Activity {
     campusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
     ArrayList<String> campuslist = new ArrayList<String>();
+
     CampusAutoSelected = false;
 
     try {
@@ -91,7 +92,7 @@ public class MapSelectActivity extends Activity {
 
       // Geo-fence ui variables
       textDebug = (TextView) findViewById(R.id.textView);
-      button = (Button) findViewById(R.id.button);
+      autoLocateButton = (Button) findViewById(R.id.button);
 
       // Location manager for geo-fencing
       locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -196,8 +197,8 @@ public class MapSelectActivity extends Activity {
         }
       };
 
-      // Setup geofence button
-      configure_button();
+      // Setup geofence autoLocateButton
+      configureAutoLocateButton();
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -215,35 +216,44 @@ public class MapSelectActivity extends Activity {
 
   @Override
   public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-    switch (requestCode){
-      case 10:
-        configure_button();
-        break;
-      default:
-        break;
+      switch (requestCode) {
+        // Location permission
+        case 10:
+          // Accepted
+          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            textDebug.append("\n Location permission granted");
+
+            // Click autoLocateButton again now that we have location permission
+            autoLocateButton.performClick();
+          }
+          // Denied
+          else {
+            textDebug.append("\n Location permissions denied.");
+          }
+
+          break;
     }
   }
 
-  void configure_button(){
-    // If we don't have permission for location
-    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-            && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        // Denied
-        textDebug.append("\n Location permission denied");
-
-        // Request permission (spam loop with onRequestPermissionsResult())
-        requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET}, 10);
-      }
-      return;
-    }
-    // All below only executes if permissions granted
-    textDebug.append("\n Location permission granted");
-
-    // Setup button to request location
-    button.setOnClickListener(new View.OnClickListener() {
+  void configureAutoLocateButton(){
+    // Setup autoLocateButton to request location
+    autoLocateButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View view) {
+        // If we don't have permission for location
+        if (ActivityCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(getBaseContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+          if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            // Denied
+            textDebug.append("\n Need location permission.");
+
+            // Request permission, will click autoLocateButton again if permissions granted
+            requestPermissions(new String[]{Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET}, 10);
+          }
+          return;
+        }
+        // All below only executes if permissions granted
+
         // Listen for one location update
         //noinspection MissingPermission
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
