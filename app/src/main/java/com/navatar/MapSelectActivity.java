@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MapSelectActivity extends Activity {
   private Spinner mapSpinner,campusSpinner;
@@ -44,7 +45,7 @@ public class MapSelectActivity extends Activity {
   private Button autoLocateButton;
   private TextView textDebug;
   private static final int MAX_LOCATION_SAMPLES = 5;
-  private static final int MIN_LOCATION_ACCURACY = 20;
+  private static final int MAX_LOCATION_ACCURACY_DIST = 20;
   private int locationSamples;
   private LocationManager locationManager;
   private LocationListener listener;
@@ -69,18 +70,19 @@ public class MapSelectActivity extends Activity {
     setTitle("Welcome to Navatar");
     setContentView(R.layout.map_select);
 
-
     mapIntent= new Intent(this, MapService.class);
 
     campusSpinner = (Spinner)findViewById(R.id.campusSpinner);
-
     campusArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
             new ArrayList<String>());
     campusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
     ArrayList<String> campuslist = new ArrayList<String>();
 
     CampusAutoSelected = false;
+
+    // Geofence ui items
+    textDebug = (TextView) findViewById(R.id.textView);
+    autoLocateButton = (Button) findViewById(R.id.button);
 
     try {
       // Add campuses to spinner
@@ -90,128 +92,131 @@ public class MapSelectActivity extends Activity {
         campuslist.add(campusNames[i].replaceAll("_"," "));
       }
 
-      // Geo-fence ui variables
-      textDebug = (TextView) findViewById(R.id.textView);
-      autoLocateButton = (Button) findViewById(R.id.button);
-
-      // Location manager for geo-fencing
-      locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-      listener = new LocationListener() {
-        @Override
-        public void onLocationChanged(Location location) {
-          locationSamples++;
-          textDebug.append("\n Received location - ");
-
-          // If you draw a circle centered at this location's latitude and longitude,
-          // and with a radius equal to the accuracy(meters), then there is a 68%
-          // probability that the true location is inside the circle
-          accuracy = location.getAccuracy();
-          textDebug.append("Accuracy: " + accuracy + " m");
-
-          LocLat = location.getLatitude();
-          LocLong = location.getLongitude();
-          textDebug.append("\n " + LocLat + " " + LocLong);
-
-          // If location sample is accurate enough to use
-          if(accuracy <= MIN_LOCATION_ACCURACY) {
-            textDebug.append("\n Accuracy requirement met (" + MIN_LOCATION_ACCURACY + ")");
-            // Stop requesting locations
-            //noinspection MissingPermission
-            locationManager.removeUpdates(listener);
-            textDebug.append("\n Stopped requesting location");
-
-            // Send in location, get out name of campus if supported or nothing
-            String foundCampus = null;
-
-            ////////////////////////////////////////
-            // Prototype
-            double UNRMinLat =39.536837;
-            double UNRMaxLat =39.550971;
-            double UNRMinLong =-119.822549;
-            double UNRMaxLong =-119.809963;
-
-
-            // Scrugham eng mines prototype location check
-            if(LocLat > UNRMinLat  && LocLat < UNRMaxLat &&
-                    LocLong > UNRMinLong && LocLong < UNRMaxLong) {
-              textDebug.append("\n AT UNR");
-              foundCampus = "University_of_Nevada_Reno";
-            }
-            ////////////////////////////////////////
-
-            // If location is on supported campus
-            if (foundCampus != null){
-              // Get index of located campusName for spinner selection
-              for (int i=0;i<campusNames.length;i++){
-                if (campusNames[i].equals(foundCampus)){
-                  // Set flag for building auto locate to be attempted
-                  CampusAutoSelected = true;
-
-                  // Select campus
-                  campusSpinner.setSelection(i+1); // +1 for select campus label at [0]
-                }
-              }
-            }
-            // Not found on available campuses
-            else {
-              textDebug.append("\n User not on supported campus");
-            }
-          }
-          // Otherwise, continue getting location if max location samples has not been reached
-          else if(locationSamples < MAX_LOCATION_SAMPLES) {
-            textDebug.append("\n Accuracy too low");
-
-            // Clear lat and long
-            LocLat = Double.NaN;
-            LocLong = Double.NaN;
-          }
-          // Failed to locate user
-          else {
-            textDebug.append("\n Accuracy too low after " + locationSamples + " samples");
-            // Stop requesting locations
-            //noinspection MissingPermission
-            locationManager.removeUpdates(listener);
-            textDebug.append("\n Stopped requesting location");
-
-            // Clear lat and long
-            LocLat = Double.NaN;
-            LocLong = Double.NaN;
-          }
-        }
-
-        @Override
-        public void onStatusChanged(String s, int i, Bundle bundle) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String s) {
-          textDebug.append("\n GPS enabled");
-        }
-
-        @Override
-        public void onProviderDisabled(String s) {
-          textDebug.append("\n GPS disabled");
-          Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-          startActivity(i);
-        }
-      };
+      // Setup location manager for geo-fencing
+      configureLocationManager();
 
       // Setup geofence autoLocateButton
       configureAutoLocateButton();
-    } catch (IOException e) {
+
+      campusArrayAdapter.addAll(campuslist);
+      campusSpinner.setAdapter(campusArrayAdapter);
+      campusSpinner.setOnItemSelectedListener(campusSpinnerSelected);
+      maplist = new ArrayList<String>();
+      maplist.add(0,"Select Building");
+      mapArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
+              maplist);
+      startService(mapIntent);
+      bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
+    }
+    catch (IOException e) {
       e.printStackTrace();
     }
+  }
 
-    campusArrayAdapter.addAll(campuslist);
-    campusSpinner.setAdapter(campusArrayAdapter);
-    campusSpinner.setOnItemSelectedListener(campusSpinnerSelected);
-    maplist = new ArrayList<String>();
-    maplist.add(0,"Select Building");
-    mapArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
-            maplist);
-    startService(mapIntent);
-    bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
+  void configureLocationManager() {
+    locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+    listener = new LocationListener() {
+      @Override
+      public void onLocationChanged(Location location) {
+        locationSamples++;
+        textDebug.append("\n Received location - ");
+
+        // If you draw a circle centered at this location's latitude and longitude,
+        // and with a radius equal to the accuracy(meters), then there is a 68%
+        // probability that the true location is inside the circle
+        accuracy = location.getAccuracy();
+        textDebug.append("Accuracy: " + accuracy + " m");
+
+        LocLat = location.getLatitude();
+        LocLong = location.getLongitude();
+        textDebug.append("\n " + LocLat + " " + LocLong);
+
+        // If location sample is accurate enough to use
+        if(accuracy <= MAX_LOCATION_ACCURACY_DIST) {
+          textDebug.append("\n Accuracy requirement met (" + MAX_LOCATION_ACCURACY_DIST + ")");
+
+          // Stop requesting locations
+          locationManager.removeUpdates(listener);
+          textDebug.append("\n Stopped requesting location");
+
+          // Send in location, get out name of campus if supported or nothing
+          String foundCampus = null;
+
+          ////////////////////////////////////////
+          // Prototype
+          double UNRMinLat =39.536837;
+          double UNRMaxLat =39.550971;
+          double UNRMinLong =-119.822549;
+          double UNRMaxLong =-119.809963;
+
+
+          // Scrugham eng mines prototype location check
+          if(LocLat > UNRMinLat  && LocLat < UNRMaxLat &&
+                  LocLong > UNRMinLong && LocLong < UNRMaxLong) {
+            textDebug.append("\n AT UNR");
+            foundCampus = "University_of_Nevada_Reno";
+          }
+          ////////////////////////////////////////
+
+          // If location is on supported campus
+          if (foundCampus != null){
+            // Get index of located campusName for spinner selection
+            for (int i=0;i<campusNames.length;i++){
+              if (campusNames[i].equals(foundCampus)){
+                // Set flag for building auto locate to be attempted
+                CampusAutoSelected = true;
+
+                Toast.makeText(getBaseContext(), campusNames[i], Toast.LENGTH_SHORT).show();
+
+                // Select campus
+                campusSpinner.setSelection(i+1); // +1 for select campus label at [0]
+              }
+            }
+          }
+          // Not found on available campuses
+          else {
+            textDebug.append("\n Location not on supported campus");
+          }
+        }
+        // Otherwise, continue getting location if max location samples has not been reached
+        else if(locationSamples < MAX_LOCATION_SAMPLES) {
+          textDebug.append("\n Accuracy too low");
+
+          // Clear lat and long
+          LocLat = Double.NaN;
+          LocLong = Double.NaN;
+        }
+        // Failed to locate user
+        else {
+          textDebug.append("\n Accuracy too low after " + locationSamples + " samples");
+          // Stop requesting locations
+          locationManager.removeUpdates(listener);
+          textDebug.append("\n Stopped requesting location");
+
+          // Clear lat and long
+          LocLat = Double.NaN;
+          LocLong = Double.NaN;
+        }
+      }
+
+      @Override
+      public void onStatusChanged(String s, int i, Bundle bundle) {
+      }
+
+      @Override
+      public void onProviderEnabled(String s) {
+      }
+
+      @Override
+      public void onProviderDisabled(String provider) {
+        // GPS needs to be enabled
+        if(provider.equals("gps")) {
+          Toast.makeText(getApplicationContext(), "Location must be enabled", Toast.LENGTH_LONG).show();
+          Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+          startActivity(i);
+        }
+      }
+    };
   }
 
   @Override
@@ -254,11 +259,12 @@ public class MapSelectActivity extends Activity {
         }
         // All below only executes if permissions granted
 
-        // Listen for one location update
-        //noinspection MissingPermission
+        // Listen for location updates
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
         textDebug.append("\n Requesting location");
-        // Reset sample counter
+
+        // Init sample counter
         locationSamples = 0;
       }
     });
@@ -275,6 +281,9 @@ public class MapSelectActivity extends Activity {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
       // If a campus is selected
       if (position != 0) {
+        // Stop requesting locations, for when user manually selects campus during auto-locate
+        locationManager.removeUpdates(listener);
+
         String campusName = campusSpinner.getSelectedItem().toString();
         campusName=campusName.replaceAll(" ","_");
         setContentView(R.layout.map_select_new);
@@ -350,6 +359,8 @@ public class MapSelectActivity extends Activity {
               // Get index of located building name for spinner selection
               for (int i = 1; i < maplist.size(); i++) { // skip building label at 0
                 if (maplist.get(i).equals(foundBuilding)) {
+                  Toast.makeText(getBaseContext(), maplist.get(i), Toast.LENGTH_SHORT).show();
+
                   // Select building
                   mapSpinner.setSelection(i);
                 }
@@ -360,7 +371,6 @@ public class MapSelectActivity extends Activity {
         }
         pendingIntent = null;
     }
-
 
     OnItemSelectedListener mapSpinnerItemSelected = new OnItemSelectedListener() {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -374,7 +384,6 @@ public class MapSelectActivity extends Activity {
     public void onNothingSelected(AdapterView<?> arg0) {}
   };
 
-
     /** Defines callback for service binding, passed to bindService() */
   private ServiceConnection mMapConnection = new ServiceConnection() {
     @Override
@@ -387,6 +396,4 @@ public class MapSelectActivity extends Activity {
       mapService = null;
     }
   };
-
-
 }
