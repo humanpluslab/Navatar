@@ -228,9 +228,6 @@ public class MapSelectActivity extends Activity {
                 // Set flag for building auto locate to be attempted
                 CampusAutoSelected = true;
 
-                Toast.makeText(getBaseContext(), "Campus: " + campusNames.get(i).replaceAll("_"," "),
-                        Toast.LENGTH_SHORT).show();
-
                 // Select campus
                 campusSpinner.setSelection(i+1); // +1 for select campus label at [0]
               }
@@ -333,6 +330,9 @@ public class MapSelectActivity extends Activity {
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
 
+        Toast.makeText(getBaseContext(), "Finding your location.",
+                Toast.LENGTH_LONG).show();
+
         // Show busy spinner
         spinner.setVisibility(View.VISIBLE);
 
@@ -415,9 +415,6 @@ public class MapSelectActivity extends Activity {
             // Get index of located building name for spinner selection
             for (int i = 1; i < maplist.size(); i++) { // skip building label at 0
               if (maplist.get(i).equals(foundBuilding)) {
-                Toast.makeText(getBaseContext(), "Building: " + maplist.get(i),
-                        Toast.LENGTH_SHORT).show();
-
                 // Select building
                 mapSpinner.setSelection(i);
               }

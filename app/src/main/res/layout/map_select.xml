@@ -11,7 +11,7 @@
         android:id="@+id/tvcampusselect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Select campus from the dropdown below."
+        android:contentDescription="Select campus from the dropdown below or use the find my location button."
         android:text="Select Campus"
         android:textSize="25dp"/>
 
