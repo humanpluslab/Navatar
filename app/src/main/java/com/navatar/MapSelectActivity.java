@@ -46,7 +46,8 @@ public class MapSelectActivity extends Activity {
   private Intent mapIntent;
   private PendingIntent pendingIntent;
   public static boolean ActivityDestryoed;
-  private String[] campusNames;
+  private String[] campusFiles;
+  private ArrayList<String> campusNames;
 
   // Auto-location variables
   private static final int MAX_LOCATION_SAMPLES = 5;
@@ -82,6 +83,7 @@ public class MapSelectActivity extends Activity {
 
     mapIntent= new Intent(this, MapService.class);
 
+    campusNames = new ArrayList<String>();
     campusSpinner = (Spinner)findViewById(R.id.campusSpinner);
     campusArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
             new ArrayList<String>());
@@ -95,13 +97,19 @@ public class MapSelectActivity extends Activity {
     autoLocateButton = (Button) findViewById(R.id.button);
 
     try {
+      // Get campus files
+      campusFiles = getAssets().list("maps");
+
       // Add campuses to spinner
-      campusNames = getAssets().list("maps");
       campuslist.add("Select a campus");
-      for (int i=0;i<campusNames.length;i++){
-        // Ignore campus geofences file in the maps folder
-        if ( !campusNames[i].equals(CAMPUS_GEOFENCES_JSON_FILENAME)) {
-          campuslist.add(campusNames[i].replaceAll("_", " "));
+      for (int i=0;i<campusFiles.length;i++){
+        // If file is not campus geofences
+        if ( !campusFiles[i].equals(CAMPUS_GEOFENCES_JSON_FILENAME)) {
+          // Add campus to spinner
+          campuslist.add(campusFiles[i].replaceAll("_", " "));
+
+          // Add to campusNames arrayList
+          campusNames.add(campusFiles[i]);
         }
       }
 
@@ -211,16 +219,16 @@ public class MapSelectActivity extends Activity {
           // If location is on supported campus
           if (foundCampus != null){
             // Get index of located campusName for spinner selection
-            for (int i=0;i<campusNames.length;i++){
-              if (campusNames[i].equals(foundCampus)){
+            for (int i=0;i<campusNames.size();i++){
+              if (campusNames.get(i).equals(foundCampus)){
                 // Set flag for building auto locate to be attempted
                 CampusAutoSelected = true;
 
-                Toast.makeText(getBaseContext(), "Campus: " + campusNames[i].replaceAll("_"," "),
+                Toast.makeText(getBaseContext(), "Campus: " + campusNames.get(i).replaceAll("_"," "),
                         Toast.LENGTH_LONG).show();
 
                 // Select campus
-                campusSpinner.setSelection(i);
+                campusSpinner.setSelection(i+1); // +1 for select campus label at [0]
               }
             }
           }
