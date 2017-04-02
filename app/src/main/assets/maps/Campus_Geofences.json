@@ -3,10 +3,10 @@
 		{
 			"name": "University_of_Nevada_Reno",
 			"geofence": {
-				"minLatitude": 39.536837,
-				"minLongitude": -119.822549,
-				"maxLatitude": 39.550971,
-				"maxLongitude": -119.809963
+				"minLatitude": 39.535939,
+				"minLongitude": -119.822205,
+				"maxLatitude": 39.552202,
+				"maxLongitude": -119.810219
 			}
 		},
 		{

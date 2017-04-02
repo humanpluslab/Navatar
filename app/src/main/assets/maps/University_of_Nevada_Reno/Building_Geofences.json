@@ -17,6 +17,15 @@
 				"maxLatitude": 39.540270,
 				"maxLongitude": -119.814290
 			}
+		},
+		{
+			"name": "davidson_math_and_science",
+			"geofence": {
+				"minLatitude": 39.538640,
+				"minLongitude": -119.812937,
+				"maxLatitude": 39.539371,
+				"maxLongitude": -119.811886
+			}
 		}
 	]
 }
