@@ -1,6 +1,7 @@
 package com.navatar;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import com.navatar.maps.MapService;
@@ -21,6 +22,7 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -30,7 +32,12 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MapSelectActivity extends Activity {
+  // Manual selection variables
   private Spinner mapSpinner,campusSpinner;
   private TextView mapSelectTextView;
   private ArrayAdapter<String> mapArrayAdapter,campusArrayAdapter;
@@ -41,11 +48,14 @@ public class MapSelectActivity extends Activity {
   public static boolean ActivityDestryoed;
   private String[] campusNames;
 
-  // Geofencing
+  // Auto-location variables
+  private static final int MAX_LOCATION_SAMPLES = 5;
+  private static final int MAX_LOCATION_ACCURACY_DIST = 20; // 20 required for emulator
+  private String CAMPUS_GEOFENCES_JSON_FILENAME = "Campus_Geofences.json";
+  private JSONArray campusGeofences;
+  private JSONArray buildingGeofences;
   private Button autoLocateButton;
   private TextView textDebug;
-  private static final int MAX_LOCATION_SAMPLES = 5;
-  private static final int MAX_LOCATION_ACCURACY_DIST = 20;
   private int locationSamples;
   private LocationManager locationManager;
   private LocationListener listener;
@@ -80,7 +90,7 @@ public class MapSelectActivity extends Activity {
 
     CampusAutoSelected = false;
 
-    // Geofence ui items
+    // Auto-locate ui items
     textDebug = (TextView) findViewById(R.id.textView);
     autoLocateButton = (Button) findViewById(R.id.button);
 
@@ -89,13 +99,19 @@ public class MapSelectActivity extends Activity {
       campusNames = getAssets().list("maps");
       campuslist.add("Select a campus");
       for (int i=0;i<campusNames.length;i++){
-        campuslist.add(campusNames[i].replaceAll("_"," "));
+        // Ignore campus geofences file in the maps folder
+        if ( !campusNames[i].equals(CAMPUS_GEOFENCES_JSON_FILENAME)) {
+          campuslist.add(campusNames[i].replaceAll("_", " "));
+        }
       }
 
-      // Setup location manager for geo-fencing
+      // Load campus geofences
+      loadCampusGeofencesJSONFromAsset();
+
+      // Setup location manager for auto-location
       configureLocationManager();
 
-      // Setup geofence autoLocateButton
+      // Setup autoLocateButton
       configureAutoLocateButton();
 
       campusArrayAdapter.addAll(campuslist);
@@ -110,6 +126,56 @@ public class MapSelectActivity extends Activity {
     }
     catch (IOException e) {
       e.printStackTrace();
+    }
+  }
+
+  private void loadCampusGeofencesJSONFromAsset() {
+    String json = null;
+    try {
+      InputStream is = this.getAssets().open("maps/"+ CAMPUS_GEOFENCES_JSON_FILENAME);
+      int size = is.available();
+      byte[] buffer = new byte[size];
+      is.read(buffer);
+      is.close();
+      json = new String(buffer, "UTF-8");
+
+      try {
+        JSONObject obj = new JSONObject(json);
+        campusGeofences = obj.getJSONArray("campuses");
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+    } catch (IOException ex) {
+      ex.printStackTrace();
+    }
+  }
+
+  // Returns name of found area, or null
+  private String checkIfLocationIsInsideJSONGeofence( JSONArray geofences ) {
+    try {
+      // Loop through input geofences
+      for (int i = 0; i < geofences.length(); i++) {
+        JSONObject jo_inside = geofences.getJSONObject(i);
+
+        JSONObject geofence = jo_inside.getJSONObject("geofence");
+        double minLatitude = geofence.getDouble("minLatitude");
+        double minLongitude = geofence.getDouble("minLongitude");
+        double maxLatitude = geofence.getDouble("maxLatitude");
+        double maxLongitude = geofence.getDouble("maxLongitude");
+
+        // If location is inside geofence
+        if (LocLat >= minLatitude && LocLat <= maxLatitude &&
+                LocLong >= minLongitude && LocLong <= maxLongitude) {
+          // Return the name of the geofence
+          return jo_inside.getString("name");
+        }
+      }
+
+      // Finished search and didn't find a match
+      return null;
+    } catch (JSONException e) {
+      e.printStackTrace();
+      return null;
     }
   }
 
@@ -139,24 +205,8 @@ public class MapSelectActivity extends Activity {
           locationManager.removeUpdates(listener);
           textDebug.append("\n Stopped requesting location");
 
-          // Send in location, get out name of campus if supported or nothing
-          String foundCampus = null;
-
-          ////////////////////////////////////////
-          // Prototype
-          double UNRMinLat =39.536837;
-          double UNRMaxLat =39.550971;
-          double UNRMinLong =-119.822549;
-          double UNRMaxLong =-119.809963;
-
-
-          // Scrugham eng mines prototype location check
-          if(LocLat > UNRMinLat  && LocLat < UNRMaxLat &&
-                  LocLong > UNRMinLong && LocLong < UNRMaxLong) {
-            textDebug.append("\n AT UNR");
-            foundCampus = "University_of_Nevada_Reno";
-          }
-          ////////////////////////////////////////
+          // Send in location, get out name of campus if supported or null
+          String foundCampus = checkIfLocationIsInsideJSONGeofence(campusGeofences);
 
           // If location is on supported campus
           if (foundCampus != null){
@@ -166,21 +216,23 @@ public class MapSelectActivity extends Activity {
                 // Set flag for building auto locate to be attempted
                 CampusAutoSelected = true;
 
-                Toast.makeText(getBaseContext(), campusNames[i], Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Campus: " + campusNames[i].replaceAll("_"," "),
+                        Toast.LENGTH_LONG).show();
 
                 // Select campus
-                campusSpinner.setSelection(i+1); // +1 for select campus label at [0]
+                campusSpinner.setSelection(i);
               }
             }
           }
-          // Not found on available campuses
+          // Not found on supported campuses
           else {
-            textDebug.append("\n Location not on supported campus");
+            Toast.makeText(getBaseContext(), "Location is not on a supported campus.",
+                    Toast.LENGTH_LONG).show();
           }
         }
         // Otherwise, continue getting location if max location samples has not been reached
         else if(locationSamples < MAX_LOCATION_SAMPLES) {
-          textDebug.append("\n Accuracy too low");
+          textDebug.append("\n Sample accuracy too low");
 
           // Clear lat and long
           LocLat = Double.NaN;
@@ -188,7 +240,9 @@ public class MapSelectActivity extends Activity {
         }
         // Failed to locate user
         else {
-          textDebug.append("\n Accuracy too low after " + locationSamples + " samples");
+          Toast.makeText(getBaseContext(), "Unable to get an accurate location.",
+                  Toast.LENGTH_LONG).show();
+
           // Stop requesting locations
           locationManager.removeUpdates(listener);
           textDebug.append("\n Stopped requesting location");
@@ -211,7 +265,7 @@ public class MapSelectActivity extends Activity {
       public void onProviderDisabled(String provider) {
         // GPS needs to be enabled
         if(provider.equals("gps")) {
-          Toast.makeText(getApplicationContext(), "Location must be enabled", Toast.LENGTH_LONG).show();
+          Toast.makeText(getApplicationContext(), "GPS must be enabled.", Toast.LENGTH_LONG).show();
           Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
           startActivity(i);
         }
@@ -233,7 +287,11 @@ public class MapSelectActivity extends Activity {
           }
           // Denied
           else {
-            textDebug.append("\n Location permissions denied.");
+            Toast toast = Toast.makeText(this, "Location permission is required for auto-locating.",
+                    Toast.LENGTH_LONG);
+            TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+            if( v != null) v.setGravity(Gravity.CENTER);
+            toast.show();
           }
 
           break;
@@ -262,7 +320,8 @@ public class MapSelectActivity extends Activity {
         // Listen for location updates
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
-        textDebug.append("\n Requesting location");
+        Toast.makeText(getBaseContext(), "Finding your location..",
+                Toast.LENGTH_LONG).show();
 
         // Init sample counter
         locationSamples = 0;
@@ -312,64 +371,58 @@ public class MapSelectActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+      try {
         // Populate spinner with buildings
         super.onActivityResult(requestCode, resultCode, data);
         maplist.clear();
         maplist.add("Select a building");
 
-        // Add found maps to spinner
+        // If maps loaded for selected campus
         if(data.hasExtra("maps")) {
-
+          // Add maps to spinner
           maplist.addAll((ArrayList<String>) data.getSerializableExtra("maps"));
 
-          // If campus was auto selected, try auto selecting building
-          if (CampusAutoSelected) {
-            // Send in location, get out name of building if supported or nothing
-            String foundBuilding = null;
+          // If we have a location with high enough accuracy (campus was auto selected)
+          //   and building geofences were loaded
+          if (CampusAutoSelected && data.hasExtra("geofences")) {
+            // Get building geofences and convert back to json array
+            String geofencesString = data.getStringExtra("geofences");
+            buildingGeofences = new JSONArray(geofencesString);
 
-            ///////////////////////////////////////////////////
-            // Prototype
-            double ScrugMinLat = 39.539345;
-            double ScrugMaxLat = 39.540135;
-            double ScrugMinLong = -119.814162;
-            double ScrugMaxLong = -119.812982;
-
-            double AnsariMinLat = 39.539795;
-            double AnsariMaxLat = 39.540270;
-            double AnsariMinLong = -119.815059;
-            double AnsariMaxLong = -119.814290;
-
-            // Scrugham prototype location check
-            if (LocLat > ScrugMinLat && LocLat < ScrugMaxLat &&
-                    LocLong > ScrugMinLong && LocLong < ScrugMaxLong) {
-              textDebug.append("\n AT SCRUGHAM" + LocLat + " " + LocLong);
-              foundBuilding = "scrugham engineering mines";
-            }
-
-            // Ansari prototype location check
-            if (LocLat > AnsariMinLat && LocLat < AnsariMaxLat &&
-                    LocLong > AnsariMinLong && LocLong < AnsariMaxLong) {
-              textDebug.append("\n AT ANSARI" + LocLat + " " + LocLong);
-              foundBuilding = "ansari business building";
-            }
-            ////////////////////////////////////////////////////
+            // Send in location, get out name of building if supported or null
+            String foundBuilding = checkIfLocationIsInsideJSONGeofence(buildingGeofences);
 
             // If location in supported building
             if (foundBuilding != null) {
+              // Replace underscores with spaces, MapService does this for mapList
+              foundBuilding = foundBuilding.replaceAll("_"," ");
+
               // Get index of located building name for spinner selection
               for (int i = 1; i < maplist.size(); i++) { // skip building label at 0
                 if (maplist.get(i).equals(foundBuilding)) {
-                  Toast.makeText(getBaseContext(), maplist.get(i), Toast.LENGTH_SHORT).show();
+                  Toast.makeText(getBaseContext(), "Building: " + maplist.get(i),
+                          Toast.LENGTH_LONG).show();
 
                   // Select building
                   mapSpinner.setSelection(i);
                 }
               }
             }
+            // Not found in supported building
+            else {
+              // Assuming location is inaccurate
+              Toast toast = Toast.makeText(this, "Location is not accurate enough to auto-select building.",
+                      Toast.LENGTH_LONG);
+              TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
+              if( v != null) v.setGravity(Gravity.CENTER);
+              toast.show();
+            }
           }
-
         }
         pendingIntent = null;
+        } catch (Exception e) {
+        e.printStackTrace();
+      }
     }
 
     OnItemSelectedListener mapSpinnerItemSelected = new OnItemSelectedListener() {

@@ -21,11 +21,13 @@
         android:layout_height="wrap_content" />
 
     <Button
-        android:layout_width="160dp"
-        android:layout_height="60dp"
-        android:text="Auto Locate"
         android:id="@+id/button"
-        android:layout_gravity="center_horizontal" />
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="174dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="Find My Location"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -35,13 +37,12 @@
         android:id="@+id/scrollView">
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="[Geo-fence Log]"
-            android:id="@+id/textView"
+            android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:layout_gravity="center_horizontal" />
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
     </ScrollView>
 
 

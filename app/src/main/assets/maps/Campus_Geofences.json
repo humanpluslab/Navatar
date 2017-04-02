@@ -1,0 +1,22 @@
+{
+	"campuses": [
+		{
+			"name": "University_of_Nevada_Reno",
+			"geofence": {
+				"minLatitude": 39.536837,
+				"minLongitude": -119.822549,
+				"maxLatitude": 39.550971,
+				"maxLongitude": -119.809963
+			}
+		},
+		{
+			"name": "Future_Supported_Campus",
+			"geofence": {
+				"minLatitude": -1,
+				"minLongitude": -1,
+				"maxLatitude": -1,
+				"maxLongitude": -1
+			}
+		}
+	]
+}
