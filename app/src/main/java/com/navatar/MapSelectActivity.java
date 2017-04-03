@@ -40,22 +40,19 @@ import org.json.JSONObject;
 public class MapSelectActivity extends Activity {
   // Manual selection variables
   private Spinner mapSpinner,campusSpinner;
-  private TextView mapSelectTextView;
   private ArrayAdapter<String> mapArrayAdapter,campusArrayAdapter;
   private ArrayList<String> maplist;
   private MapService mapService;
   private Intent mapIntent;
   private PendingIntent pendingIntent;
   public static boolean ActivityDestryoed;
-  private String[] campusFiles;
   private ArrayList<String> campusNames;
 
   // Auto-location variables
-  private static final int MAX_LOCATION_SAMPLES = 5;
-  private static final int MAX_LOCATION_ACCURACY_DIST = 20; // Buildings are typically at least 40m apart
+  private static final int MAX_LOCATION_SAMPLES = 8;
+  private static final int MAX_LOCATION_ACCURACY_DIST = 22; // Buildings are typically at least 40m apart
   private String CAMPUS_GEOFENCES_JSON_FILENAME = "Campus_Geofences.json";
   private JSONArray campusGeofences;
-  private JSONArray buildingGeofences;
   private Button autoLocateButton;
   private ProgressBar spinner;
   private TextView textDebug;
@@ -101,18 +98,18 @@ public class MapSelectActivity extends Activity {
 
     try {
       // Get campus files
-      campusFiles = getAssets().list("maps");
+      String[] campusFiles = getAssets().list("maps");
 
       // Add campuses to spinner
       campuslist.add("Select a campus");
-      for (int i=0;i<campusFiles.length;i++){
+      for (String campusFile : campusFiles) {
         // If file is not campus geofences
-        if ( !campusFiles[i].equals(CAMPUS_GEOFENCES_JSON_FILENAME)) {
+        if (!campusFile.equals(CAMPUS_GEOFENCES_JSON_FILENAME)) {
           // Add campus to spinner
-          campuslist.add(campusFiles[i].replaceAll("_", " "));
+          campuslist.add(campusFile.replaceAll("_", " "));
 
           // Add to campusNames arrayList
-          campusNames.add(campusFiles[i]);
+          campusNames.add(campusFile);
         }
       }
 
@@ -324,9 +321,9 @@ public class MapSelectActivity extends Activity {
         // All below only executes if permissions granted
 
         // Listen for location updates
-        //  WiFi can get locations within 20m accuracy
-        //  Cellular locations are accurate to 2000m, could be used for campus selection
-        //  GPS can get down to 3m with enough time but is useless in some buildings
+        //  WiFi can get locations within ~20-22m accuracy (NETWORK_PROVIDER)
+        //  Cellular locations are accurate to 2000m, could be used for campus selection (NETWORK_PROVIDER)
+        //  GPS can get down to 3m with enough time but is useless in some buildings (GPS_PROVIDER)
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, listener);
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
 
@@ -362,7 +359,6 @@ public class MapSelectActivity extends Activity {
         campusName=campusName.replaceAll(" ","_");
         setContentView(R.layout.map_select_new);
         setTitle("Select the building");
-        mapSelectTextView = (TextView)findViewById(R.id.tvmapselect);
         mapSpinner = (Spinner) findViewById(R.id.mapSpinner);
 
 
@@ -402,7 +398,7 @@ public class MapSelectActivity extends Activity {
         if (CampusAutoSelected && data.hasExtra("geofences")) {
           // Get building geofences and convert back to json array
           String geofencesString = data.getStringExtra("geofences");
-          buildingGeofences = new JSONArray(geofencesString);
+          JSONArray buildingGeofences = new JSONArray(geofencesString);
 
           // Send in location, get out name of building if supported or null
           String foundBuilding = checkIfLocationIsInsideJSONGeofence(buildingGeofences);
