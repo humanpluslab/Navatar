@@ -271,7 +271,8 @@ public class MapSelectActivity extends Activity {
       public void onProviderDisabled(String provider) {
         // GPS needs to be enabled
         if(provider.equals("gps")) {
-          Toast.makeText(getApplicationContext(), "GPS must be enabled.", Toast.LENGTH_LONG).show();
+          Toast.makeText(getApplicationContext(), "GPS must be enabled for Navatar to find your location."
+                  + "The location settings menu has been opened for you.", Toast.LENGTH_LONG).show();
           Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
           startActivity(i);
         }
@@ -292,11 +293,8 @@ public class MapSelectActivity extends Activity {
           // Denied
           else {
             // Inform user we need permissions
-            Toast toast = Toast.makeText(getBaseContext(), "Location permission is required for auto-locating.",
-                    Toast.LENGTH_LONG);
-            TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-            if( v != null) v.setGravity(Gravity.CENTER);
-            toast.show();
+            Toast.makeText(getBaseContext(), "Location permission is required for auto-locating.",
+                    Toast.LENGTH_LONG).show();
           }
 
           break;
@@ -328,7 +326,7 @@ public class MapSelectActivity extends Activity {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
 
         Toast.makeText(getBaseContext(), "Finding your location.",
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_SHORT).show();
 
         // Show busy spinner
         spinner.setVisibility(View.VISIBLE);
@@ -419,11 +417,8 @@ public class MapSelectActivity extends Activity {
           // Not found in supported building
           else {
             // Assuming location is inaccurate
-            Toast toast = Toast.makeText(this, "Location is not accurate enough to auto-select building.",
-                    Toast.LENGTH_LONG);
-            TextView v = (TextView) toast.getView().findViewById(android.R.id.message);
-            if( v != null) v.setGravity(Gravity.CENTER);
-            toast.show();
+            Toast.makeText(getBaseContext(), "Location is not accurate enough to auto-select building.",
+                    Toast.LENGTH_LONG).show();
           }
         }
       }
