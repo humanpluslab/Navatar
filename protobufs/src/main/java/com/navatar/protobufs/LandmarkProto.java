@@ -358,7 +358,7 @@ public final class LandmarkProto {
       private final int index;
       private final int value;
 
-      private LandmarkType(int index, int value) {
+      LandmarkType(int index, int value) {
         this.index = index;
         this.value = value;
       }

@@ -16,7 +16,7 @@ public interface State extends Cloneable {
    *          The state to which the distance is calculated.
    * @return The distance between the two states.
    */
-  public double distance(State state);
+  double distance(State state);
 
   /**
    * Calculates the square distance between this state and the parameter passed to the function.
@@ -25,7 +25,7 @@ public interface State extends Cloneable {
    *          The state to which the square distance is calculated.
    * @return The square distance between the two states.
    */
-  public double squareDistance(State state);
+  double squareDistance(State state);
 
   /**
    * Adds a state to the current one.
@@ -33,7 +33,7 @@ public interface State extends Cloneable {
    * @param state
    *          The state to be added to the current one.
    */
-  public void add(State state);
+  void add(State state);
 
   /**
    * Divides the current state with an integer.
@@ -41,7 +41,7 @@ public interface State extends Cloneable {
    * @param value
    *          The integer to be used as a denominator for the division.
    */
-  public void divideBy(int value);
+  void divideBy(int value);
 
-  public State clone();
+  State clone();
 }
