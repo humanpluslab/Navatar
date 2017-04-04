@@ -62,9 +62,19 @@
     <TextView
         android:id="@+id/viewDirection"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="205dp"
         android:clickable="false"
         android:ems="10"
         android:longClickable="false"
-        android:textSize="15dp" />
+        android:textSize="15dp"
+        android:layout_weight="0.60" />
+
+    <Button
+        android:id="@+id/reverseRouteButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="reverseRoute"
+        android:text="Reverse Route"
+        android:visibility="visible"
+        android:layout_weight="0.06" />
 </LinearLayout>

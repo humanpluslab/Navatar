@@ -22,6 +22,17 @@
         android:layout_height="wrap_content" />
 
     <Button
+
+        android:id="@+id/navHistoryBut"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="174dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:onClick="navHistory"
+        android:text="Previous Navigations" />
+
+    <Button
         android:id="@+id/button"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="174dp"
@@ -54,6 +65,5 @@
             android:gravity="center"
             android:textAppearance="?android:attr/textAppearanceMedium"/>
     </ScrollView>
-
 
 </LinearLayout>

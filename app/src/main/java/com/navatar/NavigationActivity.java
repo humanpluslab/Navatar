@@ -2,6 +2,13 @@ package com.navatar;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FileWriter;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -21,8 +28,14 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Button;
+import android.util.JsonWriter;
+import android.Manifest;
+import android.support.v4.app.ActivityCompat;
+import android.content.pm.PackageManager;
 
 import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.MapService;
@@ -85,6 +98,16 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   private int pathIndex;
   private Direction directionGenerator;
 
+  private Button reverseRouteButton;
+
+  // http://stackoverflow.com/questions/8854359/exception-open-failed-eacces-permission-denied-on-android
+  // Storage Permissions
+  private static final int REQUEST_EXTERNAL_STORAGE = 1;
+  private static String[] PERMISSIONS_STORAGE = {
+          Manifest.permission.READ_EXTERNAL_STORAGE,
+          Manifest.permission.WRITE_EXTERNAL_STORAGE
+  };
+
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     String mode = "";
@@ -93,6 +116,8 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
     setContentView(R.layout.navigation_layout);
+    reverseRouteButton = (Button) findViewById(R.id.reverseRouteButton);
+    reverseRouteButton.setVisibility(View.GONE);
 
     tts = new TextToSpeech(this, ttsInitListener);
 
@@ -139,6 +164,9 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     }
 
     handler = new Handler();
+
+    // verify storage permissions
+    verifyStoragePermissions(this);
 
     // Start and bind with sensing service
     Intent sensingIntent = new Intent(this, SensingService.class);
@@ -347,6 +375,13 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       map = mapService.getActiveMap();
       pathFinder = new AStar(map);
       Log.i("Navigation Activity", "Map service connected");
+
+      try {
+        writeNavHistory();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
       startState = map.getRoomLocation(fromRoom.getName());
       pf = new ParticleFilter(navatarPath, userName, mapService.getActiveMap(), startState);
       endState = map.getRoomLocation(toRoom.getName());
@@ -356,6 +391,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
         pathIndex = 0;
         path = directionGenerator.generateDirections(path);
         navigationCommand = getNextDirection();
+
         lastStep = path.getStep(pathIndex);
         xmlOutput.append("    <location x=\"" + startState.getX() + "\" y=\"" + startState.getY()
             + "\" compass=\"" + orientation + "\" steps=\"" + stepCounter + "\" landmark=\""
@@ -376,6 +412,11 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       } catch (IOException e) {
         e.printStackTrace();
       }
+
+      if (navigationCommand.equalsIgnoreCase("You have reached your destination.")) {
+        reverseRouteButton.setVisibility(View.VISIBLE);
+      }
+
       tts.speak(navigationCommand, TextToSpeech.QUEUE_ADD, null);
       Log.d("Navigation Activity", "Particle filter service connected");
     }
@@ -385,6 +426,58 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       mapService = null;
     }
   };
+
+  public static void verifyStoragePermissions(Activity activity) {
+      // Check if we have write permission
+      int permission = ActivityCompat.checkSelfPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+      if (permission != PackageManager.PERMISSION_GRANTED) {
+          // We don't have permission so prompt the user
+          ActivityCompat.requestPermissions(
+                  activity,
+                  PERMISSIONS_STORAGE,
+                  REQUEST_EXTERNAL_STORAGE
+          );
+      }
+  }
+
+  private void writeNavHistory() throws IOException {
+    FileWriter file = null;
+    try {
+      JSONObject entry = null;
+      try {
+        entry = new JSONObject();
+        Date date = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH-mm-ss");
+        entry.put("time", dateFormat.format(date));
+        entry.put("campus", mapService.getCampusName());
+        entry.put("building", map.getName());
+        entry.put("start_room", fromRoom.getName());
+        entry.put("end_room", toRoom.getName());
+      } catch (JSONException e) {
+        Log.e("Exception", "Could not create json object for nav history");
+      }
+
+      String storagePath = Environment.getExternalStorageDirectory().getPath() + "/Navatar";
+      File directories = new File(storagePath);
+      directories.mkdirs();
+      file = new FileWriter(storagePath + "/nav_history.json", true);
+      file.write(entry.toString() + "\n");
+    } catch (IOException e) {
+      Log.e("Exception", "File write failed: " + e.toString());
+    } finally {
+      file.flush();
+      file.close();
+    }
+  }
+
+  public void reverseRoute(View view) {
+    finish();
+    Intent swap = getIntent();
+    swap.putExtra("com.Navatar.fromRoom", toRoom);
+    swap.putExtra("com.Navatar.toRoom", fromRoom);
+    startActivity(swap);
+  }
 
   private ServiceConnection sensingConnection = new ServiceConnection() {
 
@@ -506,6 +599,11 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       if(!navigationCommand.matches("(?i:Turn.*)")){
         pathIndex++;
       }
+
+      if (navigationCommand.equalsIgnoreCase("You have reached your destination.")) {
+        reverseRouteButton.setVisibility(View.VISIBLE);
+      }
+
       tts.speak(navigationCommand,TextToSpeech.QUEUE_ADD,null);
       viewDirection.setText(navigationCommand);
       return true;

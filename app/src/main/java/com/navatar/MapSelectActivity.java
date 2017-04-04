@@ -452,4 +452,10 @@ public class MapSelectActivity extends Activity {
       mapService = null;
     }
   };
+
+  public void navHistory(View view) {
+    Intent intent = new Intent(MapSelectActivity.this, NavigationHistoryActivity.class);
+    startActivity(intent);
+  }
+
 }
