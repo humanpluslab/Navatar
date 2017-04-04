@@ -9,7 +9,7 @@
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content" 
 	    android:text="@string/fromSpinerLabel"
-        android:contentDescription="Select the starting location from the dropdown below"
+        android:contentDescription="Select the starting room from the dropdown below"
 		android:textSize="25dp"
 	/>
 	<Spinner

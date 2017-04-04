@@ -1,0 +1,31 @@
+{
+	"buildings": [
+		{
+			"name": "scrugham_engineering_mines",
+			"geofence": {
+				"minLatitude": 39.539345,
+				"minLongitude": -119.814162,
+				"maxLatitude": 39.540135,
+				"maxLongitude": -119.812982
+			}
+		},
+		{
+			"name": "ansari_business_building",
+			"geofence": {
+				"minLatitude": 39.539795,
+				"minLongitude": -119.815059,
+				"maxLatitude": 39.540270,
+				"maxLongitude": -119.814290
+			}
+		},
+		{
+			"name": "davidson_math_and_science",
+			"geofence": {
+				"minLatitude": 39.538640,
+				"minLongitude": -119.812937,
+				"maxLatitude": 39.539371,
+				"maxLongitude": -119.811886
+			}
+		}
+	]
+}

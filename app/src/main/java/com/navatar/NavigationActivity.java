@@ -394,7 +394,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
         lastStep = path.getStep(pathIndex);
         xmlOutput.append("    <location x=\"" + startState.getX() + "\" y=\"" + startState.getY()
-            + "\" compass=\"" + (int) orientation + "\" steps=\"" + stepCounter + "\" landmark=\""
+            + "\" compass=\"" + orientation + "\" steps=\"" + stepCounter + "\" landmark=\""
             + lastStep.getlandmark().getType() + "\" command=\"" + navigationCommand
             + "\" isLeft=\"" + lastStep.isFollowLeft() + "\" />\n");
       } else {

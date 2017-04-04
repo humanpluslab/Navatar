@@ -300,12 +300,9 @@ public class ParticleFilter {
       if ((newDirection + 180 < 360) && (landmarkAngle > newDirection)
           && (landmarkAngle < newDirection + 180))
         left = false;
-      else if ((newDirection + 180 >= 360)
-          && ((landmarkAngle > newDirection) && (landmarkAngle < 360))
-          || ((landmarkAngle >= 0) && (landmarkAngle < newDirection - 180)))
-        left = false;
-      else
-        left = true;
+      else left = !((newDirection + 180 >= 360)
+              && ((landmarkAngle > newDirection) && (landmarkAngle < 360))
+              || ((landmarkAngle >= 0) && (landmarkAngle < newDirection - 180)));
 
       if (left == isLeft)
         return 1.0 * particle.getWeight();

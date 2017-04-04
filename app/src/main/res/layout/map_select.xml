@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="25dp"
@@ -10,7 +11,7 @@
         android:id="@+id/tvcampusselect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Select campus from the dropdown below."
+        android:contentDescription="Select campus from the dropdown below or use the find my location button."
         android:text="Select Campus"
         android:textSize="25dp"/>
 
@@ -27,5 +28,39 @@
         android:id="@+id/navHistoryBut"
         android:onClick="navHistory"
         android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/button"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="174dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="Find My Location"/>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="20dp"
+        android:visibility="invisible"
+        />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="false"
+        android:layout_gravity="center_horizontal"
+        android:id="@+id/scrollView">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceMedium"/>
+    </ScrollView>
 
 </LinearLayout>

@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/toSpinerLabel"
-        android:contentDescription="Select your destination location from the dropdown below."
+        android:contentDescription="Select your destination room from the dropdown below."
         android:textSize="25dp"
 
         />

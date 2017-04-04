@@ -41,7 +41,7 @@ public class NavigationSelectionActivity extends Activity {
   private LandmarkWrapper dummyLandmarkWrapper;
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setTitle("Select starting location");
+    setTitle("Select starting room");
     setContentView(R.layout.navigation_selection_layout);
 
     Intent mapIntent = new Intent(this, MapService.class);
@@ -78,7 +78,7 @@ public class NavigationSelectionActivity extends Activity {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         if(position!=0) {
             fromRoomItemSelected = (LandmarkWrapper) fromRoomSpinner.getItemAtPosition(position);
-            setTitle("Select destination location");
+            setTitle("Select destination room");
             getWindow().getDecorView().sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
             setContentView(R.layout.navigation_selection_layout_new);
             toRoomSpinner = (Spinner) findViewById(R.id.toSpinner);

@@ -267,9 +267,7 @@ public class BuildingMapWrapper {
    * @return True if the path goes through inaccessible areas.
    */
   public boolean pathBlocked(ParticleState start, ParticleState end) {
-    if (isAccessible(start) && isAccessible(end))
-      return false;
-    return true;
+      return !(isAccessible(start) && isAccessible(end));
   }
 
   public String getName() {
