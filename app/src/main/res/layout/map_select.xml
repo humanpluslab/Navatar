@@ -11,7 +11,7 @@
         android:id="@+id/tvcampusselect"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="Select campus from the dropdown below or use the find my location button."
+        android:contentDescription="Select campus from the dropdown below or use the find my location button. To repeat a previous route, use the previous navigations button."
         android:text="Select Campus"
         android:textSize="25dp"/>
 
@@ -22,24 +22,24 @@
         android:layout_height="wrap_content" />
 
     <Button
-
-        android:id="@+id/navHistoryBut"
-        style="@style/Widget.AppCompat.Button"
-        android:layout_width="174dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="30dp"
-        android:onClick="navHistory"
-        android:text="Previous Navigations" />
-
-    <Button
         android:id="@+id/button"
         style="@style/Widget.AppCompat.Button"
-        android:layout_width="174dp"
+        android:layout_width="178dp"
         android:layout_height="60dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
         android:text="Find My Location"/>
+
+    <Button
+
+        android:id="@+id/navHistoryBut"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="178dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:onClick="navHistory"
+        android:text="Previous Navigations"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -51,11 +51,11 @@
         />
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="false"
         android:layout_gravity="center_horizontal"
-        android:id="@+id/scrollView">
+        android:fillViewport="false">
 
         <TextView
             android:id="@+id/textView"
