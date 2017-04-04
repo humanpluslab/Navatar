@@ -154,5 +154,9 @@ public class MapSelectActivity extends Activity {
     }
   };
 
+  public void navHistory(View view) {
+    Intent intent = new Intent(MapSelectActivity.this, NavigationHistoryActivity.class);
+    startActivity(intent);
+  }
 
 }

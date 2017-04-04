@@ -20,5 +20,12 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Previous Navigations"
+        android:id="@+id/navHistoryBut"
+        android:onClick="navHistory"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

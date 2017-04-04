@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 public class MapService extends Service {
   private String navatarPath = Environment.getExternalStorageDirectory().getPath() + "/Navatar";
+  private String campusName;
   private final IBinder binder = new MapBinder();
   private ArrayList<BuildingMapWrapper> maps;
   private BuildingMapWrapper activeMap;
@@ -49,6 +50,7 @@ public class MapService extends Service {
 
     if(intent!=null){
         if(intent.hasExtra("path")){
+            campusName = intent.getStringExtra("path");
             navatarPath = "maps/"+intent.getStringExtra("path");
             pendingIntent = intent.getParcelableExtra("pendingIntent");
             loadMapsFromPath();
@@ -102,6 +104,20 @@ public class MapService extends Service {
     this.activeMap = findMapFromRoom(room);
   }
 
+  public void setActiveMapByName(String buildingName) {
+    this.activeMap = findMapByName(buildingName);
+  }
+
+  public String getCampusName() {
+    return campusName;
+  }
+
+  public void debugMapNames() {
+    for (BuildingMapWrapper map : maps) {
+        Log.d("MAP NAME:", map.getName());
+    }
+  }
+
   public ParticleState roomLocation(String room) {
     return activeMap.getRoomLocation(room);
   }
@@ -111,6 +127,17 @@ public class MapService extends Service {
       if (map.getRoomLocation(room) != null)
         return map;
     }
+    return null;
+  }
+
+  private BuildingMapWrapper findMapByName(String buildingName) {
+    for (BuildingMapWrapper map : maps) {
+        if (map.getName().equals(buildingName)){
+            Log.d("ACTIVE MAP FOUND BY NAME : ", map.getName());
+            return map;
+        }
+    }
+
     return null;
   }
 }
