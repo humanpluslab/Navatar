@@ -36,6 +36,7 @@ import android.util.JsonWriter;
 import android.Manifest;
 import android.support.v4.app.ActivityCompat;
 import android.content.pm.PackageManager;
+import android.widget.Toast;
 
 import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.MapService;
@@ -196,11 +197,11 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
         //TODO : commented out by jiwan
 
-//      try {
-//        pf.execute();
-//      } catch (IOException e1) {
-//        e1.printStackTrace();
-//      }
+      try {
+        pf.execute();
+      } catch (IOException e1) {
+        e1.printStackTrace();
+      }
 
       lastStep = path.getStep(++pathIndex);
     }
@@ -548,7 +549,8 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     }
   }
 
-  private class InputHandler extends GestureDetector.SimpleOnGestureListener {
+  /*  All gestures for the Navigation Activity screen are handled here. */
+  private class InputHandler implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
 
     private GestureDetector gestureDetector;
 
@@ -561,9 +563,38 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     }
 
     @Override
+    public boolean onDown(MotionEvent motionEvent) {
+      TextView gestureBox = (TextView) findViewById(R.id.gestureBox);
+      gestureBox.setText("onDown");
+      return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+      TextView gestureBox = (TextView) findViewById(R.id.gestureBox);
+      gestureBox.setText("onSingleTapUp");
+      return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+      TextView gestureBox = (TextView) findViewById(R.id.gestureBox);
+      gestureBox.setText("onScroll");
+      return false;
+    }
+
+    @Override
     public void onLongPress(MotionEvent arg0) {
 
-      /*Vibrator vibrator = null;
+      TextView gestureBox = (TextView) findViewById(R.id.gestureBox);
+      gestureBox.setText("onLongPress");
+
+      Vibrator vibrator = null;
 
       try {
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -573,7 +604,19 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
           vibrator.vibrate(100);
         } catch (Exception e) {}
       }
-      landmarkConfirmed(System.nanoTime());*/
+
+        // TODO: Placeholder for landmark addition until fully implemented.
+        // This will likely require extensive testing.
+        Toast.makeText(getBaseContext(), "Landmark added!", Toast.LENGTH_LONG).show();
+        tts.speak("Landmark added", TextToSpeech.QUEUE_ADD,null);
+        //landmarkConfirmed(System.nanoTime());
+    }
+
+    @Override
+    public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+      TextView gestureBox = (TextView) findViewById(R.id.gestureBox);
+      gestureBox.setText("onFling");
+      return false;
     }
 
     /*@Override
@@ -587,13 +630,23 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     @Override
     public boolean onSingleTapConfirmed(MotionEvent event){
 
-      Vibrator vibrator = null;
-      try{
-        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-      }catch(Exception e){}
-      if(vibrator !=null){
-        try{vibrator.vibrate(200);}catch(Exception exp){}
+      TextView gestureBox = (TextView) findViewById(R.id.gestureBox);
+      gestureBox.setText("onSingleTapConfirmed");
 
+      Vibrator vibrator = null;
+      try
+      {
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+      }
+      catch(Exception e){}
+
+      if(vibrator !=null)
+      {
+        try
+        {
+          vibrator.vibrate(200);
+        }
+        catch(Exception exp){}
       }
       navigationCommand = getNextDirection();
       if(!navigationCommand.matches("(?i:Turn.*)")){
@@ -608,6 +661,18 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       viewDirection.setText(navigationCommand);
       return true;
 
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent motionEvent) {
+        TextView gestureBox = (TextView) findViewById(R.id.gestureBox);
+        gestureBox.setText("onDoubleTap");
+      return false;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent motionEvent) {
+      return false;
     }
 
   }
