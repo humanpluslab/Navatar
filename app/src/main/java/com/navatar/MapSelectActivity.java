@@ -50,12 +50,11 @@ public class MapSelectActivity extends Activity {
 
   // Auto-location variables
   private static final int MAX_LOCATION_SAMPLES = 8;
-  private static final int MAX_LOCATION_ACCURACY_DIST = 22; // Buildings are typically at least 40m apart
+  private static final int MAX_LOCATION_ACCURACY_DIST = 26; // Buildings are typically at least 40m apart
   private String CAMPUS_GEOFENCES_JSON_FILENAME = "Campus_Geofences.json";
   private JSONArray campusGeofences;
   private Button autoLocateButton;
   private ProgressBar spinner;
-  private TextView textDebug;
   private int locationSamples;
   private LocationManager locationManager;
   private LocationListener listener;
@@ -94,7 +93,6 @@ public class MapSelectActivity extends Activity {
     // Auto-locate ui items
     autoLocateButton = (Button) findViewById(R.id.button);
     spinner = (ProgressBar)findViewById(R.id.progressBar);
-    textDebug = (TextView) findViewById(R.id.textView);
 
     try {
       // Get campus files
@@ -193,23 +191,17 @@ public class MapSelectActivity extends Activity {
       @Override
       public void onLocationChanged(Location location) {
         locationSamples++;
-        textDebug.append("\n Received location - ");
 
         // If you draw a circle centered at this location's latitude and longitude,
         // and with a radius equal to the accuracy(meters), then there is a 68%
         // probability that the true location is inside the circle
         accuracy = location.getAccuracy();
-        textDebug.append("Accuracy: " + accuracy + " m");
-        textDebug.append("\n Source: " +location.getProvider());
 
         LocLat = location.getLatitude();
         LocLong = location.getLongitude();
-        textDebug.append("\n " + LocLat + " " + LocLong);
 
         // If location sample is accurate enough to use
         if(accuracy <= MAX_LOCATION_ACCURACY_DIST) {
-          textDebug.append("\n Accuracy requirement met (" + MAX_LOCATION_ACCURACY_DIST + ")");
-
           // Stop requesting locations, hide busy spinner
           locationManager.removeUpdates(listener);
           spinner.setVisibility(View.INVISIBLE);
@@ -238,12 +230,11 @@ public class MapSelectActivity extends Activity {
         }
         // Otherwise, continue getting location if max location samples has not been reached
         else if(locationSamples < MAX_LOCATION_SAMPLES) {
-          textDebug.append("\n Sample accuracy too low");
-
           // Clear lat and long
           LocLat = Double.NaN;
           LocLong = Double.NaN;
         }
+
         // Failed to locate user
         else {
           Toast.makeText(getBaseContext(), "Unable to find an accurate location.",
@@ -319,7 +310,7 @@ public class MapSelectActivity extends Activity {
         // All below only executes if permissions granted
 
         // Listen for location updates
-        //  WiFi can get locations within ~20-22m accuracy (NETWORK_PROVIDER)
+        //  WiFi can get locations within ~20-26m accuracy (NETWORK_PROVIDER)
         //  Cellular locations are accurate to 2000m, could be used for campus selection (NETWORK_PROVIDER)
         //  GPS can get down to 3m with enough time but is useless in some buildings (GPS_PROVIDER)
         locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, listener);
