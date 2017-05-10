@@ -84,7 +84,6 @@ public class NavigationHistoryActivity extends Activity {
                     // TODO: assign unique ids to each json object
                     Log.d("History:", entry.toString(2));
 
-                    // super hacky work around for demo
                     String campusAbv = "UNR";
                     String displayName = entry.getString("start_room") + " to " + entry.getString("end_room") + " - " + campusAbv + " - " + entry.getString("building");
                     displayNames.add(displayName);
