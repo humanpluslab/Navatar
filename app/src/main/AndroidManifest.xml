@@ -45,10 +45,6 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/sensing_service_name" />
 
-        <activity
-            android:name=".NavigationHistoryActivity"
-            android:label="@string/title_activity_navigation_history" />
-
     </application>
 
 </manifest>

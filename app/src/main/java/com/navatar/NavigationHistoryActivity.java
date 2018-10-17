@@ -187,8 +187,8 @@ public class NavigationHistoryActivity extends Activity {
     private void startNavigation() {
         Intent myIntent = new Intent(this, NavigationActivity.class);
         myIntent.putExtra("com.Navatar.stepLength", stepLength);
-        myIntent.putExtra("com.Navatar.fromRoom", fromRoom.getLandmark());
-        myIntent.putExtra("com.Navatar.toRoom", toRoom.getLandmark());
+        //myIntent.putExtra("com.Navatar.fromRoom", fromRoom.getLandmark());
+        //myIntent.putExtra("com.Navatar.toRoom", toRoom.getLandmark());
         startActivity(myIntent);
     }
 

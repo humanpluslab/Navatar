@@ -447,8 +447,8 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   public void reverseRoute(View view) {
     finish();
     Intent swap = getIntent();
-    swap.putExtra("com.Navatar.fromRoom", toRoom);
-    swap.putExtra("com.Navatar.toRoom", fromRoom);
+    //swap.putExtra("com.Navatar.fromRoom", toRoom);
+    //swap.putExtra("com.Navatar.toRoom", fromRoom);
     startActivity(swap);
   }
 
