@@ -36,6 +36,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.view.View;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.LandmarkWrapper;
 import com.navatar.maps.MapService;
@@ -187,8 +188,12 @@ public class NavigationHistoryActivity extends Activity {
     private void startNavigation() {
         Intent myIntent = new Intent(this, NavigationActivity.class);
         myIntent.putExtra("com.Navatar.stepLength", stepLength);
-        //myIntent.putExtra("com.Navatar.fromRoom", fromRoom.getLandmark());
-        //myIntent.putExtra("com.Navatar.toRoom", toRoom.getLandmark());
+
+        Bundle b = new Bundle();
+        b.putByteArray("com.Navatar.fromRoom", fromRoom.getLandmark().toByteArray());
+        b.putByteArray("com.Navatar.toRoom", toRoom.getLandmark().toByteArray());
+        myIntent.putExtras(b);
+
         startActivity(myIntent);
     }
 

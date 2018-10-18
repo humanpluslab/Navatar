@@ -35,6 +35,7 @@ import android.widget.Button;
 import android.util.JsonWriter;
 import android.widget.Toast;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.MapService;
 import com.navatar.maps.particles.ParticleState;
@@ -116,8 +117,17 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     //  userName = extras.getString("com.Navatar.userName");
     //  stepLength = extras.getFloat("com.Navatar.stepLength");
       mode = extras.getString("com.Navatar.mode");
-      fromRoom = (Landmark) extras.get("com.Navatar.fromRoom");
-      toRoom = (Landmark) extras.get("com.Navatar.toRoom");
+
+      byte[] fb = extras.getByteArray("com.Navatar.fromRoom");
+      byte[] tb = extras.getByteArray("com.Navatar.toRoom");
+
+      try {
+        fromRoom = Landmark.parseFrom(fb);
+        toRoom = Landmark.parseFrom(tb);
+
+      } catch (InvalidProtocolBufferException e) {
+        e.printStackTrace();
+      }
 
       /*if (mode.equalsIgnoreCase("Automatic"))
         isAutomatic = true;
@@ -133,9 +143,9 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     //viewStepLength.setText(String.valueOf(stepLength));
 
     outputPerfect =
-        new XmlFile(navatarPath + "/" + userName + "From" + fromRoom + "To" + toRoom
+        new XmlFile(navatarPath + "/" + "From" + fromRoom.getName() + "To" + toRoom.getName()
             + "FeetTraining.xml");
-    outputPerfect.append("<rawData navigationFromTo=\"" + fromRoom + toRoom + "\" stepLength=\""
+    outputPerfect.append("<rawData navigationFromTo=\"" + fromRoom.getName() + toRoom.getName() + "\" stepLength=\""
          + "\">\r\n");
 
     File dir = new File(navatarPath + "/Particles");
@@ -143,7 +153,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       dir.mkdir();
     Log.i("XmlFile", "logging in");
     xmlOutput =
-        new XmlFile(navatarPath + "/Particles/" + userName + "_" + fromRoom + "_" + toRoom
+        new XmlFile(navatarPath + "/Particles/" + fromRoom.getName() + "_" + toRoom.getName()
             + "_position.xml");
     xmlOutput.append("<locations>\n");
     try {
@@ -447,8 +457,10 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   public void reverseRoute(View view) {
     finish();
     Intent swap = getIntent();
-    //swap.putExtra("com.Navatar.fromRoom", toRoom);
-    //swap.putExtra("com.Navatar.toRoom", fromRoom);
+    Bundle b = new Bundle();
+    b.putByteArray("com.Navatar.fromRoom", toRoom.toByteArray());
+    b.putByteArray("com.Navatar.toRoom", fromRoom.toByteArray());
+    swap.putExtras(b);
     startActivity(swap);
   }
 

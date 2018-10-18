@@ -120,8 +120,11 @@ public class NavigationSelectionActivity extends Activity {
   private void startNavigation() {
     Intent myIntent = new Intent(this, NavigationActivity.class);
     myIntent.putExtra("com.Navatar.stepLength", stepLength);
-    //myIntent.putExtra("com.Navatar.fromRoom", fromRoomItemSelected.getLandmark());
-    //myIntent.putExtra("com.Navatar.toRoom", toRoomItemSelected.getLandmark());
+
+    Bundle b = new Bundle();
+    b.putByteArray("com.Navatar.fromRoom", fromRoomItemSelected.getLandmark().toByteArray());
+    b.putByteArray("com.Navatar.toRoom", toRoomItemSelected.getLandmark().toByteArray());
+    myIntent.putExtras(b);
     startActivity(myIntent);
   }
 

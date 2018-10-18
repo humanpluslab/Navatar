@@ -30,7 +30,11 @@ protobuf {
                 remove java
             }
             task.plugins {
-                javalite {}
+                javalite {
+                    option 'optional_field_style=accessors'
+                    option 'parcelable_messages=true'
+
+                }
             }
         }
     }
