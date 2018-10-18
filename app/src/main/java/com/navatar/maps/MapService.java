@@ -21,6 +21,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.navatar.maps.BuildingMapWrapper;
+
 public class MapService extends Service {
   private String navatarPath = Environment.getExternalStorageDirectory().getPath() + "/Navatar";
   private String campusName;

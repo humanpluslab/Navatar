@@ -3,7 +3,7 @@
  */
 package com.navatar.maps;
 
-import android.util.Log;
+//import android.util.Log;
 
 import com.navatar.math.Constants;
 import com.navatar.protobufs.LandmarkProto.Landmark;
