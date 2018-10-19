@@ -1,0 +1,12 @@
+apply plugin: 'java'
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    implementation project(':protobufs')
+    implementation project(':maps')
+    implementation project(':math')
+    implementation project(':output')
+    implementation 'com.google.protobuf:protobuf-lite:3.0.1'
+
+}

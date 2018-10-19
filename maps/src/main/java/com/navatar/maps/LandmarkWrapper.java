@@ -65,7 +65,7 @@ public class LandmarkWrapper implements Comparable<LandmarkWrapper> {
       Field f = landmark.getClass().getDeclaredField("name_");
       f.setAccessible(true);
       f.set(landmark,newName);
-      Log.i("NavatarLogs",(String)f.get(landmark));
+      //Log.i("NavatarLogs",(String)f.get(landmark));
     }catch(NoSuchFieldException e){
 
     }catch (IllegalAccessException e){

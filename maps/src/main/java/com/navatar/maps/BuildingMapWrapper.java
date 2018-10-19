@@ -22,24 +22,24 @@ import com.navatar.protobufs.MinimapProto.Minimap.Tile;
 import com.navatar.protobufs.NavigableSpaceProto.NavigableSpace;
 import com.navatar.protobufs.NavigableSpaceProto.Ring;
 
-import android.graphics.Path;
-import android.util.SparseArray;
+//import android.graphics.Path;
+//import android.util.SparseArray;
 
 public class BuildingMapWrapper {
   /** Stores the protobuf map instance. */
   private BuildingMap protoMap;
   /** The minimap grid that stores the tiles. */
-  private SparseArray<TileWrapper[][]> minimaps;
+  private HashMap<Integer, TileWrapper[][]> minimaps;
   /** The accessible spaces of the map divided by floor. */
-  private HashMap<Integer, Path> accessibleSpaces;
+  //private HashMap<Integer, Path> accessibleSpaces;
   /** Dispatches floor indices from floor numbers. */
-  private SparseArray<Integer> floorsToIndices;
+  private HashMap<Integer, Integer> floorsToIndices;
 
   public BuildingMapWrapper(BuildingMap map) {
     this.protoMap = map;
-    minimaps = new SparseArray<>();
-    accessibleSpaces = new HashMap<>();
-    floorsToIndices = new SparseArray<>();
+    minimaps = new HashMap<>();
+    //accessibleSpaces = new HashMap<>();
+    floorsToIndices = new HashMap<>();
     int i = 0;
     for (Floor floor : map.getFloorsList()) {
       Minimap minimap = floor.getMinimap();
@@ -49,8 +49,8 @@ public class BuildingMapWrapper {
             floor.getLandmarksList(), minimap.getSideSize(), minimap.getMinCoordinates());
       }
       minimaps.put(floor.getNumber(), floorTiles);
-      accessibleSpaces.put(floor.getNumber(), createAccessibleArea(floor.getNavigableSpacesList()));
-      floorsToIndices.put(floor.getNumber(), i++);
+   //   accessibleSpaces.put(floor.getNumber(), createAccessibleArea(floor.getNavigableSpacesList()));
+    //  floorsToIndices.put(floor.getNumber(), i++);
     }
   }
 
@@ -61,7 +61,7 @@ public class BuildingMapWrapper {
    *          The navigable spaces to check if the tile overlaps with.
    * 
    * @return true if the tile overlaps with any accessible area.
-   */
+
   private static Path createAccessibleArea(List<NavigableSpace> navigableSpaces) {
     Path navigableSpace = new Path();
     navigableSpace.setFillType(Path.FillType.EVEN_ODD);
@@ -94,7 +94,7 @@ public class BuildingMapWrapper {
     }
     return navigableSpace;
   }
-
+*/
   /**
    * Finds and returns the location of the room with the specific name given as a parameter.
    * 
