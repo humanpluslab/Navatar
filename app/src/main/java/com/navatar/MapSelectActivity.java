@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import com.navatar.maps.MapService;
 
 import android.Manifest;
@@ -54,6 +56,7 @@ public class MapSelectActivity extends Activity {
   private String CAMPUS_GEOFENCES_JSON_FILENAME = "Campus_Geofences.json";
   private JSONArray campusGeofences;
   private Button autoLocateButton;
+  private Button getQrsCodeButton;
   private ProgressBar spinner;
   private int locationSamples;
   private LocationManager locationManager;
@@ -102,6 +105,7 @@ public class MapSelectActivity extends Activity {
 
     // Auto-locate ui items
     autoLocateButton = (Button) findViewById(R.id.button);
+    getQrsCodeButton = (Button) findViewById(R.id.qrButton);
     spinner = (ProgressBar)findViewById(R.id.progressBar);
 
     try {
@@ -129,6 +133,8 @@ public class MapSelectActivity extends Activity {
 
       // Setup autoLocateButton
       configureAutoLocateButton();
+
+      configureQrCodeButton();
 
       campusArrayAdapter.addAll(campuslist);
       campusSpinner.setAdapter(campusArrayAdapter);
@@ -338,6 +344,19 @@ public class MapSelectActivity extends Activity {
     });
   }
 
+  private void configureQrCodeButton() {
+
+    final MapSelectActivity self = this;
+
+    getQrsCodeButton.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        new IntentIntegrator(self).initiateScan();
+
+      }
+    });
+  }
+
   @Override
   protected void onResume(){
     super.onResume();
@@ -382,8 +401,19 @@ public class MapSelectActivity extends Activity {
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     try {
-      // Populate spinner with buildings
-      super.onActivityResult(requestCode, resultCode, data);
+
+
+      IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+      if(result != null) {
+        if(result.getContents() == null) {
+          Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+        } else {
+          Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+        }
+      } else {
+        super.onActivityResult(requestCode, resultCode, data);
+      }
+
       maplist.clear();
       maplist.add("Select a building");
 

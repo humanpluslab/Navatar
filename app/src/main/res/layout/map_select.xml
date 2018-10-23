@@ -31,6 +31,15 @@
         android:text="Find My Location"/>
 
     <Button
+        android:id="@+id/qrButton"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="178dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="Scan QR Code" />
+
+    <Button
 
         android:id="@+id/navHistoryBut"
         style="@style/Widget.AppCompat.Button"
