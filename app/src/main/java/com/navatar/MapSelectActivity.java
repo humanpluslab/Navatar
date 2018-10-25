@@ -377,13 +377,15 @@ public class MapSelectActivity extends Activity {
         campusName=campusName.replaceAll(" ","_");
         setContentView(R.layout.map_select_new);
         setTitle("Select the building");
+
         mapSpinner = (Spinner) findViewById(R.id.mapSpinner);
-
-
         mapSpinner.setAdapter(mapArrayAdapter);
         mapSpinner.setOnItemSelectedListener(mapSpinnerItemSelected);
+
         mapArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         mapIntent.putExtra("path",campusName);
+
         Intent defaultIntent = new Intent();
         pendingIntent = MapSelectActivity.this.createPendingResult(1,defaultIntent,PendingIntent.FLAG_ONE_SHOT);
         mapIntent.putExtra("pendingIntent",pendingIntent);
@@ -402,8 +404,9 @@ public class MapSelectActivity extends Activity {
   protected void onActivityResult(int requestCode, int resultCode, Intent data) {
     try {
 
-
+      // Get the results of the QR Code scanner
       IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
       if(result != null) {
         if(result.getContents() == null) {
           Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
@@ -453,7 +456,7 @@ public class MapSelectActivity extends Activity {
           }
         }
       }
-      pendingIntent = null;
+        pendingIntent = null;
       } catch (Exception e) {
       e.printStackTrace();
     }

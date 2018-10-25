@@ -50,7 +50,7 @@ public class BuildingMapWrapper {
       }
       minimaps.put(floor.getNumber(), floorTiles);
    //   accessibleSpaces.put(floor.getNumber(), createAccessibleArea(floor.getNavigableSpacesList()));
-    //  floorsToIndices.put(floor.getNumber(), i++);
+      floorsToIndices.put(floor.getNumber(), i++);
     }
   }
 
@@ -107,7 +107,9 @@ public class BuildingMapWrapper {
     for (Floor floor : protoMap.getFloorsList()) {
       for (Landmark landmark : floor.getLandmarksList()) {
         if (landmark.getName().equals(room)) {
+          // Can throw an IndexOutOfBounds error
           Coordinates particle = landmark.getParticles(0);
+
           return new ParticleState(0, particle.getX(), particle.getY(), floor.getNumber());
         }
       }

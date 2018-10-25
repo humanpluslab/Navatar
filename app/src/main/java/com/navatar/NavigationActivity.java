@@ -367,10 +367,12 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
     @Override
     public void onServiceConnected(ComponentName className, IBinder service) {
+
       MapService.MapBinder binder = (MapService.MapBinder) service;
       mapService = binder.getService();
       map = mapService.getActiveMap();
       pathFinder = new AStar(map);
+
       Log.i("Navigation Activity", "Map service connected");
 
       try {
@@ -384,12 +386,14 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       endState = map.getRoomLocation(toRoom.getName());
       path = pathFinder.findPath(startState, fromRoom, endState, toRoom);
       directionGenerator = new Direction(map.getProtobufMap());
+
       if (path != null) {
         pathIndex = 0;
         path = directionGenerator.generateDirections(path);
-        navigationCommand = getNextDirection();
 
+        navigationCommand = getNextDirection();
         lastStep = path.getStep(pathIndex);
+
         xmlOutput.append("    <location x=\"" + startState.getX() + "\" y=\"" + startState.getY()
             + "\" compass=\"" + orientation + "\" steps=\"" + stepCounter + "\" landmark=\""
             + lastStep.getlandmark().getType() + "\" command=\"" + navigationCommand
@@ -415,6 +419,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
       }
 
       tts.speak(navigationCommand, TextToSpeech.QUEUE_ADD, null);
+
       Log.d("Navigation Activity", "Particle filter service connected");
     }
 
@@ -426,6 +431,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
   private void writeNavHistory() throws IOException {
     FileWriter file = null;
+
     try {
       JSONObject entry = null;
       try {
@@ -485,6 +491,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
   @Override
   public void onSensorChanged(float[] values, int sensor, long timestamp) {
+
     switch (sensor) {
     case NavatarSensor.PEDOMETER:
       if (monitorSteps) {

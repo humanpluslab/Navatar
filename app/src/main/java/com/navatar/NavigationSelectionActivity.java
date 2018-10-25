@@ -39,39 +39,38 @@ public class NavigationSelectionActivity extends Activity {
   private BuildingMapWrapper map;
   private ArrayList<LandmarkWrapper>rooms;
   private LandmarkWrapper dummyLandmarkWrapper;
+
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
     setTitle("Select starting room");
     setContentView(R.layout.navigation_selection_layout);
 
     Intent mapIntent = new Intent(this, MapService.class);
     startService(mapIntent);
     bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
+
     fromRoomSpinner = (Spinner) findViewById(R.id.fromSpinner);
     rooms = new ArrayList<LandmarkWrapper>();
+
     LandmarkProto.Landmark dummyLandmark=LandmarkProto.Landmark.getDefaultInstance();
     dummyLandmarkWrapper= new LandmarkWrapper(dummyLandmark);
     dummyLandmarkWrapper.setName("Select Room");
     rooms.add(dummyLandmarkWrapper);
+
     roomArrayAdapter =
         new ArrayAdapter<LandmarkWrapper>(this, R.layout.room_layout,
             rooms);
 
     roomArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     fromRoomSpinner.setAdapter(roomArrayAdapter);
-
-
     fromRoomSpinner.setOnItemSelectedListener(fromRoomSpinnerItemSelected);
-
-
-    // ****************
-    // Listeners:
-    // ****************
 
     Bundle extras = getIntent().getExtras();
     if (extras != null) {
       stepLength = extras.getFloat("com.Navatar.stepLength");
     }
+
   }
 
   OnItemSelectedListener fromRoomSpinnerItemSelected = new OnItemSelectedListener() {
@@ -135,6 +134,7 @@ public class NavigationSelectionActivity extends Activity {
       MapService.MapBinder binder = (MapService.MapBinder) service;
       mapService = binder.getService();
       map = mapService.getActiveMap();
+
       rooms.clear();
       rooms.add(dummyLandmarkWrapper);
       List<LandmarkWrapper> t_rooms=map.destinations();
