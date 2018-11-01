@@ -1,0 +1,13 @@
+{
+	"buildings": [
+		{
+			"name": "tesc_ad458c6d_b4f5_4a1f_8311_10e7bc6c5e3a",
+			"geofence": {
+				"minLatitude": 47.073002,
+				"minLongitude": -122.978612,
+				"maxLatitude": 47.074387, 
+				"maxLongitude": -122.977103
+			}
+		}
+	]
+}

@@ -10,12 +10,12 @@
 			}
 		},
 		{
-			"name": "Future_Supported_Campus",
+			"name": "Evergreen_State_College",
 			"geofence": {
-				"minLatitude": -1,
-				"minLongitude": -1,
-				"maxLatitude": -1,
-				"maxLongitude": -1
+				"minLatitude": 47.07037,
+				"minLongitude": -122.98438,
+				"maxLatitude": 47.07601,
+				"maxLongitude": -122.96873
 			}
 		}
 	]

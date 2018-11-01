@@ -42,12 +42,12 @@ import org.json.JSONObject;
 public class MapSelectActivity extends Activity {
   // Manual selection variables
   private Spinner mapSpinner,campusSpinner;
-  private ArrayAdapter<String> mapArrayAdapter,campusArrayAdapter;
+  private ArrayAdapter<String> mapArrayAdapter;
   private ArrayList<String> maplist;
   private MapService mapService;
   private Intent mapIntent;
   private PendingIntent pendingIntent;
-  public static boolean ActivityDestryoed;
+  //public static boolean ActivityDestryoed;
   private ArrayList<String> campusNames;
 
   // Auto-location variables
@@ -84,29 +84,142 @@ public class MapSelectActivity extends Activity {
   }
 
   @Override
+  protected void onResume(){
+    super.onResume();
+
+  }
+
+  @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setTitle("Welcome to Navatar");
+
+    setTitle(R.string.welcome_to_navatar);
     setContentView(R.layout.map_select);
-
-    mapIntent= new Intent(this, MapService.class);
-
-    campusNames = new ArrayList<String>();
-    campusSpinner = (Spinner)findViewById(R.id.campusSpinner);
-    campusArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
-            new ArrayList<String>());
-    campusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-    ArrayList<String> campuslist = new ArrayList<String>();
-
-    CampusAutoSelected = false;
-
-    // Verify storage for route history
-    verifyStoragePermissions(this);
 
     // Auto-locate ui items
     autoLocateButton = (Button) findViewById(R.id.button);
     getQrsCodeButton = (Button) findViewById(R.id.qrButton);
     spinner = (ProgressBar)findViewById(R.id.progressBar);
+
+    // Verify storage for route history
+    verifyStoragePermissions(this);
+
+    setupCampuses();
+
+    setupMapService();
+
+    configureQrCodeButton();
+
+    // Setup location manager for auto-location
+    configureLocationManager();
+
+    // Setup autoLocateButton
+    configureAutoLocateButton();
+
+  }
+
+  @Override
+  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    switch (requestCode) {
+      // Location permission
+      case 10:
+        // Accepted
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+          // Click autoLocateButton again now that we have location permission
+          autoLocateButton.performClick();
+        }
+        // Denied
+        else {
+          // Inform user we need permissions
+          Toast.makeText(getBaseContext(), "Location permission is required for auto-locating.",
+                  Toast.LENGTH_LONG).show();
+        }
+
+        break;
+    }
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    try {
+
+      // Get the results of the QR Code scanner
+      IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+      if(result != null) {
+        if(result.getContents() == null) {
+          Toast.makeText(this, R.string.cancelled, Toast.LENGTH_LONG).show();
+        } else {
+          Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+        }
+      } else {
+        super.onActivityResult(requestCode, resultCode, data);
+      }
+
+      maplist.clear();
+      maplist.add("Select a building");
+
+      // If maps loaded for selected campus
+      if(data.hasExtra("maps")) {
+        // Add maps to spinner
+        maplist.addAll((ArrayList<String>) data.getSerializableExtra("maps"));
+
+        // If we have a location with high enough accuracy (campus was auto selected)
+        //   and building geofences were loaded
+        if (CampusAutoSelected && data.hasExtra("geofences")) {
+          // Get building geofences and convert back to json array
+          String geofencesString = data.getStringExtra("geofences");
+          JSONArray buildingGeofences = new JSONArray(geofencesString);
+
+          // Send in location, get out name of building if supported or null
+          String foundBuilding = checkIfLocationIsInsideJSONGeofence(buildingGeofences);
+
+          // If location in supported building
+          if (foundBuilding != null) {
+            // Replace underscores with spaces, MapService does this for mapList
+            foundBuilding = foundBuilding.replaceAll("_"," ");
+
+            // Get index of located building name for spinner selection
+            for (int i = 1; i < maplist.size(); i++) { // skip building label at 0
+              if (maplist.get(i).equals(foundBuilding)) {
+                // Select building
+                mapSpinner.setSelection(i);
+              }
+            }
+          }
+          // Not found in supported building
+          else {
+            // Assuming location is inaccurate
+            Toast.makeText(getBaseContext(), "Location is not accurate enough to auto-select building.",
+                    Toast.LENGTH_LONG).show();
+          }
+        }
+      }
+      pendingIntent = null;
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void setupMapService() {
+    mapIntent= new Intent(this, MapService.class);
+    maplist = new ArrayList<String>();
+    maplist.add(0,"Select Building");
+    mapArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
+            maplist);
+    startService(mapIntent);
+    bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
+  }
+
+  private void setupCampuses() {
+    campusNames = new ArrayList<String>();
+    campusSpinner = (Spinner)findViewById(R.id.campusSpinner);
+    ArrayAdapter<String> campusArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
+            new ArrayList<String>());
+    campusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+    ArrayList<String> campuslist = new ArrayList<String>();
+
+    CampusAutoSelected = false;
 
     try {
       // Get campus files
@@ -124,27 +237,12 @@ public class MapSelectActivity extends Activity {
           campusNames.add(campusFile);
         }
       }
-
       // Load campus geofences
       loadCampusGeofencesJSONFromAsset();
-
-      // Setup location manager for auto-location
-      configureLocationManager();
-
-      // Setup autoLocateButton
-      configureAutoLocateButton();
-
-      configureQrCodeButton();
 
       campusArrayAdapter.addAll(campuslist);
       campusSpinner.setAdapter(campusArrayAdapter);
       campusSpinner.setOnItemSelectedListener(campusSpinnerSelected);
-      maplist = new ArrayList<String>();
-      maplist.add(0,"Select Building");
-      mapArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
-              maplist);
-      startService(mapIntent);
-      bindService(mapIntent, mMapConnection, BIND_AUTO_CREATE);
     }
     catch (IOException e) {
       e.printStackTrace();
@@ -287,27 +385,6 @@ public class MapSelectActivity extends Activity {
     };
   }
 
-  @Override
-  public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-      switch (requestCode) {
-        // Location permission
-        case 10:
-          // Accepted
-          if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            // Click autoLocateButton again now that we have location permission
-            autoLocateButton.performClick();
-          }
-          // Denied
-          else {
-            // Inform user we need permissions
-            Toast.makeText(getBaseContext(), "Location permission is required for auto-locating.",
-                    Toast.LENGTH_LONG).show();
-          }
-
-          break;
-    }
-  }
-
   private void configureAutoLocateButton(){
     // Setup autoLocateButton to request location
     autoLocateButton.setOnClickListener(new View.OnClickListener() {
@@ -357,12 +434,6 @@ public class MapSelectActivity extends Activity {
     });
   }
 
-  @Override
-  protected void onResume(){
-    super.onResume();
-
-  }
-
   public OnItemSelectedListener campusSpinnerSelected = new OnItemSelectedListener() {
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -399,68 +470,6 @@ public class MapSelectActivity extends Activity {
 
     }
    };
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    try {
-
-      // Get the results of the QR Code scanner
-      IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-
-      if(result != null) {
-        if(result.getContents() == null) {
-          Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-        } else {
-          Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-        }
-      } else {
-        super.onActivityResult(requestCode, resultCode, data);
-      }
-
-      maplist.clear();
-      maplist.add("Select a building");
-
-      // If maps loaded for selected campus
-      if(data.hasExtra("maps")) {
-        // Add maps to spinner
-        maplist.addAll((ArrayList<String>) data.getSerializableExtra("maps"));
-
-        // If we have a location with high enough accuracy (campus was auto selected)
-        //   and building geofences were loaded
-        if (CampusAutoSelected && data.hasExtra("geofences")) {
-          // Get building geofences and convert back to json array
-          String geofencesString = data.getStringExtra("geofences");
-          JSONArray buildingGeofences = new JSONArray(geofencesString);
-
-          // Send in location, get out name of building if supported or null
-          String foundBuilding = checkIfLocationIsInsideJSONGeofence(buildingGeofences);
-
-          // If location in supported building
-          if (foundBuilding != null) {
-            // Replace underscores with spaces, MapService does this for mapList
-            foundBuilding = foundBuilding.replaceAll("_"," ");
-
-            // Get index of located building name for spinner selection
-            for (int i = 1; i < maplist.size(); i++) { // skip building label at 0
-              if (maplist.get(i).equals(foundBuilding)) {
-                // Select building
-                mapSpinner.setSelection(i);
-              }
-            }
-          }
-          // Not found in supported building
-          else {
-            // Assuming location is inaccurate
-            Toast.makeText(getBaseContext(), "Location is not accurate enough to auto-select building.",
-                    Toast.LENGTH_LONG).show();
-          }
-        }
-      }
-        pendingIntent = null;
-      } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
 
   public OnItemSelectedListener mapSpinnerItemSelected = new OnItemSelectedListener() {
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

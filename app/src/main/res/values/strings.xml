@@ -21,4 +21,6 @@
     <string name="pf_service_name">PF Service</string>
     <string name="mapSpinerLabel">Map Selection</string>
     <string name="title_activity_navigation_history">NavigationHistoryActivity</string>
+    <string name="welcome_to_navatar">Welcome to Navatar</string>
+    <string name="cancelled">Cancelled</string>
 </resources>

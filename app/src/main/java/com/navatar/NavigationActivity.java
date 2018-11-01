@@ -101,12 +101,12 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
 
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    String mode = "";
 
     requestWindowFeature(Window.FEATURE_NO_TITLE);
     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         WindowManager.LayoutParams.FLAG_FULLSCREEN);
     setContentView(R.layout.navigation_layout);
+
     reverseRouteButton = (Button) findViewById(R.id.reverseRouteButton);
     reverseRouteButton.setVisibility(View.GONE);
 
@@ -116,7 +116,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     if (extras != null) {
     //  userName = extras.getString("com.Navatar.userName");
     //  stepLength = extras.getFloat("com.Navatar.stepLength");
-      mode = extras.getString("com.Navatar.mode");
+      String mode = extras.getString("com.Navatar.mode");
 
       byte[] fb = extras.getByteArray("com.Navatar.fromRoom");
       byte[] tb = extras.getByteArray("com.Navatar.toRoom");
@@ -142,26 +142,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
    // viewUserName.setText(userName);
     //viewStepLength.setText(String.valueOf(stepLength));
 
-    outputPerfect =
-        new XmlFile(navatarPath + "/" + "From" + fromRoom.getName() + "To" + toRoom.getName()
-            + "FeetTraining.xml");
-    outputPerfect.append("<rawData navigationFromTo=\"" + fromRoom.getName() + toRoom.getName() + "\" stepLength=\""
-         + "\">\r\n");
-
-    File dir = new File(navatarPath + "/Particles");
-    if (!dir.exists())
-      dir.mkdir();
-    Log.i("XmlFile", "logging in");
-    xmlOutput =
-        new XmlFile(navatarPath + "/Particles/" + fromRoom.getName() + "_" + toRoom.getName()
-            + "_position.xml");
-    xmlOutput.append("<locations>\n");
-    try {
-      xmlOutput.writeFile(false);
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    writeXml();
 
     handler = new Handler();
 
@@ -171,7 +152,6 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     bindService(sensingIntent, sensingConnection, BIND_AUTO_CREATE);
 
     // Bind with map service
-
     Intent mapIntent = new Intent(this, MapService.class);
     startService(mapIntent);
     bindService(mapIntent, mapConnection, BIND_AUTO_CREATE);
@@ -183,6 +163,31 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
   @Override
   public boolean onTouchEvent(MotionEvent event) {
     return inputHandler.onTouchEvent(event);
+  }
+
+
+  private void writeXml() {
+    outputPerfect =
+            new XmlFile(navatarPath + "/" + "From" + fromRoom.getName() + "To" + toRoom.getName()
+                    + "FeetTraining.xml");
+    outputPerfect.append("<rawData navigationFromTo=\"" + fromRoom.getName() + toRoom.getName() + "\" stepLength=\""
+            + "\">\r\n");
+
+    File dir = new File(navatarPath + "/Particles");
+    if (!dir.exists())
+      dir.mkdir();
+    Log.i("XmlFile", "logging in");
+    xmlOutput =
+            new XmlFile(navatarPath + "/Particles/" + fromRoom.getName() + "_" + toRoom.getName()
+                    + "_position.xml");
+    xmlOutput.append("<locations>\n");
+    try {
+      xmlOutput.writeFile(false);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 
   // TODO Check that works properly
