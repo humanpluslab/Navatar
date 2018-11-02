@@ -23,4 +23,5 @@
     <string name="title_activity_navigation_history">NavigationHistoryActivity</string>
     <string name="welcome_to_navatar">Welcome to Navatar</string>
     <string name="cancelled">Cancelled</string>
+    <string name="nav_service_name">Navigation Service</string>
 </resources>

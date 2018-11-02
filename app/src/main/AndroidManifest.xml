@@ -42,6 +42,10 @@
             android:icon="@drawable/ic_launcher"
             android:label="@string/map_service_name" />
         <service
+            android:name=".navigation.NavigationService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/nav_service_name" />
+        <service
             android:name=".sensing.SensingService"
             android:icon="@drawable/ic_launcher"
             android:label="@string/sensing_service_name" />
