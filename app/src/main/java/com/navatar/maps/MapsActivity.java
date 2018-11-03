@@ -32,7 +32,7 @@ public class MapsActivity extends DaggerAppCompatActivity {
             // Get the fragment from dagger
             mapsFragment = mapsFragmentProvider.get();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), mapsFragment, R.layout.map_select);
+                    getSupportFragmentManager(), mapsFragment, R.id.contentFrame);
         }
 
 

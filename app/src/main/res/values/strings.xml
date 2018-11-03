@@ -24,4 +24,7 @@
     <string name="welcome_to_navatar">Welcome to Navatar</string>
     <string name="cancelled">Cancelled</string>
     <string name="nav_service_name">Navigation Service</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
