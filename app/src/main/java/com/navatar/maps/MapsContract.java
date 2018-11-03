@@ -12,6 +12,8 @@ public interface MapsContract {
 
     interface Presenter extends BasePresenter<View> {
 
+        void result(int requestCode, int resultCode);
+
     }
 
 }
