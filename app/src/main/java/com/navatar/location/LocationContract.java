@@ -1,10 +1,9 @@
-package com.navatar.maps;
+package com.navatar.location;
 
 import com.navatar.BasePresenter;
 import com.navatar.BaseView;
 
-public interface MapsContract {
-
+public interface LocationContract {
 
     interface View extends BaseView<Presenter> {
 

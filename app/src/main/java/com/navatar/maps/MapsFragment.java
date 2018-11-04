@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -92,6 +93,17 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ProgressBar spinner = root.findViewById(R.id.progressBar);
         Spinner campusSpinner = root.findViewById(R.id.campusSpinner);
         campusSpinner.setAdapter(mListAdapter);
+        campusSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                mPresenter.selectMap();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) { }
+
+        });
 
         return root;
     }
@@ -158,5 +170,9 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         }
     }
 
+    @Override
+    public boolean isActive() {
+        return isAdded();
+    }
 
 }
