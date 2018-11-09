@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.navatar.R;
@@ -26,6 +27,7 @@ public class LocationFragment extends DaggerFragment implements LocationContract
     @Inject
     LocationContract.Presenter mPresenter;
 
+    private ProgressBar progressBar;
 
     @Inject
     public LocationFragment() {}
@@ -53,6 +55,8 @@ public class LocationFragment extends DaggerFragment implements LocationContract
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.location_frag, container, false);
 
+        progressBar = root.findViewById(R.id.progressBar);
+
         Button autoLocateButton = root.findViewById(R.id.button);
 
         autoLocateButton.setOnClickListener(new View.OnClickListener() {
@@ -64,6 +68,17 @@ public class LocationFragment extends DaggerFragment implements LocationContract
         return root;
     }
 
+    @Override
+    public void showProgressbar() {
+        progressBar.setVisibility(View.VISIBLE);
+
+    }
+
+    @Override
+    public void hideProgressbar() {
+        progressBar.setVisibility(View.INVISIBLE);
+
+    }
 
 
     @Override

@@ -9,6 +9,9 @@ public interface LocationContract {
 
         boolean isActive();
 
+        void showProgressbar();
+
+        void hideProgressbar();
     }
 
     interface Presenter extends BasePresenter<View> {
