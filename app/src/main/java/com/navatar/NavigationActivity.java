@@ -388,7 +388,7 @@ public class NavigationActivity extends Activity implements NavatarSensorListene
     public void onServiceDisconnected(ComponentName name) {
 
     }
-  }
+  };
 
   private ServiceConnection mapConnection = new ServiceConnection() {
 

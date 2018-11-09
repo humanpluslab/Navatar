@@ -15,6 +15,8 @@ public interface LocationContract {
 
         void result(int requestCode, int resultCode);
 
+        void getLocation();
+
     }
 
 }

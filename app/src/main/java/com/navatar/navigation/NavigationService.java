@@ -62,6 +62,7 @@ public class NavigationService extends Service {
         }
     }
 
+    /*
     private void writeXml() {
         outputPerfect =
                 new XmlFile(navatarPath + "/" + "From" + fromRoom.getName() + "To" + toRoom.getName()
@@ -239,5 +240,5 @@ public class NavigationService extends Service {
             file.close();
         }
     }
-
+    */
 }

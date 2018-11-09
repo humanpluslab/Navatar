@@ -97,7 +97,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.selectMap();
+               // mPresenter.selectMap();
             }
 
             @Override
@@ -154,7 +154,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
             View rowView = view;
             if (rowView == null) {
                 LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                rowView = inflater.inflate(R.layout.task_item, viewGroup, false);
+                //rowView = inflater.inflate(R.layout.task_item, viewGroup, false);
             }
 
             final Map map = getItem(i);

@@ -21,6 +21,7 @@ public class LocationActivity extends DaggerAppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.location_act);
 
         LocationFragment locationFragment =
                 (LocationFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
@@ -33,6 +34,8 @@ public class LocationActivity extends DaggerAppCompatActivity {
 
 
         // Load previously saved state, if available.
-        if (savedInstanceState != null) { }
+        if (savedInstanceState != null) {
+        }
 
     }
+}

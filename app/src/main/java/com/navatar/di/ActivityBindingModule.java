@@ -1,5 +1,9 @@
 package com.navatar.di;
 
+import android.location.Location;
+
+import com.navatar.location.LocationActivity;
+import com.navatar.location.LocationModule;
 import com.navatar.maps.MapsActivity;
 import com.navatar.maps.MapsModule;
 
@@ -19,4 +23,7 @@ public abstract class ActivityBindingModule {
     @ContributesAndroidInjector(modules = MapsModule.class)
     abstract MapsActivity mapsActivity();
 
+    @ActivityScoped
+    @ContributesAndroidInjector(modules = LocationModule.class)
+    abstract LocationActivity locationActivity();
 }

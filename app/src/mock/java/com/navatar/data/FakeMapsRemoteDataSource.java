@@ -1,25 +1,15 @@
-package com.navatar.data.source.local;
+package com.navatar.data;
 
 import android.support.annotation.NonNull;
 
-import com.navatar.data.Map;
 import com.navatar.data.source.MapsDataSource;
-import com.navatar.util.AppExecutors;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-
-@Singleton
-public class MapsLocalDataSource implements MapsDataSource {
-
-    private final AppExecutors mAppExecutors;
-
+public class FakeMapsRemoteDataSource implements MapsDataSource {
     @Inject
-    public MapsLocalDataSource(@NonNull AppExecutors executors) {
-        mAppExecutors = executors;
+    public FakeMapsRemoteDataSource() {
+
     }
 
     /**
@@ -32,15 +22,9 @@ public class MapsLocalDataSource implements MapsDataSource {
             @Override
             public void run() {
 
-                mAppExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                });
             }
         };
 
-        mAppExecutors.diskIO().execute(runnable);
     }
 
     /**
@@ -52,15 +36,10 @@ public class MapsLocalDataSource implements MapsDataSource {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                mAppExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                });
+
             }
         };
 
-        mAppExecutors.diskIO().execute(runnable);
     }
 
     @Override

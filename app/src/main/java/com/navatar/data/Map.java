@@ -8,6 +8,11 @@ import com.google.common.base.Strings;
 
 public class Map {
 
+    public Map(String id, String name) {
+        mId = id;
+        mName = name;
+    }
+
     @NonNull
     private final String mId;
 
