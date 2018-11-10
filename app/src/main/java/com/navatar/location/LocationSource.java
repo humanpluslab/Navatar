@@ -1,4 +1,4 @@
-package com.navatar.data.source;
+package com.navatar.location;
 
 import android.location.Location;
 import android.support.annotation.NonNull;
@@ -8,7 +8,7 @@ public interface LocationSource {
     interface LocationCallback {
 
         void onLocationChanged(Location location);
-        void onLocationApiManagerConnected();
+        void onLocationManagerConnected();
 
     }
 

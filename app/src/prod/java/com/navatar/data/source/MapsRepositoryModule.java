@@ -26,7 +26,7 @@ public abstract class MapsRepositoryModule {
     @Singleton
     @Binds
     @Remote
-    abstract MapsDataSource provideMapsRemoteDataSource(FakeMapsRemoteDataSource dataSource);
+    abstract MapsDataSource provideMapsRemoteDataSource(MapsRemoteDataSource dataSource);
 
     @Singleton
     @Provides

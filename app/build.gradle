@@ -68,6 +68,7 @@ android {
 
 }
 
+
 dependencies {
 
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -91,8 +92,8 @@ dependencies {
     implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     implementation "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
     implementation "com.google.guava:guava:$rootProject.guavaVersion"
-    implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
-    annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
+    //implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
+    //annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
 
     // Dagger dependencies
     annotationProcessor "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
@@ -133,5 +134,6 @@ dependencies {
     androidTestImplementation "com.android.support:design:$rootProject.supportLibraryVersion"
     androidTestImplementation "com.google.code.findbugs:jsr305:3.0.1"
 
-
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+    implementation 'com.google.android.gms:play-services-maps:16.0.0'
 }

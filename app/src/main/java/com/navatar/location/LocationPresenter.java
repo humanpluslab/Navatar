@@ -1,29 +1,29 @@
 package com.navatar.location;
 
 import android.location.Location;
-import android.location.LocationListener;
+import com.navatar.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 
 import javax.inject.Inject;
 
-public final class LocationPresenter implements LocationContract.Presenter, LocationListener {
+public final class LocationPresenter implements LocationContract.Presenter, LocationSource.LocationCallback {
 
+    private final LocationManager mLocationManager;
 
     @Nullable
     private LocationContract.View mLocationView;
 
     @Inject
-    LocationPresenter() {
-    }
-
-    @Override
-    public void result(int requestCode, int resultCode) {
-
+    LocationPresenter(LocationManager locationManager) {
+        mLocationManager = locationManager;
     }
 
     @Override
     public void getLocation() {
+
+        mLocationManager.getLocation(this);
+
         mLocationView.showProgressbar();
     }
 
@@ -37,27 +37,15 @@ public final class LocationPresenter implements LocationContract.Presenter, Loca
         mLocationView = null;
     }
 
-
-    @Override
-    public void onStatusChanged(String s, int i, Bundle bundle) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String s) {
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-        // GPS needs to be enabled
-        if (provider.equals("gps")) {
-
-        }
-    }
-
     @Override
     public void onLocationChanged(Location location) {
 
+        mLocationView.hideProgressbar();
+
     }
+
+    @Override
+    public void onLocationManagerConnected() { }
+
 
 }

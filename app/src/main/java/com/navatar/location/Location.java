@@ -1,4 +1,4 @@
-package com.navatar.data;
+package com.navatar.location;
 
 import com.google.common.base.Objects;
 

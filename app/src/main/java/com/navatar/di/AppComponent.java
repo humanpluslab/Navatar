@@ -4,6 +4,9 @@ import android.app.Application;
 import com.navatar.NavatarApplication;
 import com.navatar.data.source.MapsRepository;
 import com.navatar.data.source.MapsRepositoryModule;
+import com.navatar.location.LocationManager;
+import com.navatar.location.LocationManagerModule;
+
 import dagger.BindsInstance;
 import dagger.Component;
 import dagger.android.AndroidInjector;
@@ -22,13 +25,17 @@ import javax.inject.Singleton;
  * // and location of subcomponents.
  */
 @Singleton
-@Component(modules = {MapsRepositoryModule.class,
+@Component(modules = {
+        MapsRepositoryModule.class,
+        LocationManagerModule.class,
         ApplicationModule.class,
         ActivityBindingModule.class,
         AndroidSupportInjectionModule.class})
 public interface AppComponent extends AndroidInjector<NavatarApplication> {
 
     MapsRepository getMapsRepository();
+
+    LocationManager getLocationManager();
 
     // Gives us syntactic sugar. we can then do DaggerAppComponent.builder().application(this).build().inject(this);
     // never having to instantiate any modules or say which module we are passing the application to.
