@@ -27,6 +27,13 @@ public class LocationFragment extends DaggerFragment implements LocationContract
     @Inject
     LocationContract.Presenter mPresenter;
 
+    @Inject
+    PermissionsRequestResultDispatcher permissionsRequestResultDispatcher;
+
+    @Inject
+    @Named("locationReqCode")
+    Integer locationRequestCode;
+
     private ProgressBar progressBar;
 
     @Inject

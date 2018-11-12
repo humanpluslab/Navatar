@@ -3,8 +3,11 @@ package com.navatar.location;
 import com.navatar.di.ActivityScoped;
 import com.navatar.di.FragmentScoped;
 
+import javax.inject.Named;
+
 import dagger.Binds;
 import dagger.Module;
+import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
 
 /**
@@ -13,6 +16,15 @@ import dagger.android.ContributesAndroidInjector;
  */
 @Module
 public abstract class LocationModule {
+
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 144;
+
+    @Provides
+    @Named("locationReqCode")
+    static Integer provideLocationReqCode() {
+        return LOCATION_PERMISSION_REQUEST_CODE;
+    }
+
     @FragmentScoped
     @ContributesAndroidInjector
     abstract LocationFragment locationFragment();

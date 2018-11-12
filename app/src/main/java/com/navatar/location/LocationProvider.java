@@ -6,12 +6,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class LocationManager implements LocationSource {
+public class LocationProvider implements LocationSource {
 
     private final LocationSource mLocationSource;
 
     @Inject
-    public LocationManager(LocationSource locationSource) {
+    public LocationProvider(LocationSource locationSource) {
         mLocationSource = locationSource;
     }
 

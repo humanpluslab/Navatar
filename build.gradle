@@ -64,6 +64,9 @@ ext {
     roomVersion = '1.1.1'
     daggerVersion = '2.16'
     dexmakerVersion = '1.2'
+    rxjavaVersion = '2.1.13'
+    rxandroidVersion = '2.0.2'
+
 }
 
 //When there is an error in code generation you will may see

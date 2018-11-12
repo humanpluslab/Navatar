@@ -1,6 +1,8 @@
 package com.navatar.location;
 
 import android.Manifest;
+import android.content.IntentSender;
+import android.os.Looper;
 import android.provider.Settings;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -14,7 +16,18 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.navatar.NavigationActivity;
 import com.navatar.R;
 import com.navatar.sensing.BuildConfig;
@@ -37,11 +50,42 @@ public class LocationActivity extends DaggerAppCompatActivity {
     @Inject
     Lazy<LocationFragment> locationFragmentProvider;
 
-    private SensingService sensing;
     /**
      * Code used in requesting runtime permissions.
      */
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
+
+    /**
+     * Constant used in the location settings dialog.
+     */
+    private static final int REQUEST_CHECK_SETTINGS = 0x1;
+
+    /**
+     * The desired interval for location updates. Inexact. Updates may be more or less frequent.
+     */
+    private static final long UPDATE_INTERVAL_IN_MILLISECONDS = 10000;
+
+    /**
+     * The fastest rate for active location updates. Exact. Updates will never be more frequent
+     * than this value.
+     */
+    private static final long FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS =
+            UPDATE_INTERVAL_IN_MILLISECONDS / 2;
+
+    /**
+     * Provides access to the Location Settings API.
+     */
+    private SettingsClient mSettingsClient;
+
+    /**
+     * Stores the types of location services the client is interested in using. Used for checking
+     * settings to determine if the device has optimal location settings.
+     */
+    private LocationSettingsRequest mLocationSettingsRequest;
+
+    private Boolean mRequestingLocationUpdates = false;
+
+    private LocationRequest mLocationRequest;
 
 
     @Override
@@ -52,12 +96,10 @@ public class LocationActivity extends DaggerAppCompatActivity {
         // Check for permissions to access User Location
         if (!checkPermissions()) {
             requestPermissions();
+        } else {
+            buildLocationSettingsRequest();
+            checkLocationSettings();
         }
-
-        // Start and bind with sensing service
-        Intent sensingIntent = new Intent(this, SensingService.class);
-        startService(sensingIntent);
-        bindService(sensingIntent, sensingConnection, BIND_AUTO_CREATE);
 
 
         LocationFragment locationFragment =
@@ -72,29 +114,67 @@ public class LocationActivity extends DaggerAppCompatActivity {
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
+
         }
 
     }
 
-    private ServiceConnection sensingConnection = new ServiceConnection() {
 
-        @Override
-        public void onServiceConnected(ComponentName className, IBinder service) {
-            SensingService.SensingBinder binder = (SensingService.SensingBinder) service;
-            sensing = binder.getService();
+    /**
+     * Uses a {@link com.google.android.gms.location.LocationSettingsRequest.Builder} to build
+     * a {@link com.google.android.gms.location.LocationSettingsRequest} that is used for checking
+     * if a device has the needed location settings.
+     */
+    private void buildLocationSettingsRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setFastestInterval(FASTEST_UPDATE_INTERVAL_IN_MILLISECONDS);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mSettingsClient = LocationServices.getSettingsClient(this);
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        mLocationSettingsRequest = builder.build();
+    }
 
-            //sensing.registerListener(LocationActivity.this, new int[] { NavatarSensor.COMPASS,
-            //        NavatarSensor.PEDOMETER });
-            Log.d(TAG, "Sensing service connected");
-        }
+    @SuppressWarnings({"MissingPermission"})
+    private void checkLocationSettings() {
+        // Begin by checking if the device has the necessary location settings.
+        mSettingsClient.checkLocationSettings(mLocationSettingsRequest)
+                .addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+                    @Override
+                    public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+                        Log.i(TAG, "All location settings are satisfied.");
+                        mRequestingLocationUpdates = true;
+                    }
+                })
+                .addOnFailureListener(this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        int statusCode = ((ApiException) e).getStatusCode();
+                        switch (statusCode) {
+                            case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                                Log.i(TAG, "Location settings are not satisfied. Attempting to upgrade " +
+                                        "location settings ");
+                                try {
+                                    // Show the dialog by calling startResolutionForResult(), and check the
+                                    // result in onActivityResult().
+                                    ResolvableApiException rae = (ResolvableApiException) e;
+                                    rae.startResolutionForResult(LocationActivity.this, REQUEST_CHECK_SETTINGS);
+                                } catch (IntentSender.SendIntentException sie) {
+                                    Log.i(TAG, "PendingIntent unable to execute request.");
+                                }
+                                break;
+                            case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                                String errorMessage = "Location settings are inadequate, and cannot be " +
+                                        "fixed here. Fix in Settings.";
+                                Log.e(TAG, errorMessage);
+                                Toast.makeText(LocationActivity.this, errorMessage, Toast.LENGTH_LONG).show();
+                                mRequestingLocationUpdates = false;
+                        }
 
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            // TODO Maybe unregister listener here
-            sensing = null;
-        }
-    };
-
+                    }
+                });
+    }
     /**
      * Shows a {@link Snackbar}.
      *

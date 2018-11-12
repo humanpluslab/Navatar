@@ -1,29 +1,32 @@
 package com.navatar.location;
 
 import android.location.Location;
-import com.navatar.location.LocationManager;
+
+import com.navatar.di.ActivityScoped;
+
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import javax.inject.Inject;
 
+@ActivityScoped
 public final class LocationPresenter implements LocationContract.Presenter, LocationSource.LocationCallback {
 
-    private final LocationManager mLocationManager;
+    private final LocationProvider mLocationProvider;
 
     @Nullable
     private LocationContract.View mLocationView;
 
     @Inject
-    LocationPresenter(LocationManager locationManager) {
-        mLocationManager = locationManager;
+    LocationPresenter(LocationProvider locationProvider) {
+        mLocationProvider = locationProvider;
     }
 
     @Override
     public void getLocation() {
         Log.d("MainActivity", "Getting Location");
 
-        mLocationManager.getLocation(this);
+        mLocationProvider.getLocation(this);
 
         mLocationView.showProgressbar();
     }
