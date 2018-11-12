@@ -1,14 +1,4 @@
-package com.navatar;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.FileWriter;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONArray;
+package com.navatar.navigation;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -26,21 +16,20 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Button;
-import android.util.JsonWriter;
 import android.widget.Toast;
 
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.navatar.R;
 import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.MapService;
 import com.navatar.maps.particles.ParticleState;
 import com.navatar.math.Angles;
-import com.navatar.navigation.NavigationService;
 import com.navatar.output.file.XmlFile;
 import com.navatar.particlefilter.ParticleFilter;
 import com.navatar.particlefilter.Transition;
@@ -53,9 +42,16 @@ import com.navatar.sensing.NavatarSensor;
 import com.navatar.sensing.NavatarSensorListener;
 import com.navatar.sensing.SensingService;
 
-import dagger.android.support.DaggerAppCompatActivity;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class NavigationActivity extends DaggerAppCompatActivity implements NavatarSensorListener {
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+public class NavigationActivity extends Activity implements NavatarSensorListener {
 
   private static final int METERS_FROM_PATH = 5;
   private static final boolean WITH_COMPASS = true;
