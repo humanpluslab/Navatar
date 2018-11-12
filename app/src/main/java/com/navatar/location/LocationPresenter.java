@@ -2,8 +2,8 @@ package com.navatar.location;
 
 import android.location.Location;
 import com.navatar.location.LocationManager;
-import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -21,6 +21,7 @@ public final class LocationPresenter implements LocationContract.Presenter, Loca
 
     @Override
     public void getLocation() {
+        Log.d("MainActivity", "Getting Location");
 
         mLocationManager.getLocation(this);
 

@@ -13,7 +13,7 @@ public class FakeLocationSource implements LocationSource {
     }
 
     @Override
-    public void getLocation(@NonNull LocationCallback callback) {
+    public void getLocation(LocationCallback callback) {
 
     }
 

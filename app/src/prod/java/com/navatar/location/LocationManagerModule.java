@@ -12,6 +12,6 @@ public abstract class LocationManagerModule {
 
     @Singleton
     @Binds
-    abstract LocationSource provideLocation(GoogleLocationSource dataSource);
+    abstract LocationSource provideLocation(FakeLocationSource dataSource);
 
 }
