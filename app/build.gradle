@@ -10,12 +10,13 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
 
         debug {
-            minifyEnabled true
+            minifyEnabled false
             // Uses new built-in shrinker http://tools.android.com/tech-docs/new-build-system/built-in-shrinker
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

@@ -26,6 +26,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 
 public class QRCodeScanner implements LocationProvider {
@@ -69,5 +70,12 @@ public class QRCodeScanner implements LocationProvider {
                     emitter.onSuccess(Location.create(69, 69));
                 }
         );
+    }
+
+    @NonNull
+    @Override
+    public Observable<Location> getLocationChanged() {
+
+
     }
 }

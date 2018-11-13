@@ -7,18 +7,25 @@ import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationServices;
 
 import javax.inject.Inject;
 
+import io.reactivex.Observable;
 import io.reactivex.Single;
 import com.navatar.location.LocationProvider;
 import com.navatar.location.model.Location;
 import com.navatar.location.model.NoLocationAvailableException;
 
-public class AndroidLocationProvider implements LocationProvider {
+public class AndroidLocationProvider implements LocationProvider, LocationListener {
+
+    private final String TAG = AndroidLocationProvider.class.getSimpleName();
 
     private final FusedLocationProviderClient fusedLocationProviderClient;
+
+    private android.location.Location lastKnownLocation;
+
 
     @Inject
     public AndroidLocationProvider(Context context) {
@@ -39,7 +46,7 @@ public class AndroidLocationProvider implements LocationProvider {
                                         emitter.onSuccess(Location.create(location.getLatitude(),
                                                 location.getLongitude()));
                                     } else {
-                                        Log.w("LOCATION", "Are you using an emulator? " +
+                                        Log.w(TAG, "Are you using an emulator? " +
                                                 "Make sure you send a dummy location " +
                                                 "to the emulator through the emulator settings");
                                         emitter.onError(new NoLocationAvailableException());
@@ -49,4 +56,20 @@ public class AndroidLocationProvider implements LocationProvider {
         );
 
     }
+
+    @NonNull
+    @Override
+    public Observable<Location> getLocationChanged() {
+
+
+
+    }
+
+    @Override
+    public void onLocationChanged(android.location.Location location) {
+        Log.d(TAG, "onLocationChanged: hit");
+        lastKnownLocation = location;
+
+    }
+
 }

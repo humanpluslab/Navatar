@@ -1,6 +1,6 @@
 package com.navatar.data.source;
 
-import com.navatar.data.FakeMapsRemoteDataSource;
+import com.navatar.data.source.remote.MapsRemoteDataSource;
 import com.navatar.data.source.local.MapsLocalDataSource;
 import com.navatar.util.AppExecutors;
 import com.navatar.util.DiskIOThreadExecutor;
