@@ -29,5 +29,12 @@
         adequate to run this sample. Fix in Settings.</string>
     <string name="permission_denied_explanation">Permission was denied, but location permission is required for auto-locating</string>
     <string name="settings">Settings</string>
+    <string name="longitude">Longitude</string>
+    <string name="latitude">Latitude</string>
+    <string name="location_header">Here is your current location</string>
+    <string name="softDeny">Click here to enable location permissions.</string>
+    <string name="hardDeny">You have previously denied location permissions. Click here to go to settings and enable them.</string>
+    <string name="error_accessing_location">There was an error retrieving your location.</string>
+    <string name="error_generic">An unexpected error has occurred.</string>
 
 </resources>

@@ -1,7 +1,13 @@
 package com.navatar.location;
 
+import android.Manifest;
+
 import com.navatar.di.ActivityScoped;
 import com.navatar.di.FragmentScoped;
+import com.navatar.location.details.AndroidLocationProvider;
+import com.navatar.common.PermissionRequestHandler;
+import com.navatar.common.details.RuntimePermissionRequestHandler;
+import com.navatar.location.model.Location;
 
 import javax.inject.Named;
 
@@ -19,6 +25,17 @@ public abstract class LocationModule {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 144;
 
+    @ActivityScoped
+    @Binds
+    abstract LocationContract.View provideView(LocationFragment fragment);
+
+    @ActivityScoped
+    @Binds
+    abstract LocationContract.Presenter providePresenter(LocationPresenter presenter);
+
+    @Binds
+    abstract LocationProvider providerLocationProvider(AndroidLocationProvider locationProvider);
+
     @Provides
     @Named("locationReqCode")
     static Integer provideLocationReqCode() {
@@ -30,6 +47,13 @@ public abstract class LocationModule {
     abstract LocationFragment locationFragment();
 
     @ActivityScoped
-    @Binds abstract LocationContract.Presenter locationPresenter(LocationPresenter presenter);
+    @Binds
+    abstract PermissionRequestHandler bindPermissionRequestHandler(RuntimePermissionRequestHandler runtimePermissionRequestHandler);
+
+    @ActivityScoped
+    @Provides
+    static RuntimePermissionRequestHandler providePermissionRequestHandler(LocationFragment activity, @Named("locationReqCode") Integer reqCode) {
+        return new RuntimePermissionRequestHandler(activity.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION, reqCode);
+    }
 
 }

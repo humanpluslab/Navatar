@@ -1,24 +1,14 @@
 package com.navatar.location;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import io.reactivex.Single;
+import com.navatar.location.model.Location;
 
-@Singleton
-public class LocationProvider implements LocationSource {
+public interface LocationProvider {
 
-    private final LocationSource mLocationSource;
-
-    @Inject
-    public LocationProvider(LocationSource locationSource) {
-        mLocationSource = locationSource;
-    }
-
-    @Override
-    public void getLocation(@NonNull LocationCallback callback) {
-        mLocationSource.getLocation(callback);
-    }
-
+    @NonNull
+    Single<Location> getLocation();
 
 }

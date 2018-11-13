@@ -3,7 +3,6 @@ package com.navatar;
 import android.support.annotation.VisibleForTesting;
 import com.navatar.data.source.MapsRepository;
 import com.navatar.di.DaggerAppComponent;
-import com.navatar.location.LocationProvider;
 
 import dagger.android.AndroidInjector;
 import dagger.android.DaggerApplication;
@@ -12,9 +11,6 @@ import javax.inject.Inject;
 public class NavatarApplication extends DaggerApplication {
     @Inject
     MapsRepository mapRepository;
-
-    @Inject
-    LocationProvider locationProvider;
 
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
@@ -30,7 +26,4 @@ public class NavatarApplication extends DaggerApplication {
         return mapRepository;
     }
 
-
-    @VisibleForTesting
-    public LocationProvider getLocationProvider() { return locationProvider; }
 }

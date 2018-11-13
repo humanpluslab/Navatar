@@ -7,16 +7,31 @@ public interface LocationContract {
 
     interface View extends BaseView<Presenter> {
 
-        boolean isActive();
+        void showLatitude(String latitude);
 
-        void showProgressbar();
+        void showLongitude(String longitude);
 
-        void hideProgressbar();
+        void showNoLocationAvailable();
+
+        void showGenericError();
+
+        void showSoftDenied();
+
+        void showHardDenied();
+
+        void hidePermissionDeniedWarning();
+
     }
 
     interface Presenter extends BasePresenter<View> {
 
-        void getLocation();
+        /**
+         * Signals the presenter to start the process for fetching the location.
+         * If permissions are required, requesting them will be handled inside this process
+         */
+        void loadData();
+
+        void cleanup();
 
     }
 

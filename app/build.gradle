@@ -66,11 +66,14 @@ android {
         abortOnError false
     }
 
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 
 dependencies {
-
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':protobufs')
     implementation project(':time')
@@ -80,10 +83,8 @@ dependencies {
     implementation project(':sensingservices')
     implementation project(':particlefilter')
     implementation project(':pathplanning')
-
     implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     implementation 'com.google.protobuf:protobuf-lite:3.0.1'
-
 
     // App's dependencies, including test
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
@@ -92,6 +93,8 @@ dependencies {
     implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     implementation "com.android.support.test.espresso:espresso-idling-resource:$rootProject.espressoVersion"
     implementation "com.google.guava:guava:$rootProject.guavaVersion"
+    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintVersion"
+
     //implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     //annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
 
@@ -102,10 +105,15 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$rootProject.daggerVersion"
     annotationProcessor "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
 
+    // autovalue
+    implementation "com.google.auto.value:auto-value-annotations:$rootProject.autovalueVersion"
+    annotationProcessor "com.google.auto.value:auto-value:$rootProject.autovalueVersion"
+
     // rxjava
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
-
+    implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
+    annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
     // Dependencies for local unit tests
     testImplementation "junit:junit:$rootProject.ext.junitVersion"
@@ -115,7 +123,6 @@ dependencies {
     // Android Testing Support Library's runner and rules
     androidTestImplementation "com.android.support.test:runner:$rootProject.ext.runnerVersion"
     androidTestImplementation "com.android.support.test:rules:$rootProject.ext.rulesVersion"
-
     androidTestImplementation "android.arch.persistence.room:testing:$rootProject.roomVersion"
 
     // Dependencies for Android unit tests
@@ -137,8 +144,7 @@ dependencies {
     androidTestImplementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     androidTestImplementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     androidTestImplementation "com.android.support:design:$rootProject.supportLibraryVersion"
-    androidTestImplementation "com.google.code.findbugs:jsr305:3.0.1"
-
+    androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.1'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
 }

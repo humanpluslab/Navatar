@@ -66,6 +66,9 @@ ext {
     dexmakerVersion = '1.2'
     rxjavaVersion = '2.1.13'
     rxandroidVersion = '2.0.2'
+    butterknifeVersion = '8.8.1'
+    constraintVersion = '1.1.0'
+    autovalueVersion = '1.6'
 
 }
 

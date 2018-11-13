@@ -1,55 +1,116 @@
 package com.navatar.location;
 
-import android.location.Location;
-
-import com.navatar.di.ActivityScoped;
-
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.lang.ref.WeakReference;
+
 import javax.inject.Inject;
 
+import io.reactivex.disposables.CompositeDisposable;
+import com.navatar.common.PermissionRequestHandler;
+import com.navatar.di.ActivityScoped;
+import com.navatar.location.LocationInteractor;
+import com.navatar.location.model.Location;
+import com.navatar.location.model.NoLocationAvailableException;
+
 @ActivityScoped
-public final class LocationPresenter implements LocationContract.Presenter, LocationSource.LocationCallback {
+public class LocationPresenter implements LocationContract.Presenter {
 
-    private final LocationProvider mLocationProvider;
+    private static final String TAG = "LOCATION";
 
-    @Nullable
+    private final WeakReference<LocationContract.View> viewWeakReference;
+    private final LocationInteractor interactor;
+    private PermissionRequestHandler permissionRequestHandler;
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
     private LocationContract.View mLocationView;
 
     @Inject
-    LocationPresenter(LocationProvider locationProvider) {
-        mLocationProvider = locationProvider;
+    public LocationPresenter(LocationContract.View view,
+                             LocationInteractor interactor,
+                             PermissionRequestHandler permissionRequestHandler) {
+        this.viewWeakReference = new WeakReference<>(view);
+        this.interactor = interactor;
+        this.permissionRequestHandler = permissionRequestHandler;
     }
 
     @Override
-    public void getLocation() {
-        Log.d("MainActivity", "Getting Location");
+    public void loadData() {
+        if (!permissionRequestHandler.checkHasPermission()) {
+            disposables.clear();
+            disposables.add(permissionRequestHandler.requestPermission()
+                    .subscribe(
+                            this::handleResult,
+                            throwable -> Log.e(TAG, "An error occurred on the permission request " +
+                                    "result stream", throwable)
+                    )
+            );
+        } else {
+            getLocation();
+        }
+    }
 
-        mLocationProvider.getLocation(this);
+    private void handleResult(PermissionRequestHandler.PermissionRequestResult result) {
+        //LocationContract.View view = viewWeakReference.get();
+        if (mLocationView != null) {
+            switch (result) {
+                case GRANTED:
+                    getLocation();
+                    break;
+                case DENIED_SOFT:
+                    mLocationView.showSoftDenied();
+                    break;
+                case DENIED_HARD:
+                    mLocationView.showHardDenied();
+                    break;
+            }
+        }
+    }
 
-        mLocationView.showProgressbar();
+    private void getLocation() {
+        disposables.add(
+                interactor.getLocation()
+                        .subscribe(
+                                location -> {
+                                    //LocationContract.View view = viewWeakReference.get();
+                                    if (mLocationView != null) {
+                                        mLocationView.hidePermissionDeniedWarning();
+                                        mLocationView.showLatitude(String.valueOf(location.latitude()));
+                                        mLocationView.showLongitude(String.valueOf(location.longitude()));
+                                    }
+                                },
+                                throwable -> {
+                                    //LocationContract.View view = viewWeakReference.get();
+                                    if (mLocationView != null) {
+                                        Log.e(TAG, "Error while getting location", throwable);
+                                        if (throwable instanceof NoLocationAvailableException) {
+                                            mLocationView.showNoLocationAvailable();
+                                        } else {
+                                            mLocationView.showGenericError();
+                                        }
+
+                                    }
+                                }
+                        )
+        );
+    }
+
+
+    @Override
+    public void cleanup() {
+        disposables.clear();
     }
 
     @Override
     public void takeView(LocationContract.View view) {
-        this.mLocationView = view;
+        mLocationView = view;
     }
 
     @Override
     public void dropView() {
         mLocationView = null;
     }
-
-    @Override
-    public void onLocationChanged(Location location) {
-
-        mLocationView.hideProgressbar();
-
-    }
-
-    @Override
-    public void onLocationManagerConnected() { }
 
 
 }
