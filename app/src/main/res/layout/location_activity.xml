@@ -80,7 +80,18 @@
       app:layout_constraintTop_toTopOf="@+id/longitudeLabel"
       tools:text="3.131232" />
 
-  </android.support.constraint.ConstraintLayout>
+    <com.journeyapps.barcodescanner.BarcodeView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:id="@+id/zxing_barcode_surface"
+        app:zxing_framing_rect_width="250dp"
+        app:zxing_framing_rect_height="50dp"
+        app:layout_constraintTop_toBottomOf="@+id/longitudeTextView" />
 
+
+
+  </android.support.constraint.ConstraintLayout>
 
 </android.support.constraint.ConstraintLayout>

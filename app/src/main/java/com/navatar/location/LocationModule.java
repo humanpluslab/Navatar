@@ -9,12 +9,18 @@ import com.navatar.common.PermissionRequestHandler;
 import com.navatar.common.details.RuntimePermissionRequestHandler;
 import com.navatar.location.model.Location;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.inject.Named;
 
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
 import dagger.android.ContributesAndroidInjector;
+import dagger.multibindings.ElementsIntoSet;
 
 /**
  * This is a Dagger module. We use this to pass in the View dependency to the
@@ -28,7 +34,6 @@ public abstract class LocationModule {
     @Binds
     abstract LocationContract.View provideView(LocationActivity activity);
 
-
     @Binds
     abstract LocationContract.Presenter providePresenter(LocationPresenter presenter);
 
@@ -41,7 +46,6 @@ public abstract class LocationModule {
         return LOCATION_PERMISSION_REQUEST_CODE;
     }
 
-
     @ActivityScoped
     @Binds
     abstract PermissionRequestHandler bindPermissionRequestHandler(RuntimePermissionRequestHandler runtimePermissionRequestHandler);
@@ -50,6 +54,12 @@ public abstract class LocationModule {
     @Provides
     static RuntimePermissionRequestHandler providePermissionRequestHandler(LocationActivity activity, @Named("locationReqCode") Integer reqCode) {
         return new RuntimePermissionRequestHandler(activity, Manifest.permission.ACCESS_FINE_LOCATION, reqCode);
+    }
+
+    @Provides
+    @ElementsIntoSet
+    static Set<LocationProvider> provideLocationProviders(AndroidLocationProvider alp) {
+        return new HashSet<LocationProvider>(Arrays.asList(alp));
     }
 
 }

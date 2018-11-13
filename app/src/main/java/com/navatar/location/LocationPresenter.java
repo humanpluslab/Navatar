@@ -69,29 +69,29 @@ public class LocationPresenter implements LocationContract.Presenter {
 
     private void getLocation() {
         disposables.add(
-                interactor.getLocation()
-                        .subscribe(
-                                location -> {
-                                    LocationContract.View view = viewWeakReference.get();
-                                    if (view != null) {
-                                        view.hidePermissionDeniedWarning();
-                                        view.showLatitude(String.valueOf(location.latitude()));
-                                        view.showLongitude(String.valueOf(location.longitude()));
-                                    }
-                                },
-                                throwable -> {
-                                    LocationContract.View view = viewWeakReference.get();
-                                    if (view != null) {
-                                        Log.e(TAG, "Error while getting location", throwable);
-                                        if (throwable instanceof NoLocationAvailableException) {
-                                            view.showNoLocationAvailable();
-                                        } else {
-                                            view.showGenericError();
-                                        }
+            interactor.getLocation()
+            .subscribe(
+                location -> {
+                    LocationContract.View view = viewWeakReference.get();
+                    if (view != null) {
+                        view.hidePermissionDeniedWarning();
+                        view.showLatitude(String.valueOf(location.latitude()));
+                        view.showLongitude(String.valueOf(location.longitude()));
+                    }
+                },
+                throwable -> {
+                    LocationContract.View view = viewWeakReference.get();
+                    if (view != null) {
+                        Log.e(TAG, "Error while getting location", throwable);
+                        if (throwable instanceof NoLocationAvailableException) {
+                            view.showNoLocationAvailable();
+                        } else {
+                            view.showGenericError();
+                        }
 
-                                    }
-                                }
-                        )
+                    }
+                }
+            )
         );
     }
 

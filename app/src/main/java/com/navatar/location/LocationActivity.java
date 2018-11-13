@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.journeyapps.barcodescanner.BarcodeView;
 import com.navatar.R;
 import com.navatar.common.details.PermissionsRequestResultDispatcher;
 import com.navatar.location.model.Location;
@@ -53,6 +54,9 @@ public class LocationActivity extends DaggerAppCompatActivity
 
     @BindViews({R.id.softDenyTextView, R.id.hardDenyTextView})
     List<TextView> deniedTextViews;
+
+    @BindView(R.id.zxing_barcode_surface)
+    BarcodeView barcodeView;
 
     private static final ButterKnife.Action<View> VISIBLE =
             (v, index) -> v.setVisibility(View.VISIBLE);
