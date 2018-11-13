@@ -40,6 +40,8 @@ import dagger.android.support.DaggerAppCompatActivity;
 public class LocationActivity extends DaggerAppCompatActivity
         implements LocationContract.View {
 
+    private static final String TAG = LocationActivity.class.getSimpleName();
+
     @BindView(R.id.latitudeTextView)
     TextView latitudeTextView;
 
@@ -55,8 +57,8 @@ public class LocationActivity extends DaggerAppCompatActivity
     @BindViews({R.id.softDenyTextView, R.id.hardDenyTextView})
     List<TextView> deniedTextViews;
 
-    @BindView(R.id.zxing_barcode_surface)
-    BarcodeView barcodeView;
+    //@BindView(R.id.zxing_barcode_surface)
+    //BarcodeView barcodeView;
 
     private static final ButterKnife.Action<View> VISIBLE =
             (v, index) -> v.setVisibility(View.VISIBLE);
@@ -72,6 +74,11 @@ public class LocationActivity extends DaggerAppCompatActivity
     @Inject
     @Named("locationReqCode")
     Integer locationRequestCode;
+
+    @Inject
+    @Named("cameraReqCode")
+    Integer cameraRequestCode;
+
 
     public static Intent newIntent(Context context) {
         Intent i = new Intent(context, LocationActivity.class);
@@ -163,11 +170,12 @@ public class LocationActivity extends DaggerAppCompatActivity
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-        if (requestCode == locationRequestCode) {
+        Log.e(TAG, String.join(" : ", permissions));
+        if (requestCode == locationRequestCode || requestCode == cameraRequestCode ) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                permissionsRequestResultDispatcher.dispatchResult(true);
+                permissionsRequestResultDispatcher.dispatchResult(true, permissions[0]);
             } else {
-                permissionsRequestResultDispatcher.dispatchResult(false);
+                permissionsRequestResultDispatcher.dispatchResult(false, permissions[0]);
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

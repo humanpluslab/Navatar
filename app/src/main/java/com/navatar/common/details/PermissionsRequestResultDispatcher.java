@@ -21,8 +21,8 @@ public class PermissionsRequestResultDispatcher {
     /**
      * To be called from {@link Activity#onRequestPermissionsResult(int, String[], int[])}
      */
-    public void dispatchResult(boolean granted) {
-        permissionRequestHandler.onPermissionRequestResult(granted);
+    public void dispatchResult(boolean granted, String permission) {
+        permissionRequestHandler.onPermissionRequestResult(granted, permission);
     }
     
 }

@@ -4,9 +4,9 @@ import io.reactivex.Single;
 
 public interface PermissionRequestHandler {
     
-    boolean checkHasPermission();
+    boolean checkHasPermission(String permission);
     
-    Single<PermissionRequestResult> requestPermission();
+    Single<PermissionRequestResult> requestPermission(String permission, int requestCode);
     
     enum PermissionRequestResult {
         GRANTED,

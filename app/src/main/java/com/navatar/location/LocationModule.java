@@ -7,6 +7,7 @@ import com.navatar.di.FragmentScoped;
 import com.navatar.location.details.AndroidLocationProvider;
 import com.navatar.common.PermissionRequestHandler;
 import com.navatar.common.details.RuntimePermissionRequestHandler;
+import com.navatar.location.details.QRCodeScanner;
 import com.navatar.location.model.Location;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import dagger.multibindings.ElementsIntoSet;
 public abstract class LocationModule {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 144;
+    private static final int CAMERA_PERMISSION_REQUEST_CODE = 250;
 
     @Binds
     abstract LocationContract.View provideView(LocationActivity activity);
@@ -46,20 +48,24 @@ public abstract class LocationModule {
         return LOCATION_PERMISSION_REQUEST_CODE;
     }
 
+    @Provides
+    @Named("cameraReqCode")
+    static Integer provideCameraReqCode() { return CAMERA_PERMISSION_REQUEST_CODE; }
+
     @ActivityScoped
     @Binds
     abstract PermissionRequestHandler bindPermissionRequestHandler(RuntimePermissionRequestHandler runtimePermissionRequestHandler);
 
     @ActivityScoped
     @Provides
-    static RuntimePermissionRequestHandler providePermissionRequestHandler(LocationActivity activity, @Named("locationReqCode") Integer reqCode) {
-        return new RuntimePermissionRequestHandler(activity, Manifest.permission.ACCESS_FINE_LOCATION, reqCode);
+    static RuntimePermissionRequestHandler providePermissionRequestHandler(LocationActivity activity) {
+        return new RuntimePermissionRequestHandler(activity);
     }
 
     @Provides
     @ElementsIntoSet
-    static Set<LocationProvider> provideLocationProviders(AndroidLocationProvider alp) {
-        return new HashSet<LocationProvider>(Arrays.asList(alp));
+    static Set<LocationProvider> provideLocationProviders(AndroidLocationProvider alp, QRCodeScanner qrs) {
+        return new HashSet<LocationProvider>(Arrays.asList(alp, qrs));
     }
 
 }

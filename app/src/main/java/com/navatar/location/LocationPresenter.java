@@ -1,11 +1,13 @@
 package com.navatar.location;
 
+import android.Manifest;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import io.reactivex.disposables.CompositeDisposable;
 import com.navatar.common.PermissionRequestHandler;
@@ -26,6 +28,14 @@ public class LocationPresenter implements LocationContract.Presenter {
     private LocationContract.View mLocationView;
 
     @Inject
+    @Named("locationReqCode")
+    Integer locationRequestCode;
+
+    @Inject
+    @Named("cameraReqCode")
+    Integer cameraRequestCode;
+
+    @Inject
     public LocationPresenter(LocationContract.View view,
                              LocationInteractor interactor,
                              PermissionRequestHandler permissionRequestHandler) {
@@ -36,9 +46,9 @@ public class LocationPresenter implements LocationContract.Presenter {
 
     @Override
     public void loadData() {
-        if (!permissionRequestHandler.checkHasPermission()) {
+        if (!permissionRequestHandler.checkHasPermission(Manifest.permission.ACCESS_FINE_LOCATION)) {
             disposables.clear();
-            disposables.add(permissionRequestHandler.requestPermission()
+            disposables.add(permissionRequestHandler.requestPermission(Manifest.permission.ACCESS_FINE_LOCATION, locationRequestCode)
                     .subscribe(
                             this::handleResult,
                             throwable -> Log.e(TAG, "An error occurred on the permission request " +
@@ -46,8 +56,24 @@ public class LocationPresenter implements LocationContract.Presenter {
                     )
             );
         } else {
+            checkCameraPermissions();
             getLocation();
         }
+
+    }
+
+    private void checkCameraPermissions() {
+        if (!permissionRequestHandler.checkHasPermission(Manifest.permission.CAMERA)) {
+            disposables.add(permissionRequestHandler.requestPermission(Manifest.permission.CAMERA, cameraRequestCode)
+                    .subscribe(
+                            this::handleCameraResult,
+                            throwable -> Log.e(TAG, "An error occurred on the permission request " +
+                                    "result stream", throwable)
+                    )
+            );
+
+        }
+
     }
 
     private void handleResult(PermissionRequestHandler.PermissionRequestResult result) {
@@ -65,6 +91,25 @@ public class LocationPresenter implements LocationContract.Presenter {
                     break;
             }
         }
+        checkCameraPermissions();
+    }
+
+    private void handleCameraResult(PermissionRequestHandler.PermissionRequestResult result) {
+        LocationContract.View view = viewWeakReference.get();
+        if (view != null) {
+            switch (result) {
+                case GRANTED:
+                    getLocation();
+                    break;
+                case DENIED_SOFT:
+                    view.showSoftDenied();
+                    break;
+                case DENIED_HARD:
+                    view.showHardDenied();
+                    break;
+            }
+        }
+
     }
 
     private void getLocation() {
@@ -74,6 +119,7 @@ public class LocationPresenter implements LocationContract.Presenter {
                 location -> {
                     LocationContract.View view = viewWeakReference.get();
                     if (view != null) {
+                        Log.e(TAG, "Lat: " + location.latitude() + " Long: " + location.longitude());
                         view.hidePermissionDeniedWarning();
                         view.showLatitude(String.valueOf(location.latitude()));
                         view.showLongitude(String.valueOf(location.longitude()));

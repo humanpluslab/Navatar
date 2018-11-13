@@ -6,6 +6,7 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.navatar.common.PermissionRequestHandler;
 
@@ -15,21 +16,18 @@ import io.reactivex.Single;
 import io.reactivex.subjects.AsyncSubject;
 
 public class RuntimePermissionRequestHandler implements PermissionRequestHandler {
-    
+
+    private static final String TAG = RuntimePermissionRequestHandler.class.getSimpleName();
+
     private final WeakReference<Activity> activityWeakReference;
-    private final String permission;
-    private final int requestCode;
     private AsyncSubject<PermissionRequestResult> subject;
     
-    // TODO - think about supporting multiple permissions
-    public RuntimePermissionRequestHandler(Activity activity, String permission, int requestCode) {
+    public RuntimePermissionRequestHandler(Activity activity) {
         this.activityWeakReference = new WeakReference<>(activity);
-        this.permission = permission;
-        this.requestCode = requestCode;
     }
     
     @Override
-    public boolean checkHasPermission() {
+    public boolean checkHasPermission(String permission) {
         if (activityWeakReference.get() != null) {
             Activity activity = activityWeakReference.get();
             return ContextCompat.checkSelfPermission(activity, permission)
@@ -40,7 +38,7 @@ public class RuntimePermissionRequestHandler implements PermissionRequestHandler
     }
     
     @Override
-    public Single<PermissionRequestResult> requestPermission() {
+    public Single<PermissionRequestResult> requestPermission(String permission, int requestCode) {
         subject = AsyncSubject.create();
         
         if (activityWeakReference.get() != null) {
@@ -55,7 +53,8 @@ public class RuntimePermissionRequestHandler implements PermissionRequestHandler
     
     
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public void onPermissionRequestResult(boolean granted) {
+    public void onPermissionRequestResult(boolean granted, String permission) {
+        Log.e(TAG, permission + " granted: " + granted);
         if (subject != null) {
             if (granted) {
                 subject.onNext(PermissionRequestResult.GRANTED);
