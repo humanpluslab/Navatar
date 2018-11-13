@@ -25,11 +25,10 @@ public abstract class LocationModule {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 144;
 
-    @ActivityScoped
     @Binds
-    abstract LocationContract.View provideView(LocationFragment fragment);
+    abstract LocationContract.View provideView(LocationActivity activity);
 
-    @ActivityScoped
+
     @Binds
     abstract LocationContract.Presenter providePresenter(LocationPresenter presenter);
 
@@ -42,9 +41,6 @@ public abstract class LocationModule {
         return LOCATION_PERMISSION_REQUEST_CODE;
     }
 
-    @FragmentScoped
-    @ContributesAndroidInjector
-    abstract LocationFragment locationFragment();
 
     @ActivityScoped
     @Binds
@@ -52,8 +48,8 @@ public abstract class LocationModule {
 
     @ActivityScoped
     @Provides
-    static RuntimePermissionRequestHandler providePermissionRequestHandler(LocationFragment activity, @Named("locationReqCode") Integer reqCode) {
-        return new RuntimePermissionRequestHandler(activity.getActivity(), Manifest.permission.ACCESS_FINE_LOCATION, reqCode);
+    static RuntimePermissionRequestHandler providePermissionRequestHandler(LocationActivity activity, @Named("locationReqCode") Integer reqCode) {
+        return new RuntimePermissionRequestHandler(activity, Manifest.permission.ACCESS_FINE_LOCATION, reqCode);
     }
 
 }

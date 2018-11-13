@@ -36,49 +36,123 @@ import dagger.Lazy;
 import dagger.android.AndroidInjection;
 import dagger.android.support.DaggerAppCompatActivity;
 
-public class LocationActivity extends DaggerAppCompatActivity {
+public class LocationActivity extends DaggerAppCompatActivity
+        implements LocationContract.View {
 
-    private static final String TAG = LocationActivity.class.getSimpleName();
+    @BindView(R.id.latitudeTextView)
+    TextView latitudeTextView;
+
+    @BindView(R.id.longitudeTextView)
+    TextView longitudeTextView;
+
+    @BindView(R.id.softDenyTextView)
+    TextView softDeniedWarningTextView;
+
+    @BindView(R.id.hardDenyTextView)
+    TextView hardDeniedWarningTextView;
+
+    @BindViews({R.id.softDenyTextView, R.id.hardDenyTextView})
+    List<TextView> deniedTextViews;
+
+    private static final ButterKnife.Action<View> VISIBLE =
+            (v, index) -> v.setVisibility(View.VISIBLE);
+    private static final ButterKnife.Action<View> GONE =
+            (v, index) -> v.setVisibility(View.GONE);
 
     @Inject
-    LocationPresenter mLocationPresenter;
+    LocationContract.Presenter presenter;
 
     @Inject
-    Lazy<LocationFragment> locationFragmentProvider;
+    PermissionsRequestResultDispatcher permissionsRequestResultDispatcher;
 
     @Inject
     @Named("locationReqCode")
     Integer locationRequestCode;
 
+    public static Intent newIntent(Context context) {
+        Intent i = new Intent(context, LocationActivity.class);
+        Bundle b = new Bundle();
+
+        i.putExtras(b);
+        return i;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.location_act);
+        setContentView(R.layout.location_activity);
 
-        LocationFragment locationFragment =
-                (LocationFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
-        if (locationFragment == null) {
-            // Get the fragment from dagger
-            locationFragment = locationFragmentProvider.get();
-            ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), locationFragment, R.id.contentFrame);
-        }
-
-        //locationFragment.onStart();
-
-        // Load previously saved state, if available.
-        if (savedInstanceState != null) {
-
-        }
-
+        ButterKnife.bind(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        //mLocationPresenter.loadData();
+        presenter.loadData();
     }
+
+    @Override
+    public void showLatitude(String latitude) {
+        latitudeTextView.setText(latitude);
+    }
+
+    @Override
+    public void showLongitude(String longitude) {
+        longitudeTextView.setText(longitude);
+    }
+
+    @Override
+    public void showNoLocationAvailable() {
+        Toast.makeText(LocationActivity.this, R.string.error_accessing_location,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showGenericError() {
+        Toast.makeText(LocationActivity.this, R.string.error_generic,
+                Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showSoftDenied() {
+        ButterKnife.apply(softDeniedWarningTextView, VISIBLE);
+        ButterKnife.apply(hardDeniedWarningTextView, GONE);
+    }
+
+    @Override
+    public void showHardDenied() {
+        ButterKnife.apply(hardDeniedWarningTextView, VISIBLE);
+        ButterKnife.apply(softDeniedWarningTextView, GONE);
+    }
+
+
+    @Override
+    public void hidePermissionDeniedWarning() {
+        ButterKnife.apply(deniedTextViews, GONE);
+    }
+
+
+    @OnClick(R.id.softDenyTextView)
+    void softDenyTextViewClicked(View view) {
+        presenter.loadData();
+    }
+
+    @OnClick(R.id.hardDenyTextView)
+    void hardDenyTextViewClicked(View view) {
+        Intent intent = new Intent();
+        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+        Uri uri = Uri.fromParts("package", getPackageName(), null);
+        intent.setData(uri);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        presenter.cleanup();
+    }
+
 
     @Override
     @SuppressWarnings({"MissingPermission"})
@@ -87,9 +161,9 @@ public class LocationActivity extends DaggerAppCompatActivity {
                                            @NonNull int[] grantResults) {
         if (requestCode == locationRequestCode) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //permissionsRequestResultDispatcher.dispatchResult(true);
+                permissionsRequestResultDispatcher.dispatchResult(true);
             } else {
-                //permissionsRequestResultDispatcher.dispatchResult(false);
+                permissionsRequestResultDispatcher.dispatchResult(false);
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);

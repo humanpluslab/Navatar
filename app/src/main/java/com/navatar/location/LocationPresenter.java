@@ -14,7 +14,6 @@ import com.navatar.location.LocationInteractor;
 import com.navatar.location.model.Location;
 import com.navatar.location.model.NoLocationAvailableException;
 
-@ActivityScoped
 public class LocationPresenter implements LocationContract.Presenter {
 
     private static final String TAG = "LOCATION";
@@ -52,17 +51,17 @@ public class LocationPresenter implements LocationContract.Presenter {
     }
 
     private void handleResult(PermissionRequestHandler.PermissionRequestResult result) {
-        //LocationContract.View view = viewWeakReference.get();
-        if (mLocationView != null) {
+        LocationContract.View view = viewWeakReference.get();
+        if (view != null) {
             switch (result) {
                 case GRANTED:
                     getLocation();
                     break;
                 case DENIED_SOFT:
-                    mLocationView.showSoftDenied();
+                    view.showSoftDenied();
                     break;
                 case DENIED_HARD:
-                    mLocationView.showHardDenied();
+                    view.showHardDenied();
                     break;
             }
         }
@@ -73,21 +72,21 @@ public class LocationPresenter implements LocationContract.Presenter {
                 interactor.getLocation()
                         .subscribe(
                                 location -> {
-                                    //LocationContract.View view = viewWeakReference.get();
-                                    if (mLocationView != null) {
-                                        mLocationView.hidePermissionDeniedWarning();
-                                        mLocationView.showLatitude(String.valueOf(location.latitude()));
-                                        mLocationView.showLongitude(String.valueOf(location.longitude()));
+                                    LocationContract.View view = viewWeakReference.get();
+                                    if (view != null) {
+                                        view.hidePermissionDeniedWarning();
+                                        view.showLatitude(String.valueOf(location.latitude()));
+                                        view.showLongitude(String.valueOf(location.longitude()));
                                     }
                                 },
                                 throwable -> {
-                                    //LocationContract.View view = viewWeakReference.get();
-                                    if (mLocationView != null) {
+                                    LocationContract.View view = viewWeakReference.get();
+                                    if (view != null) {
                                         Log.e(TAG, "Error while getting location", throwable);
                                         if (throwable instanceof NoLocationAvailableException) {
-                                            mLocationView.showNoLocationAvailable();
+                                            view.showNoLocationAvailable();
                                         } else {
-                                            mLocationView.showGenericError();
+                                            view.showGenericError();
                                         }
 
                                     }
@@ -101,6 +100,7 @@ public class LocationPresenter implements LocationContract.Presenter {
     public void cleanup() {
         disposables.clear();
     }
+
 
     @Override
     public void takeView(LocationContract.View view) {

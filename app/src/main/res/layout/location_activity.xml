@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  tools:context="com.navatar.location.LocationActivity">
+
+
+  <android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+      android:id="@+id/softDenyTextView"
+      android:text="@string/softDeny"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      tools:visibility="visible"
+      android:textColor="@color/warningSoft"
+      app:layout_constraintTop_toTopOf="parent"
+      style="@style/deniedWarning"/>
+
+    <TextView
+      android:id="@+id/hardDenyTextView"
+      android:text="@string/hardDeny"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      tools:visibility="visible"
+      android:textColor="@color/warningHard"
+      app:layout_constraintTop_toTopOf="parent"
+      style="@style/deniedWarning" />
+
+    <TextView
+      android:id="@+id/header"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="48dp"
+      android:text="@string/location_header"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+      android:id="@+id/latitudeLabel"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:text="@string/latitude"
+      app:layout_constraintStart_toStartOf="@+id/header"
+      app:layout_constraintTop_toBottomOf="@+id/header" />
+
+    <TextView
+      android:id="@+id/latitudeTextView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toBottomOf="@+id/latitudeLabel"
+      app:layout_constraintEnd_toEndOf="@+id/header"
+      app:layout_constraintTop_toTopOf="@+id/latitudeLabel"
+      tools:text="43.23214" />
+
+    <TextView
+      android:id="@+id/longitudeLabel"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="16dp"
+      android:text="@string/longitude"
+      app:layout_constraintStart_toStartOf="@+id/header"
+      app:layout_constraintTop_toBottomOf="@+id/latitudeLabel" />
+
+
+    <TextView
+      android:id="@+id/longitudeTextView"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      app:layout_constraintBottom_toBottomOf="@+id/longitudeLabel"
+      app:layout_constraintEnd_toEndOf="@+id/header"
+      app:layout_constraintTop_toTopOf="@+id/longitudeLabel"
+      tools:text="3.131232" />
+
+  </android.support.constraint.ConstraintLayout>
+
+
+</android.support.constraint.ConstraintLayout>
