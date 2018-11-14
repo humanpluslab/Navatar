@@ -76,6 +76,6 @@ public class QRCodeScanner implements LocationProvider {
     @Override
     public Observable<Location> getLocationChanged() {
 
-
+        return Observable.empty();
     }
 }

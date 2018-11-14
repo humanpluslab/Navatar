@@ -116,6 +116,14 @@ dependencies {
     implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
+    // rxlocation
+    implementation 'com.patloew.rxlocation:rxlocation:1.0.5'
+
+    // About library for displaying info on Open Source Libraries
+    implementation('com.mikepenz:aboutlibraries:6.0.9@aar') {
+        transitive = true
+    }
+
     // Dependencies for local unit tests
     testImplementation "junit:junit:$rootProject.ext.junitVersion"
     testImplementation "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"

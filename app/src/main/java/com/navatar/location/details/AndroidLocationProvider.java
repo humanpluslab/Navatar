@@ -62,7 +62,7 @@ public class AndroidLocationProvider implements LocationProvider, LocationListen
     public Observable<Location> getLocationChanged() {
 
 
-
+        return Observable.empty();
     }
 
     @Override
