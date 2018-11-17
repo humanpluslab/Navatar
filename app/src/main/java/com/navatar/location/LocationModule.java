@@ -4,6 +4,7 @@ import android.Manifest;
 
 import com.navatar.di.ActivityScoped;
 import com.navatar.di.FragmentScoped;
+import com.navatar.location.details.AndroidGeofencingProvider;
 import com.navatar.location.details.AndroidLocationProvider;
 import com.navatar.common.PermissionRequestHandler;
 import com.navatar.common.details.RuntimePermissionRequestHandler;
@@ -40,7 +41,10 @@ public abstract class LocationModule {
     abstract LocationContract.Presenter providePresenter(LocationPresenter presenter);
 
     @Binds
-    abstract LocationProvider providerLocationProvider(AndroidLocationProvider locationProvider);
+    abstract LocationProvider provideLocationProvider(AndroidLocationProvider locationProvider);
+
+    @Binds
+    abstract GeofencingProvider provideGeofencingProvider(AndroidGeofencingProvider geofencingProvider);
 
     @Provides
     @Named("locationReqCode")

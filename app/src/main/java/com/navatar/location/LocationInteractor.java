@@ -23,13 +23,13 @@ public class LocationInteractor {
     }
 
 
-    public Observable<Location> getLocation() {
+    public Observable<Location> getLocationUpdates() {
         Observable<Location> wrapper = null;
         for (LocationProvider loc : locationProviders){
             if (wrapper == null) {
-                wrapper = loc.getLocation().toObservable();
+                wrapper = loc.getLocationUpdates();
             } else {
-                wrapper = Observable.merge(wrapper, loc.getLocation().toObservable());
+                wrapper = Observable.merge(wrapper, loc.getLocationUpdates());
             }
         }
         return wrapper;

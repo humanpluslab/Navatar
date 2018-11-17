@@ -9,6 +9,7 @@ import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import com.navatar.common.PermissionRequestHandler;
 import com.navatar.di.ActivityScoped;
@@ -25,7 +26,7 @@ public class LocationPresenter implements LocationContract.Presenter {
     private PermissionRequestHandler permissionRequestHandler;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private LocationContract.View mLocationView;
+    //private LocationContract.View mLocationView;
 
     @Inject
     @Named("locationReqCode")
@@ -76,6 +77,7 @@ public class LocationPresenter implements LocationContract.Presenter {
 
     }
 
+
     private void handleResult(PermissionRequestHandler.PermissionRequestResult result) {
         LocationContract.View view = viewWeakReference.get();
         if (view != null) {
@@ -114,7 +116,7 @@ public class LocationPresenter implements LocationContract.Presenter {
 
     private void getLocation() {
         disposables.add(
-            interactor.getLocation()
+            interactor.getLocationUpdates()
             .subscribe(
                 location -> {
                     LocationContract.View view = viewWeakReference.get();
@@ -150,12 +152,12 @@ public class LocationPresenter implements LocationContract.Presenter {
 
     @Override
     public void takeView(LocationContract.View view) {
-        mLocationView = view;
+       // mLocationView = view;
     }
 
     @Override
     public void dropView() {
-        mLocationView = null;
+        //mLocationView = null;
     }
 
 

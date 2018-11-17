@@ -6,70 +6,67 @@ import android.support.annotation.NonNull;
 import android.support.annotation.RequiresPermission;
 import android.util.Log;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationListener;
-import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationRequest;
 
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
-import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 import com.navatar.location.LocationProvider;
 import com.navatar.location.model.Location;
-import com.navatar.location.model.NoLocationAvailableException;
+import com.patloew.rxlocation.RxLocation;
 
-public class AndroidLocationProvider implements LocationProvider, LocationListener {
+import java.util.concurrent.TimeUnit;
+
+public class AndroidLocationProvider implements LocationProvider {
 
     private final String TAG = AndroidLocationProvider.class.getSimpleName();
 
-    private final FusedLocationProviderClient fusedLocationProviderClient;
-
-    private android.location.Location lastKnownLocation;
+    private final RxLocation rxLocation;
+    private final LocationRequest locationRequest;
 
 
     @Inject
     public AndroidLocationProvider(Context context) {
-        this.fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(context);
+        rxLocation = new RxLocation(context);
+        rxLocation.setDefaultTimeout(15, TimeUnit.SECONDS);
+        locationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(5000);
+    }
+
+    @NonNull
+    @Override
+    public Observable<Location> getLocationUpdates() {
+
+        return rxLocation
+                .settings()
+                .checkAndHandleResolution(locationRequest)
+                .flatMapObservable(this::getLocationObservable)
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
     @RequiresPermission(Manifest.permission.ACCESS_FINE_LOCATION)
     @SuppressWarnings({"MissingPermission"})
-    @NonNull
-    @Override
-    public Single<Location> getLocation() {
+    private Observable<Location> getLocationObservable(boolean success) {
+        if(success) {
+            return rxLocation.location().updates(locationRequest)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .flatMap(this::convertLocation);
 
-        return Single.create(
-                emitter -> fusedLocationProviderClient
-                        .getLastLocation()
-                        .addOnSuccessListener(location -> {
-                                    if (location != null) {
-                                        emitter.onSuccess(Location.create(location.getLatitude(),
-                                                location.getLongitude()));
-                                    } else {
-                                        Log.w(TAG, "Are you using an emulator? " +
-                                                "Make sure you send a dummy location " +
-                                                "to the emulator through the emulator settings");
-                                        emitter.onError(new NoLocationAvailableException());
-                                    }
-                                }
-                        )
-        );
-
+        } else {
+            return rxLocation.location().lastLocation()
+                    .flatMapObservable(this::convertLocation);
+        }
     }
 
-    @NonNull
-    @Override
-    public Observable<Location> getLocationChanged() {
-
-
-        return Observable.empty();
+    private Observable<Location> convertLocation(android.location.Location location) {
+        return Observable.just(Location.create(location.getLatitude(), location.getLongitude()));
     }
 
-    @Override
-    public void onLocationChanged(android.location.Location location) {
-        Log.d(TAG, "onLocationChanged: hit");
-        lastKnownLocation = location;
 
-    }
 
 }

@@ -106,6 +106,10 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$rootProject.daggerVersion"
     annotationProcessor "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
 
+    // Navigation Architecture
+    //implementation "android.arch.navigation:navigation-fragment-ktx:1.0.0-alpha05"
+    //implementation "android.arch.navigation:navigation-ui-ktx:1.0.0-alpha05"
+
     // autovalue
     implementation "com.google.auto.value:auto-value-annotations:$rootProject.autovalueVersion"
     annotationProcessor "com.google.auto.value:auto-value:$rootProject.autovalueVersion"
