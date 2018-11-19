@@ -5,27 +5,15 @@ import android.support.annotation.NonNull;
 import com.navatar.data.Map;
 
 import java.util.List;
+import java.util.Optional;
+
+import io.reactivex.Flowable;
 
 public interface MapsDataSource {
 
-    interface LoadMapsCallback {
+    Flowable<List<Map>> getMaps();
 
-        void onMapsLoaded(List<Map> tasks);
-
-        void onDataNotAvailable();
-    }
-
-    interface GetMapCallback {
-
-        void onMapLoaded(Map task);
-
-        void onDataNotAvailable();
-    }
-
-
-    void getMaps(@NonNull LoadMapsCallback callback);
-
-    void getMap(@NonNull String mapId, @NonNull GetMapCallback callback);
+    Flowable<Optional<Map>> getMap(@NonNull String mapId);
 
     void activateMap(@NonNull Map map);
 
