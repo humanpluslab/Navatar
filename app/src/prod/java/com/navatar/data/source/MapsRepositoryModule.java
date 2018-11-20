@@ -2,10 +2,8 @@ package com.navatar.data.source;
 
 import com.navatar.data.source.remote.MapsRemoteDataSource;
 import com.navatar.data.source.local.MapsLocalDataSource;
-import com.navatar.util.AppExecutors;
-import com.navatar.util.DiskIOThreadExecutor;
-
-import java.util.concurrent.Executors;
+import com.navatar.util.schedulers.BaseSchedulerProvider;
+import com.navatar.util.schedulers.ImmediateSchedulerProvider;
 
 import javax.inject.Singleton;
 
@@ -15,8 +13,6 @@ import dagger.Provides;
 
 @Module
 public abstract class MapsRepositoryModule {
-
-    private static final int THREAD_COUNT = 3;
 
     @Singleton
     @Binds
@@ -28,11 +24,4 @@ public abstract class MapsRepositoryModule {
     @Remote
     abstract MapsDataSource provideMapsRemoteDataSource(MapsRemoteDataSource dataSource);
 
-    @Singleton
-    @Provides
-    static AppExecutors provideAppExecutors() {
-        return new AppExecutors(new DiskIOThreadExecutor(),
-                Executors.newFixedThreadPool(THREAD_COUNT),
-                new AppExecutors.MainThreadExecutor());
-    }
 }

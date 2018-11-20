@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 import com.navatar.data.Map;
 
 import java.util.List;
-import java.util.Optional;
+import com.google.common.base.Optional;
 
 import io.reactivex.Flowable;
 
@@ -20,5 +20,7 @@ public interface MapsDataSource {
     void activateMap(@NonNull String mapId);
 
     void refreshMaps();
+
+    void saveMap(@NonNull Map task);
 
 }

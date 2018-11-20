@@ -1,13 +1,25 @@
 package com.navatar.data.source.local;
 
+import android.content.Context;
+import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 
 import com.navatar.data.Map;
 import com.navatar.data.source.MapsDataSource;
-import com.navatar.util.AppExecutors;
+import com.navatar.util.schedulers.BaseSchedulerProvider;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+import com.google.common.base.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -15,63 +27,58 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class MapsLocalDataSource implements MapsDataSource {
 
-    private final AppExecutors mAppExecutors;
+    private AssetManager assetManager;
+
 
     @Inject
-    public MapsLocalDataSource(@NonNull AppExecutors executors) {
-        mAppExecutors = executors;
+    public MapsLocalDataSource(@NonNull Context context,
+                               @NonNull BaseSchedulerProvider schedulerProvider) {
+        checkNotNull(context, "context cannot be null");
+        checkNotNull(schedulerProvider, "scheduleProvider cannot be null");
+        assetManager = context.getAssets();
     }
 
-    /**
-     * Note: {@link LoadMapsCallback#onDataNotAvailable()} is fired if the database doesn't exist
-     * or the table is empty.
-     */
     @Override
-    public void getMaps(@NonNull final LoadMapsCallback callback) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
+    public Flowable<List<Map>> getMaps() {
+        // Get campus files
+        try {
+            String[] campusFiles = assetManager.list("maps");
 
-                mAppExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                });
-            }
-        };
+            Observable observable = Observable.fromIterable(Arrays.asList(campusFiles));
 
-        mAppExecutors.diskIO().execute(runnable);
+            return observable
+                        .map(n -> new Map((String)n, (String)n))
+                        .toList()
+                        .toFlowable();
+
+        } catch (IOException e) {
+            return Flowable.empty();
+        }
     }
 
-    /**
-     * Note: {@link GetTaskCallback#onDataNotAvailable()} is fired if the {@link Task} isn't
-     * found.
-     */
     @Override
-    public void getMap(@NonNull final String mapId, @NonNull final GetMapCallback callback) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                mAppExecutors.mainThread().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                    }
-                });
-            }
-        };
+    public Flowable<Optional<Map>> getMap(@NonNull String mapId) {
+        return Observable.just(Optional.of(new Map("",""))).toFlowable(BackpressureStrategy.LATEST);
+    }
 
-        mAppExecutors.diskIO().execute(runnable);
+    @Override
+    public void saveMap(Map map) {
+
+    }
+
+    @Override
+    public void activateMap(@NonNull Map map) {
+        activateMap(map.getId());
+    }
+
+    @Override
+    public void activateMap(@NonNull String mapId) {
+
     }
 
     @Override
     public void refreshMaps() {
 
     }
-
-    @Override
-    public void activateMap(@NonNull Map map) {}
-
-    @Override
-    public void activateMap(@NonNull String mapId) {}
 
 }

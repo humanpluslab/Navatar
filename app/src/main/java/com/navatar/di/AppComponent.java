@@ -4,6 +4,7 @@ import android.app.Application;
 import com.navatar.NavatarApplication;
 import com.navatar.data.source.MapsRepository;
 import com.navatar.data.source.MapsRepositoryModule;
+import com.navatar.util.schedulers.SchedulerModule;
 
 import dagger.BindsInstance;
 import dagger.Component;
@@ -24,6 +25,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 @Component(modules = {
+        SchedulerModule.class,
         MapsRepositoryModule.class,
         ApplicationModule.class,
         ActivityBindingModule.class,
