@@ -6,11 +6,15 @@ import android.support.annotation.Nullable;
 import com.google.common.base.Objects;
 import com.google.common.base.Strings;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Map {
 
     public Map(String id, String name) {
         mId = id;
         mName = name;
+        mBuildings = new ArrayList<String>();
     }
 
     @NonNull
@@ -19,6 +23,8 @@ public class Map {
     @Nullable
     private final String mName;
 
+    @NonNull
+    private final List<String> mBuildings;
 
     @NonNull
     public String getId() {
@@ -30,6 +36,9 @@ public class Map {
         return mName;
     }
 
+    public List<String> getBuildings() {
+        return mBuildings;
+    }
 
     public boolean isEmpty() {
         return Strings.isNullOrEmpty(mName);
@@ -53,5 +62,7 @@ public class Map {
     public String toString() {
         return "Map with name" + mName;
     }
+
+
 
 }

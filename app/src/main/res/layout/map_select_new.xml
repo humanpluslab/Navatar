@@ -16,5 +16,5 @@
         style="android:spinnerStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:prompt="@string/mapSpinerLabel" />
+        android:prompt="@string/mapSpinnerLabel" />
 </LinearLayout>

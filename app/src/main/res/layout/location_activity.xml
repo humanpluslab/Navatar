@@ -1,99 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  xmlns:tools="http://schemas.android.com/tools"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  tools:context="com.navatar.location.LocationActivity">
-
-
-  <android.support.constraint.ConstraintLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.navatar.location.LocationActivity"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-      android:id="@+id/softDenyTextView"
-      android:text="@string/softDeny"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      tools:visibility="visible"
-      android:textColor="@color/warningSoft"
-      app:layout_constraintTop_toTopOf="parent"
-      style="@style/deniedWarning"/>
-
-    <TextView
-      android:id="@+id/hardDenyTextView"
-      android:text="@string/hardDeny"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      tools:visibility="visible"
-      android:textColor="@color/warningHard"
-      app:layout_constraintTop_toTopOf="parent"
-      style="@style/deniedWarning" />
-
-    <TextView
-      android:id="@+id/header"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="48dp"
-      android:text="@string/location_header"
-      app:layout_constraintEnd_toEndOf="parent"
-      app:layout_constraintStart_toStartOf="parent"
-      app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-      android:id="@+id/latitudeLabel"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
-      android:text="@string/latitude"
-      app:layout_constraintStart_toStartOf="@+id/header"
-      app:layout_constraintTop_toBottomOf="@+id/header" />
-
-    <TextView
-      android:id="@+id/latitudeTextView"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      app:layout_constraintBottom_toBottomOf="@+id/latitudeLabel"
-      app:layout_constraintEnd_toEndOf="@+id/header"
-      app:layout_constraintTop_toTopOf="@+id/latitudeLabel"
-      tools:text="43.23214" />
-
-    <TextView
-      android:id="@+id/longitudeLabel"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginTop="16dp"
-      android:text="@string/longitude"
-      app:layout_constraintStart_toStartOf="@+id/header"
-      app:layout_constraintTop_toBottomOf="@+id/latitudeLabel" />
+    android:padding="25dp">
 
 
-    <TextView
-      android:id="@+id/longitudeTextView"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      app:layout_constraintBottom_toBottomOf="@+id/longitudeLabel"
-      app:layout_constraintEnd_toEndOf="@+id/header"
-      app:layout_constraintTop_toTopOf="@+id/longitudeLabel"
-      tools:text="3.131232" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvmapselect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="@string/mapSelectionDescription"
+            android:text="@string/mapSpinnerLabel"
+            android:textSize="25dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Spinner
+            android:id="@+id/mapSpinner"
+            style="android:spinnerStyle"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:prompt="@string/mapSpinnerLabel"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvmapselect" />
 
 
-  </android.support.constraint.ConstraintLayout>
-  <TextView
-      android:id="@+id/tvcampusselect"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:contentDescription="Select campus from the dropdown below or use the find my location button. To repeat a previous route, use the previous navigations button."
-      android:text="Select Campus"
-      android:textSize="25dp"/>
 
-  <Spinner
-      android:id="@+id/campusSpinner"
-      style="android:spinnerStyle"
-      android:layout_width="fill_parent"
-      android:layout_height="wrap_content" />
+        <TextView
+            android:id="@+id/header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/locationHeader"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mapSpinner" />
+
+        <TextView
+            android:id="@+id/latitudeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/latitude"
+            app:layout_constraintStart_toStartOf="@+id/header"
+            app:layout_constraintTop_toBottomOf="@+id/header" />
+
+        <TextView
+            android:id="@+id/latitudeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/latitudeLabel"
+            app:layout_constraintEnd_toEndOf="@+id/header"
+            app:layout_constraintTop_toTopOf="@+id/latitudeLabel"
+            tools:text="43.23214" />
+
+        <TextView
+            android:id="@+id/longitudeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/longitude"
+            app:layout_constraintStart_toStartOf="@+id/header"
+            app:layout_constraintTop_toBottomOf="@+id/latitudeLabel" />
+
+
+        <TextView
+            android:id="@+id/longitudeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="@+id/longitudeLabel"
+            app:layout_constraintEnd_toEndOf="@+id/header"
+            app:layout_constraintTop_toTopOf="@+id/longitudeLabel"
+            tools:text="3.131232" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="fill_parent"
+            android:layout_height="60dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="5dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.25"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/longitudeTextView">
+
+            <com.google.android.gms.common.SignInButton
+                android:id="@+id/sign_in_button"
+                android:layout_width="178dp"
+                android:layout_height="60dp" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/navHistoryBut"
+            style="@style/Widget.AppCompat.Button"
+            android:layout_width="178dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="8dp"
+            android:text="@string/navHistoryButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    </android.support.constraint.ConstraintLayout>
+
 
 </android.support.constraint.ConstraintLayout>

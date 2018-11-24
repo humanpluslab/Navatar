@@ -2,6 +2,9 @@ package com.navatar.location;
 
 import com.navatar.BasePresenter;
 import com.navatar.BaseView;
+import com.navatar.data.Map;
+
+import java.util.List;
 
 public interface LocationContract {
 
@@ -21,6 +24,8 @@ public interface LocationContract {
 
         void hidePermissionDeniedWarning();
 
+        void addMaps(List<Map> maps);
+
     }
 
     interface Presenter extends BasePresenter<View> {
@@ -32,6 +37,8 @@ public interface LocationContract {
         void loadData();
 
         void cleanup();
+
+        void onMapSelected(String mapName);
 
     }
 

@@ -47,7 +47,8 @@ public class MapsLocalDataSource implements MapsDataSource {
             Observable observable = Observable.fromIterable(Arrays.asList(campusFiles));
 
             return observable
-                        .map(n -> new Map((String)n, (String)n))
+                        .filter(n -> !((String)n).endsWith(".json"))
+                        .map(n -> new Map((String)n, ((String)n).replace('_', ' ')))
                         .toList()
                         .toFlowable();
 

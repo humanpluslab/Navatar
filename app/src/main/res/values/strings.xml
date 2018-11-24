@@ -2,7 +2,6 @@
 <resources>
     <string name="app_name">Navatar</string>
     <string name="modelsDirectory">/sdcard/Navatar/models/</string>
-    <string name="taskSpinerLabel">Select a task:</string>
     <string name="buildingSpinerLabel">Select a building:</string>
     <string name="userNameEditTextLabel">Type user name:</string>
     <string name="selectBuildingButtonLabel">Confirm Selected Building</string>
@@ -19,8 +18,9 @@
     <string name="map_service_name">Map Service</string>
     <string name="sensing_service_name">Sensing Service</string>
     <string name="pf_service_name">PF Service</string>
-    <string name="mapSpinerLabel">Map Selection</string>
-    <string name="title_activity_navigation_history">NavigationHistoryActivity</string>
+    <string name="mapSpinnerLabel">Select a Map:</string>
+    <string name="mapSelectionDescription">Select a Map to start navigating</string>
+    <string name="title_activity_navigation_history">Navigation History</string>
     <string name="welcome_to_navatar">Welcome to Navatar</string>
     <string name="cancelled">Cancelled</string>
     <string name="nav_service_name">Navigation Service</string>
@@ -31,10 +31,11 @@
     <string name="settings">Settings</string>
     <string name="longitude">Longitude</string>
     <string name="latitude">Latitude</string>
-    <string name="location_header">Here is your current location</string>
+    <string name="locationHeader">Your Current Location</string>
     <string name="softDeny">Click here to enable location permissions.</string>
     <string name="hardDeny">You have previously denied location permissions. Click here to go to settings and enable them.</string>
     <string name="error_accessing_location">There was an error retrieving your location.</string>
     <string name="error_generic">An unexpected error has occurred.</string>
+    <string name="navHistoryButton">Navigation History</string>
 
 </resources>

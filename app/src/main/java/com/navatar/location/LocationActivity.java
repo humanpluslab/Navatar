@@ -14,16 +14,25 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.journeyapps.barcodescanner.BarcodeView;
 import com.navatar.R;
 import com.navatar.common.details.PermissionsRequestResultDispatcher;
+import com.navatar.data.Map;
 import com.navatar.location.model.Location;
+import com.navatar.maps.MapsFragment;
 import com.navatar.util.ActivityUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -37,6 +46,8 @@ import dagger.Lazy;
 import dagger.android.AndroidInjection;
 import dagger.android.support.DaggerAppCompatActivity;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class LocationActivity extends DaggerAppCompatActivity
         implements LocationContract.View {
 
@@ -45,25 +56,11 @@ public class LocationActivity extends DaggerAppCompatActivity
     @BindView(R.id.latitudeTextView)
     TextView latitudeTextView;
 
+    @BindView(R.id.mapSpinner)
+    Spinner mapSpinner;
+
     @BindView(R.id.longitudeTextView)
     TextView longitudeTextView;
-
-    @BindView(R.id.softDenyTextView)
-    TextView softDeniedWarningTextView;
-
-    @BindView(R.id.hardDenyTextView)
-    TextView hardDeniedWarningTextView;
-
-    @BindViews({R.id.softDenyTextView, R.id.hardDenyTextView})
-    List<TextView> deniedTextViews;
-
-    //@BindView(R.id.zxing_barcode_surface)
-    //BarcodeView barcodeView;
-
-    private static final ButterKnife.Action<View> VISIBLE =
-            (v, index) -> v.setVisibility(View.VISIBLE);
-    private static final ButterKnife.Action<View> GONE =
-            (v, index) -> v.setVisibility(View.GONE);
 
     @Inject
     LocationContract.Presenter presenter;
@@ -79,6 +76,8 @@ public class LocationActivity extends DaggerAppCompatActivity
     @Named("cameraReqCode")
     Integer cameraRequestCode;
 
+    private MapListAdapter mListAdapter;
+
 
     public static Intent newIntent(Context context) {
         Intent i = new Intent(context, LocationActivity.class);
@@ -93,8 +92,27 @@ public class LocationActivity extends DaggerAppCompatActivity
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.location_activity);
-
         ButterKnife.bind(this);
+    }
+
+
+    @Override
+    public void addMaps(List<Map> maps) {
+
+        mListAdapter = new MapListAdapter(maps);
+
+        mapSpinner.setAdapter(mListAdapter);
+        mapSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                presenter.onMapSelected(mapSpinner.getSelectedItem().toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
     }
 
     @Override
@@ -127,36 +145,20 @@ public class LocationActivity extends DaggerAppCompatActivity
 
     @Override
     public void showSoftDenied() {
-        ButterKnife.apply(softDeniedWarningTextView, VISIBLE);
-        ButterKnife.apply(hardDeniedWarningTextView, GONE);
+
     }
 
     @Override
     public void showHardDenied() {
-        ButterKnife.apply(hardDeniedWarningTextView, VISIBLE);
-        ButterKnife.apply(softDeniedWarningTextView, GONE);
+
     }
 
 
     @Override
     public void hidePermissionDeniedWarning() {
-        ButterKnife.apply(deniedTextViews, GONE);
+
     }
 
-
-    @OnClick(R.id.softDenyTextView)
-    void softDenyTextViewClicked(View view) {
-        presenter.loadData();
-    }
-
-    @OnClick(R.id.hardDenyTextView)
-    void hardDenyTextViewClicked(View view) {
-        Intent intent = new Intent();
-        intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-        Uri uri = Uri.fromParts("package", getPackageName(), null);
-        intent.setData(uri);
-        startActivity(intent);
-    }
 
     @Override
     protected void onDestroy() {
@@ -179,6 +181,51 @@ public class LocationActivity extends DaggerAppCompatActivity
             }
         } else {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    private static class MapListAdapter extends BaseAdapter {
+
+        private List<Map> mMaps;
+
+        public MapListAdapter(List<Map> maps) {
+            setList(maps);
+        }
+
+        private void setList(List<Map> maps) {
+            mMaps = checkNotNull(maps);
+        }
+
+        @Override
+        public int getCount() {
+            return mMaps.size();
+        }
+
+        @Override
+        public Map getItem(int i) {
+            return mMaps.get(i);
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return i;
+        }
+
+        @Override
+        public View getView(int i, View view, ViewGroup viewGroup) {
+
+            View rowView = view;
+            if (rowView == null) {
+                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
+                rowView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, viewGroup, false);
+            }
+
+            final Map map = getItem(i);
+
+            ((TextView)rowView).setText(map.getName());
+
+            return rowView;
+
         }
     }
 
