@@ -123,6 +123,9 @@ dependencies {
     // rxlocation
     implementation 'com.patloew.rxlocation:rxlocation:1.0.5'
 
+    // rx permissions
+    implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
+
     // About library for displaying info on Open Source Libraries
     implementation('com.mikepenz:aboutlibraries:6.0.9@aar') {
         transitive = true

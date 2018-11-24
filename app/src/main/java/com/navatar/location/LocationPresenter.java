@@ -107,7 +107,7 @@ public class LocationPresenter implements LocationContract.Presenter {
 
     private void checkCameraPermissions() {
         if (!permissionRequestHandler.checkHasPermission(Manifest.permission.CAMERA)) {
-            disposables.add(permissionRequestHandler.requestPermission(Manifest.permission.CAMERA, cameraRequestCode)
+            disposables.add(permissionRequestHandler.requestPermissions(Manifest.permission.CAMERA, cameraRequestCode)
                     .subscribe(
                             this::handleCameraResult,
                             throwable -> Log.e(TAG, "An error occurred on the permission request " +
