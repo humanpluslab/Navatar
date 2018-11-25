@@ -1,11 +1,7 @@
 package com.navatar.di;
 
-import android.location.Location;
-
-import com.navatar.location.LocationActivity;
-import com.navatar.location.LocationModule;
-import com.navatar.maps.MapsActivity;
-import com.navatar.maps.MapsModule;
+import com.navatar.main.MainModule;
+import com.navatar.main.MainActivity;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -19,11 +15,8 @@ import dagger.android.ContributesAndroidInjector;
  */
 @Module
 public abstract class ActivityBindingModule {
-    @ActivityScoped
-    @ContributesAndroidInjector(modules = MapsModule.class)
-    abstract MapsActivity mapsActivity();
 
     @ActivityScoped
-    @ContributesAndroidInjector(modules = LocationModule.class)
-    abstract LocationActivity locationActivity();
+    @ContributesAndroidInjector(modules = MainModule.class)
+    abstract MainActivity mainActivity();
 }

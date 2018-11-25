@@ -1,5 +1,6 @@
 package com.navatar.main;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.navatar.R;
 import com.navatar.common.details.PermissionsRequestResultDispatcher;
+import com.navatar.common.details.RuntimePermissionRequestHandler;
 import com.navatar.data.Map;
 import com.navatar.di.ActivityScoped;
 
@@ -27,6 +29,7 @@ import javax.inject.Named;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.support.DaggerFragment;
+import dagger.android.AndroidInjection;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -51,7 +54,6 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
 
     private MapListAdapter mListAdapter;
 
-
     @Inject
     public MainFragment() {
         // Requires empty public constructor
@@ -60,7 +62,12 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mPresenter.setPermissionHandler(new RuntimePermissionRequestHandler(this));
+    }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
     }
 
     @Override
@@ -91,7 +98,6 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
 
         ButterKnife.bind(this, root);
 
-
         autoLocateButton.setOnClickListener(v-> {
 
         });
@@ -99,7 +105,6 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
         getQrsCodeButton.setOnClickListener(v -> {
             //new IntentIntegrator(self).initiateScan();
         });
-
 
         return root;
     }
@@ -114,7 +119,7 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
         mapSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                presenter.onMapSelected(mapSpinner.getSelectedItem().toString());
+                mPresenter.onMapSelected(mapSpinner.getSelectedItem().toString());
             }
 
             @Override

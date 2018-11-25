@@ -1,9 +1,10 @@
 package com.navatar.data.source;
 
-import com.navatar.data.source.remote.FakeMapsRemoteDataSource;
+import com.navatar.data.FakeMapsRemoteDataSource;
 import com.navatar.data.source.local.MapsLocalDataSource;
 import com.navatar.util.schedulers.BaseSchedulerProvider;
-import com.navatar.util.schedulers.ImmediateSchedulerProvider;import javax.inject.Singleton;
+import com.navatar.util.schedulers.ImmediateSchedulerProvider;
+import javax.inject.Singleton;
 
 import dagger.Binds;
 import dagger.Module;

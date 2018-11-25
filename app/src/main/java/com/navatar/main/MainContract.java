@@ -2,6 +2,7 @@ package com.navatar.main;
 
 import com.navatar.BasePresenter;
 import com.navatar.BaseView;
+import com.navatar.common.PermissionRequestHandler;
 import com.navatar.data.Map;
 
 import java.util.List;
@@ -37,6 +38,8 @@ public interface MainContract {
         void cleanup();
 
         void onMapSelected(String mapName);
+
+        void setPermissionHandler(PermissionRequestHandler handler);
 
     }
 

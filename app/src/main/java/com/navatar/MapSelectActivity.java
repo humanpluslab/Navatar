@@ -213,7 +213,7 @@ public class MapSelectActivity extends Activity {
 
   private void setupCampuses() {
     campusNames = new ArrayList<String>();
-    campusSpinner = (Spinner)findViewById(R.id.campusSpinner);
+    campusSpinner = (Spinner)findViewById(R.id.mapSpinner);
     ArrayAdapter<String> campusArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item,
             new ArrayList<String>());
     campusArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

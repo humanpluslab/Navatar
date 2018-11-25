@@ -126,11 +126,6 @@ dependencies {
     // rx permissions
     implementation 'com.github.tbruyelle:rxpermissions:0.10.2'
 
-    // About library for displaying info on Open Source Libraries
-    implementation('com.mikepenz:aboutlibraries:6.0.9@aar') {
-        transitive = true
-    }
-
     // Dependencies for local unit tests
     testImplementation "junit:junit:$rootProject.ext.junitVersion"
     testImplementation "org.mockito:mockito-all:$rootProject.ext.mockitoVersion"
@@ -162,5 +157,4 @@ dependencies {
     androidTestImplementation "com.android.support:design:$rootProject.supportLibraryVersion"
     androidTestImplementation 'com.google.code.findbugs:jsr305:3.0.1'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.android.gms:play-services-maps:16.0.0'
 }

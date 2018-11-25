@@ -2,43 +2,38 @@ package com.navatar.data;
 
 import android.support.annotation.NonNull;
 
+import com.google.common.base.Optional;
 import com.navatar.data.source.MapsDataSource;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.inject.Inject;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.Observable;
+
 public class FakeMapsRemoteDataSource implements MapsDataSource {
+
     @Inject
     public FakeMapsRemoteDataSource() {
 
     }
 
-    /**
-     * Note: {@link LoadMapsCallback#onDataNotAvailable()} is fired if the database doesn't exist
-     * or the table is empty.
-     */
     @Override
-    public void getMaps(@NonNull final LoadMapsCallback callback) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        };
-
+    public Flowable<List<Map>> getMaps() {
+        return Flowable.empty();
     }
 
-    /**
-     * Note: {@link GetTaskCallback#onDataNotAvailable()} is fired if the {@link Task} isn't
-     * found.
-     */
     @Override
-    public void getMap(@NonNull final String mapId, @NonNull final GetMapCallback callback) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
+    public Flowable<Optional<Map>> getMap(@NonNull String mapId) {
+        return Flowable.empty();
+    }
 
-            }
-        };
+    @Override
+    public void saveMap(Map map) {
 
     }
 
@@ -48,9 +43,15 @@ public class FakeMapsRemoteDataSource implements MapsDataSource {
     }
 
     @Override
-    public void activateMap(@NonNull Map map) {}
+    public void activateMap(String map) {
+
+    }
 
     @Override
-    public void activateMap(@NonNull String mapId) {}
+    public void activateMap(@NonNull Map map) {
+        activateMap(map.getId());
+    }
+
+
 
 }

@@ -24,9 +24,9 @@
             android:name=".NavigationSelectionActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".location.LocationActivity"
+            android:name=".main.MainActivity"
             android:screenOrientation="portrait"
-            >
+            android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

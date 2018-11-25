@@ -1,6 +1,5 @@
 package com.navatar.common.details;
 
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -10,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.navatar.common.PermissionRequestHandler;
+import com.navatar.main.MainFragment;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -17,6 +17,8 @@ import java.lang.ref.WeakReference;
 
 import io.reactivex.Observable;
 import io.reactivex.subjects.AsyncSubject;
+
+import javax.inject.Inject;
 
 public class RuntimePermissionRequestHandler implements PermissionRequestHandler {
 
@@ -28,7 +30,7 @@ public class RuntimePermissionRequestHandler implements PermissionRequestHandler
     private final RxPermissions rxPermissions;
 
     public RuntimePermissionRequestHandler(Fragment fragment) {
-        this.fragmentWeakReference = new WeakReference<>(fragment);
+        this.fragmentWeakReference = new WeakReference<Fragment>(fragment);
         this.rxPermissions = new RxPermissions(fragment);
     }
     

@@ -3,27 +3,19 @@ package com.navatar.main;
 import com.navatar.common.PermissionRequestHandler;
 import com.navatar.common.details.RuntimePermissionRequestHandler;
 import com.navatar.di.ActivityScoped;
-import com.navatar.location.GeofencingProvider;
-import com.navatar.location.LocationActivity;
-import com.navatar.location.LocationContract;
-import com.navatar.location.LocationPresenter;
-import com.navatar.location.LocationProvider;
-import com.navatar.location.details.AndroidGeofencingProvider;
-import com.navatar.location.details.AndroidLocationProvider;
-import com.navatar.location.details.QRCodeScanner;
+import com.navatar.di.FragmentScoped;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Named;
 
 import dagger.Binds;
 import dagger.Module;
 import dagger.Provides;
-import dagger.multibindings.ElementsIntoSet;
+import dagger.android.ContributesAndroidInjector;
 
 /**
  * This is a Dagger module. We use this to pass in the View dependency to the
@@ -55,32 +47,12 @@ public abstract class MainModule {
                 ));
     }
 
-    @Binds
-    abstract MainContract.View provideView(MainFragment fragment);
+    @FragmentScoped
+    @ContributesAndroidInjector
+    abstract MainFragment mainFragment();
 
+    @ActivityScoped
     @Binds
     abstract MainContract.Presenter providePresenter(MainPresenter presenter);
-
-    @Binds
-    abstract LocationProvider provideLocationProvider(AndroidLocationProvider locationProvider);
-
-    @Binds
-    abstract GeofencingProvider provideGeofencingProvider(AndroidGeofencingProvider geofencingProvider);
-
-    @ActivityScoped
-    @Binds
-    abstract PermissionRequestHandler bindPermissionRequestHandler(RuntimePermissionRequestHandler runtimePermissionRequestHandler);
-
-    @ActivityScoped
-    @Provides
-    static RuntimePermissionRequestHandler providePermissionRequestHandler(MainFragment fragment) {
-        return new RuntimePermissionRequestHandler(fragment);
-    }
-
-    @Provides
-    @ElementsIntoSet
-    static Set<LocationProvider> provideLocationProviders(AndroidLocationProvider alp, QRCodeScanner qrs) {
-        return new HashSet<LocationProvider>(Arrays.asList(alp, qrs));
-    }
 
 }
