@@ -8,15 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.navatar.R;
-import com.navatar.common.details.PermissionsRequestResultDispatcher;
 import com.navatar.common.details.RuntimePermissionRequestHandler;
 import com.navatar.data.Map;
 import com.navatar.di.ActivityScoped;
@@ -29,9 +27,6 @@ import javax.inject.Named;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import dagger.android.support.DaggerFragment;
-import dagger.android.AndroidInjection;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 @ActivityScoped
 public class MainFragment extends DaggerFragment implements MainContract.View {
@@ -99,11 +94,11 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
         ButterKnife.bind(this, root);
 
         autoLocateButton.setOnClickListener(v-> {
-
+            // mPresenter
         });
 
         getQrsCodeButton.setOnClickListener(v -> {
-            //new IntentIntegrator(self).initiateScan();
+            // new IntentIntegrator(self).initiateScan();
         });
 
         return root;
@@ -113,13 +108,15 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
     @Override
     public void addMaps(List<Map> maps) {
 
-        mListAdapter = new MapListAdapter(maps);
-
+        mListAdapter = new MapListAdapter(getContext(), maps);
         mapSpinner.setAdapter(mListAdapter);
+        mapSpinner.setSelection(mListAdapter.getCount());
         mapSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.onMapSelected(mapSpinner.getSelectedItem().toString());
+                if (position < mListAdapter.getCount()) {
+                    mPresenter.onMapSelected(mapSpinner.getSelectedItem().toString());
+                }
             }
 
             @Override
@@ -156,51 +153,43 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
 
     }
 
+    private static class MapListAdapter extends ArrayAdapter {
 
-    private static class MapListAdapter extends BaseAdapter {
-
-        private List<Map> mMaps;
-
-        public MapListAdapter(List<Map> maps) {
-            setList(maps);
-        }
-
-        private void setList(List<Map> maps) {
-            mMaps = checkNotNull(maps);
+        public MapListAdapter(Context context, List<Map> maps) {
+            super(context, android.R.layout.simple_spinner_item, maps);
+            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         }
 
         @Override
         public int getCount() {
-            return mMaps.size();
+            return super.getCount();
         }
 
         @Override
-        public Map getItem(int i) {
-            return mMaps.get(i);
-        }
-
-        @Override
-        public long getItemId(int i) {
-            return i;
-        }
-
-        @Override
-        public View getView(int i, View view, ViewGroup viewGroup) {
-
-            View rowView = view;
-            if (rowView == null) {
-                LayoutInflater inflater = LayoutInflater.from(viewGroup.getContext());
-                rowView = inflater.inflate(android.R.layout.simple_spinner_dropdown_item, viewGroup, false);
+        public boolean isEnabled(int position){
+            if(position >= getCount()) {
+                return false;
             }
+            return true;
+        }
 
-            if (i == 0) {
-                ((TextView)rowView).setText(R.string.mapSpinnerLabel);
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            View v = null;
+
+            if (position >= getCount()) {
+                v = super.getView(0, convertView, parent);
+                TextView tv = (TextView) v;
+                tv.setText("");
+                tv.setHint(R.string.mapSpinnerLabel);
             } else {
-                final Map map = getItem(i - 1);
-                ((TextView) rowView).setText(map.getName());
+                v = super.getView(position, convertView, parent);
             }
-            return rowView;
+            return v;
         }
+
+
     }
 
 }

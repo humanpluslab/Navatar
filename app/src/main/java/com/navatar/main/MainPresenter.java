@@ -8,6 +8,7 @@ import com.google.common.base.Optional;
 import com.navatar.common.PermissionRequestHandler;
 import com.navatar.data.Map;
 import com.navatar.data.source.MapsRepository;
+import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationInteractor;
 import com.navatar.location.model.NoLocationAvailableException;
 
@@ -26,7 +27,7 @@ public class MainPresenter implements MainContract.Presenter {
     private final LocationInteractor interactor;
     private PermissionRequestHandler permissionRequestHandler;
     private final CompositeDisposable disposables = new CompositeDisposable();
-
+    private final GeofencingProvider geofencingProvider;
     private final MapsRepository mMapRepository;
 
     @Nullable
@@ -41,9 +42,10 @@ public class MainPresenter implements MainContract.Presenter {
     Integer cameraRequestCode;
 
     @Inject
-    public MainPresenter(LocationInteractor interactor, MapsRepository mapsRepository) {
+    public MainPresenter(LocationInteractor interactor, MapsRepository mapsRepository, GeofencingProvider geofencingProvider) {
         this.interactor = interactor;
         this.mMapRepository = mapsRepository;
+        this.geofencingProvider = geofencingProvider;
     }
 
     @Override
@@ -58,17 +60,24 @@ public class MainPresenter implements MainContract.Presenter {
         disposables.clear();
 
         disposables.add(permissionRequestHandler.requestPermissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA)
-                .subscribe(
-                        this::handlePermissionsResult,
-                        throwable -> Log.e(TAG, "An error occurred getting permissions", throwable)
-                ));
+            .subscribe(
+                this::handlePermissionsResult,
+                throwable -> Log.e(TAG, "An error occurred getting permissions", throwable)
+            ));
 
         disposables.add(mMapRepository.getMaps()
-                .subscribe(
-                        this::handleMapsResult,
-                        throwable -> Log.e(TAG, "An error occurred map provider stream", throwable)
-                ));
+            .subscribe(
+                this::handleMapsResult,
+                throwable -> Log.e(TAG, "An error occurred map provider stream", throwable)
+            ));
 
+
+        disposables.add(mMapRepository.getGeofences()
+            .subscribe(
+
+
+
+            ));
     }
 
     @Override
@@ -81,8 +90,7 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     private void handleBuildingResult(Optional<Map> map) {
-        MainContract.View view = mMainView;
-        if (view != null && map.isPresent()){
+        if (mMainView != null && map.isPresent()){
             Map nMap = map.get();
             //view.addBuildingList(nMap.getBuildings());
         }
@@ -90,25 +98,23 @@ public class MainPresenter implements MainContract.Presenter {
 
 
     private void handleMapsResult(List<Map> maps) {
-        MainContract.View view = mMainView;
-        if (view != null) {
-            view.addMaps(maps);
+        if (mMainView != null) {
+            mMainView.addMaps(maps);
         }
     }
 
 
     private void handlePermissionsResult(PermissionRequestHandler.PermissionRequestResult result) {
-        MainContract.View view = mMainView;
-        if (view != null) {
+        if (mMainView != null) {
             switch (result) {
                 case GRANTED:
                     getLocation();
                     break;
                 case DENIED_SOFT:
-                    view.showSoftDenied();
+                    mMainView.showSoftDenied();
                     break;
                 case DENIED_HARD:
-                    view.showHardDenied();
+                    mMainView.showHardDenied();
                     break;
             }
         }
@@ -120,22 +126,20 @@ public class MainPresenter implements MainContract.Presenter {
             interactor.getLocationUpdates()
             .subscribe(
                 location -> {
-                    MainContract.View view = mMainView;
-                    if (view != null) {
+                    if (mMainView!= null) {
                         Log.e(TAG, "Lat: " + location.latitude() + " Long: " + location.longitude());
-                        view.hidePermissionDeniedWarning();
+                        mMainView.hidePermissionDeniedWarning();
                         //view.showLatitude(String.valueOf(location.latitude()));
                         //view.showLongitude(String.valueOf(location.longitude()));
                     }
                 },
                 throwable -> {
-                    MainContract.View view = mMainView;
-                    if (view != null) {
+                    if (mMainView != null) {
                         Log.e(TAG, "Error while getting location", throwable);
                         if (throwable instanceof NoLocationAvailableException) {
-                            view.showNoLocationAvailable();
+                            mMainView.showNoLocationAvailable();
                         } else {
-                            view.showGenericError();
+                            mMainView.showGenericError();
                         }
 
                     }

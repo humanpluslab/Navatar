@@ -11,16 +11,19 @@ import com.google.android.gms.location.LocationRequest;
 import javax.inject.Inject;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 
+import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationProvider;
+import com.navatar.location.model.GeofenceRequest;
 import com.navatar.location.model.Location;
 import com.patloew.rxlocation.RxLocation;
 
 import java.util.concurrent.TimeUnit;
 
-public class AndroidLocationProvider implements LocationProvider {
+public class AndroidLocationProvider implements LocationProvider, GeofencingProvider {
 
     private final String TAG = AndroidLocationProvider.class.getSimpleName();
 
@@ -67,6 +70,10 @@ public class AndroidLocationProvider implements LocationProvider {
         return Observable.just(Location.create(location.getLatitude(), location.getLongitude()));
     }
 
+    @Override
+    public Single<GeofenceRequest.Status> addGeoFenceRequest(GeofenceRequest request) {
+        return Single.never();
+    }
 
 
 }

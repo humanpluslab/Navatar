@@ -60,7 +60,7 @@ public class Map {
 
     @Override
     public String toString() {
-        return "Map with name" + mName;
+        return mName;
     }
 
 

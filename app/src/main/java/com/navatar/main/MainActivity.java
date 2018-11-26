@@ -20,15 +20,6 @@ public class MainActivity extends DaggerAppCompatActivity {
     @Inject
     Lazy<MainFragment> mainFragmentProvider;
 
-    public static Intent newIntent(Context context) {
-        Intent i = new Intent(context, MainActivity.class);
-        Bundle b = new Bundle();
-
-        i.putExtras(b);
-        return i;
-    }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
@@ -47,8 +38,6 @@ public class MainActivity extends DaggerAppCompatActivity {
                     getSupportFragmentManager(), mainFragment, R.id.contentFrame);
         }
 
-        // Load previously saved state, if available.
-        if (savedInstanceState != null) { }
     }
 
 

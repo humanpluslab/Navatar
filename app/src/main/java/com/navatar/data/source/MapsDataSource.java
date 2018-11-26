@@ -6,6 +6,7 @@ import com.navatar.data.Map;
 
 import java.util.List;
 import com.google.common.base.Optional;
+import com.navatar.location.model.Geofence;
 
 import io.reactivex.Flowable;
 
@@ -15,9 +16,7 @@ public interface MapsDataSource {
 
     Flowable<Optional<Map>> getMap(@NonNull String mapId);
 
-    void activateMap(@NonNull Map map);
-
-    void activateMap(@NonNull String mapId);
+    Flowable<List<Geofence>> getGeofences();
 
     void refreshMaps();
 

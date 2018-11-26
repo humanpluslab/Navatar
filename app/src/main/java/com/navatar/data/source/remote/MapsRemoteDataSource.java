@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import com.google.common.base.Optional;
 import com.navatar.data.Map;
 import com.navatar.data.source.MapsDataSource;
+import com.navatar.location.model.Geofence;
 
 import java.util.List;
 
@@ -36,6 +37,13 @@ public class MapsRemoteDataSource implements MapsDataSource {
         }
     }
 
+
+    @Override
+    public Flowable<List<Geofence>> getGeofences() {
+        return Flowable.empty();
+    }
+
+
     @Override
     public void refreshMaps() {
 
@@ -43,16 +51,6 @@ public class MapsRemoteDataSource implements MapsDataSource {
 
     @Override
     public void saveMap(Map map) {
-
-    }
-
-    @Override
-    public void activateMap(@NonNull Map map) {
-
-    }
-
-    @Override
-    public void activateMap(@NonNull String mapId) {
 
     }
 

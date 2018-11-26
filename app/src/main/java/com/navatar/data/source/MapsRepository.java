@@ -6,9 +6,11 @@ import android.support.annotation.VisibleForTesting;
 
 import com.navatar.data.Map;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import com.google.common.base.Optional;
+import com.navatar.location.model.Geofence;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -22,12 +24,14 @@ public class MapsRepository implements MapsDataSource {
 
     private final MapsDataSource mMapsRemoteDataSource;
     private final MapsDataSource mMapsLocalDataSource;
-    /**
-     * This variable has package local visibility so it can be accessed from tests.
-     */
+
     @VisibleForTesting
     @Nullable
     java.util.Map<String, com.navatar.data.Map> mCachedMaps;
+
+    @VisibleForTesting
+    @Nullable
+    List<Geofence> mCachedGeofences;
 
     /**
      * Marks the cache as invalid, to force an update the next time data is requested. This variable
@@ -92,6 +96,47 @@ public class MapsRepository implements MapsDataSource {
 
 
     @Override
+    public Flowable<List<Geofence>> getGeofences() {
+        if (mCachedGeofences != null && !mCacheIsDirty) {
+            return Flowable.fromIterable(mCachedGeofences).toList().toFlowable();
+        } else if (mCachedGeofences == null) {
+            mCachedGeofences = new ArrayList<>();
+        }
+
+        Flowable<List<Geofence>> remoteGeofences = getRemoteGeofences();
+
+        if (mCacheIsDirty) {
+            return remoteGeofences;
+        } else {
+            // Query the local storage if available. If not, query the network.
+            Flowable<List<Geofence>> localGeofences = getAndCacheLocalGeofences();
+            return Flowable.concat(localGeofences, remoteGeofences)
+                    .filter(maps -> !maps.isEmpty())
+                    .firstOrError()
+                    .toFlowable();
+        }
+
+    }
+
+
+    private Flowable<List<Geofence>> getAndCacheLocalGeofences() {
+        return mMapsLocalDataSource.getGeofences()
+                .flatMap(gfs -> Flowable.fromIterable(gfs)
+                        .doOnNext(gf -> mCachedGeofences.add(gf))
+                        .toList()
+                        .toFlowable());
+    }
+
+    private Flowable<List<Geofence>> getRemoteGeofences() {
+        return mMapsRemoteDataSource
+                .getGeofences()
+                .flatMap(gfs -> Flowable.fromIterable(gfs).doOnNext(gf -> {
+                    mCachedGeofences.add(gf);
+                }).toList().toFlowable())
+                .doOnComplete(() -> mCacheIsDirty = false);
+    }
+
+    @Override
     public Flowable<Optional<Map>> getMap(@NonNull String mapId) {
         checkNotNull(mapId);
 
@@ -128,22 +173,11 @@ public class MapsRepository implements MapsDataSource {
     }
 
     @Override
-    public void activateMap(@NonNull com.navatar.data.Map map) {
-
-    }
-
-    @Override
-    public void activateMap(@NonNull String mapId) {
-
-    }
-
-    @Override
     public void saveMap(@NonNull Map map) {
         checkNotNull(map);
         mMapsRemoteDataSource.saveMap(map);
         mMapsLocalDataSource.saveMap(map);
 
-        // Do in memory cache update to keep the app UI up to date
         if (mCachedMaps == null) {
             mCachedMaps = new LinkedHashMap<>();
         }

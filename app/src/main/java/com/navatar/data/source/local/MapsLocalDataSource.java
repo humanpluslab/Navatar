@@ -6,13 +6,22 @@ import android.support.annotation.NonNull;
 
 import com.navatar.data.Map;
 import com.navatar.data.source.MapsDataSource;
+import com.navatar.location.model.Geofence;
+import com.navatar.location.model.Point;
+import com.navatar.location.model.Polygon;
 import com.navatar.util.schedulers.BaseSchedulerProvider;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.base.Optional;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -27,15 +36,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Singleton
 public class MapsLocalDataSource implements MapsDataSource {
 
-    private AssetManager assetManager;
+    private String CAMPUS_GEOFENCES_JSON_FILENAME = "Campus_Geofences.json";
 
+    private AssetManager assetManager;
+    private BaseSchedulerProvider schedulerProvider;
 
     @Inject
     public MapsLocalDataSource(@NonNull Context context,
                                @NonNull BaseSchedulerProvider schedulerProvider) {
         checkNotNull(context, "context cannot be null");
         checkNotNull(schedulerProvider, "scheduleProvider cannot be null");
-        assetManager = context.getAssets();
+        this.assetManager = context.getAssets();
+        this.schedulerProvider = schedulerProvider;
     }
 
     @Override
@@ -44,36 +56,87 @@ public class MapsLocalDataSource implements MapsDataSource {
         try {
             String[] campusFiles = assetManager.list("maps");
 
-            Observable observable = Observable.fromIterable(Arrays.asList(campusFiles));
+            Observable<String> observable = Observable
+                .fromIterable(Arrays.asList(campusFiles));
 
             return observable
-                        .filter(n -> !((String)n).endsWith(".json"))
-                        .map(n -> new Map((String)n, ((String)n).replace('_', ' ')))
-                        .toList()
-                        .toFlowable();
+                .observeOn(schedulerProvider.io())
+                .filter(n -> !n.endsWith(".json"))
+                .map(this::newMap)
+                .toList()
+                .toFlowable();
 
         } catch (IOException e) {
             return Flowable.empty();
         }
     }
 
+    private Map newMap(String path) {
+        return new Map(path, path.replace('_', ' '));
+    }
+
     @Override
     public Flowable<Optional<Map>> getMap(@NonNull String mapId) {
+
         return Observable.just(Optional.of(new Map("",""))).toFlowable(BackpressureStrategy.LATEST);
     }
 
     @Override
+    public Flowable<List<Geofence>> getGeofences() {
+        return Observable.fromIterable(loadCampusGeofencesJSONFromAsset())
+                .observeOn(schedulerProvider.io())
+                .toList()
+                .toFlowable();
+    }
+
+
+    private List<Geofence> loadCampusGeofencesJSONFromAsset() {
+        List<Geofence> gflist = new ArrayList<>();
+
+        try {
+            InputStream is = assetManager.open("maps/"+ CAMPUS_GEOFENCES_JSON_FILENAME);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String json = new String(buffer, "UTF-8");
+
+            JSONObject obj = new JSONObject(json);
+            JSONArray geofences = obj.getJSONArray("campuses");
+
+            for (int i = 0; i < geofences.length(); i++) {
+                JSONObject jo_inside = geofences.getJSONObject(i);
+                JSONObject geofence = jo_inside.getJSONObject("geofence");
+
+                ArrayList<Point> points = new ArrayList<>();
+                Point minLatitude = Point.create(
+                        geofence.getDouble("minLatitude"),
+                        geofence.getDouble("minLongitude"), 0);
+                points.add(minLatitude);
+                Point maxLatitude = Point.create(
+                        geofence.getDouble("maxLatitude"),
+                        geofence.getDouble("maxLongitude"),0);
+                points.add(maxLatitude);
+                Polygon polygon = Polygon.create(points);
+                gflist.add(new Geofence<Polygon>(polygon, jo_inside.getString("name")));
+            }
+
+
+        } catch (JSONException e) {
+                //e.printStackTrace();
+
+        } catch (IOException ex) {
+            //ex.printStackTrace();
+        }
+
+        return gflist;
+
+    }
+
+
+
+    @Override
     public void saveMap(Map map) {
-
-    }
-
-    @Override
-    public void activateMap(@NonNull Map map) {
-        activateMap(map.getId());
-    }
-
-    @Override
-    public void activateMap(@NonNull String mapId) {
 
     }
 

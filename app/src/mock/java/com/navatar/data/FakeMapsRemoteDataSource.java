@@ -43,15 +43,9 @@ public class FakeMapsRemoteDataSource implements MapsDataSource {
     }
 
     @Override
-    public void activateMap(String map) {
-
+    public Flowable<List<Geofence>> getGeofences() {
+        return Flowable.empty();
     }
-
-    @Override
-    public void activateMap(@NonNull Map map) {
-        activateMap(map.getId());
-    }
-
 
 
 }
