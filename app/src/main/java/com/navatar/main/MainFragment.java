@@ -90,7 +90,7 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
         ButterKnife.bind(this, root);
 
         autoLocateButton.setOnClickListener(v-> {
-            // mPresenter
+            mPresenter.getLocation();
         });
 
         getQrsCodeButton.setOnClickListener(v -> {

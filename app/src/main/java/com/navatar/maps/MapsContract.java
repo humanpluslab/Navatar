@@ -1,5 +1,8 @@
 package com.navatar.maps;
 
+import android.support.annotation.NonNull;
+
+import com.navatar.BaseNavigator;
 import com.navatar.BasePresenter;
 import com.navatar.BaseView;
 import com.navatar.data.Map;
@@ -12,7 +15,7 @@ public interface MapsContract {
 
         void addMaps(List<Map> maps);
 
-        void showBuildings(Map map);
+        void showMap(Map map);
     }
 
     interface Presenter extends BasePresenter<View> {
@@ -23,4 +26,11 @@ public interface MapsContract {
 
         void cleanup();
     }
+
+    interface Navigator extends BaseNavigator<Presenter> {
+
+        void navigate(Map map);
+
+    }
+
 }

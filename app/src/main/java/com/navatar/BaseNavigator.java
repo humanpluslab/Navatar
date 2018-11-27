@@ -1,5 +1,5 @@
 package com.navatar;
 
-public interface BaseNavigator {
+public interface BaseNavigator<T> {
 
 }

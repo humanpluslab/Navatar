@@ -3,7 +3,6 @@ package com.navatar.maps;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.common.base.Optional;
 import com.navatar.data.Map;
 import com.navatar.data.source.MapsRepository;
 import com.navatar.location.GeofencingProvider;
@@ -21,14 +20,17 @@ public class MapsPresenter implements MapsContract.Presenter {
     private final CompositeDisposable disposables = new CompositeDisposable();
     private final GeofencingProvider geofencingProvider;
     private final MapsRepository mMapRepository;
+    private final MapsContract.Navigator mNavigator;
+
 
     @Nullable
     private MapsContract.View mMapsView;
 
     @Inject
-    public MapsPresenter(MapsRepository mapsRepository, GeofencingProvider geofencingProvider) {
+    public MapsPresenter(MapsRepository mapsRepository, GeofencingProvider geofencingProvider, MapsContract.Navigator navigator) {
         this.mMapRepository = mapsRepository;
         this.geofencingProvider = geofencingProvider;
+        this.mNavigator = navigator;
     }
 
     @Override
@@ -50,14 +52,7 @@ public class MapsPresenter implements MapsContract.Presenter {
     }
     @Override
     public void onMapSelected(Map map) {
-        mMapsView.showBuildings(map);
-    }
-
-    private void handleBuildingResult(Optional<Map> map) {
-        if (mMapsView != null && map.isPresent()){
-            Map nMap = map.get();
-            //view.addBuildingList(nMap.getBuildings());
-        }
+        mMapsView.showMap(map);
     }
 
 

@@ -11,6 +11,7 @@ import com.navatar.data.source.MapsRepository;
 import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationInteractor;
 import com.navatar.location.model.NoLocationAvailableException;
+import com.navatar.maps.MapsContract;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ public class MainPresenter implements MainContract.Presenter {
     private PermissionRequestHandler permissionRequestHandler;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private final MainContract.Navigator mNavigator;
+    private final MapsContract.Navigator mNavigator;
 
     @Nullable
     private MainContract.View mMainView;
@@ -41,7 +42,7 @@ public class MainPresenter implements MainContract.Presenter {
     Integer cameraRequestCode;
 
     @Inject
-    public MainPresenter(LocationInteractor interactor, MainContract.Navigator navigator) {
+    public MainPresenter(LocationInteractor interactor, MapsContract.Navigator navigator) {
         this.interactor = interactor;
         this.mNavigator = navigator;
     }
@@ -84,8 +85,8 @@ public class MainPresenter implements MainContract.Presenter {
         }
     }
 
-
-    private void getLocation() {
+    @Override
+    public void getLocation() {
         disposables.add(
             interactor.getLocationUpdates()
             .subscribe(

@@ -1,11 +1,14 @@
 package com.navatar.main;
 
+import android.support.v7.app.AppCompatActivity;
+
 import com.navatar.common.PermissionRequestHandler;
 import com.navatar.common.details.RuntimePermissionRequestHandler;
 import com.navatar.di.ActivityScoped;
 import com.navatar.di.FragmentScoped;
 import com.navatar.maps.MapsContract;
 import com.navatar.maps.MapsFragment;
+import com.navatar.maps.MapsNavigator;
 import com.navatar.maps.MapsPresenter;
 
 
@@ -69,5 +72,7 @@ public abstract class MainModule {
     @Binds
     abstract MapsContract.Presenter provideMapsPresenter(MapsPresenter presenter);
 
+    @Binds
+    abstract MapsContract.Navigator provideMapsNavigator(MapsNavigator navigator);
 
 }

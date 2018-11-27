@@ -37,14 +37,12 @@ public class MainActivity extends DaggerAppCompatActivity {
                 (MapsFragment) getSupportFragmentManager().findFragmentById(R.id.spinnerFrame);
 
         if (mainFragment == null) {
-            // Get the fragment from dagger
             mainFragment = mainFragmentProvider.get();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), mainFragment, R.id.contentFrame);
         }
 
         if (mapsFragment == null) {
-            // Get the fragment from dagger
             mapsFragment = mapFragmentProvider.get();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), mapsFragment, R.id.spinnerFrame);

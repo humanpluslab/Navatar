@@ -18,4 +18,8 @@ public abstract class MapsModule {
     @Binds
     abstract MapsContract.Presenter providePresenter(MapsPresenter presenter);
 
+    @ActivityScoped
+    @Binds
+    abstract MapsContract.Navigator provideNavigator(MapsNavigator navigator);
+
 }

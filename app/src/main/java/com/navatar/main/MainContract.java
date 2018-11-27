@@ -38,9 +38,11 @@ public interface MainContract {
 
         void setPermissionHandler(PermissionRequestHandler handler);
 
+        void getLocation();
+
     }
 
-    interface Navigator extends BaseNavigator {
+    interface Navigator extends BaseNavigator<Presenter> {
         void navigate();
     }
 

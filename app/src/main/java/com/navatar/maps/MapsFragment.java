@@ -34,7 +34,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     @Inject
     MapsContract.Presenter mPresenter;
 
-    
+
     @Inject
     public MapsFragment() {
 
@@ -92,7 +92,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     }
 
     @Override
-    public void showBuildings(Map map) {
+    public void showMap(Map map) {
 
     }
 
@@ -134,6 +134,5 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
 
 
     }
-
 
 }
