@@ -12,7 +12,6 @@ import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationInteractor;
 import com.navatar.location.model.NoLocationAvailableException;
 
-import java.lang.ref.WeakReference;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -27,8 +26,8 @@ public class MainPresenter implements MainContract.Presenter {
     private final LocationInteractor interactor;
     private PermissionRequestHandler permissionRequestHandler;
     private final CompositeDisposable disposables = new CompositeDisposable();
-    private final GeofencingProvider geofencingProvider;
-    private final MapsRepository mMapRepository;
+
+    private final MainContract.Navigator mNavigator;
 
     @Nullable
     private MainContract.View mMainView;
@@ -42,10 +41,9 @@ public class MainPresenter implements MainContract.Presenter {
     Integer cameraRequestCode;
 
     @Inject
-    public MainPresenter(LocationInteractor interactor, MapsRepository mapsRepository, GeofencingProvider geofencingProvider) {
+    public MainPresenter(LocationInteractor interactor, MainContract.Navigator navigator) {
         this.interactor = interactor;
-        this.mMapRepository = mapsRepository;
-        this.geofencingProvider = geofencingProvider;
+        this.mNavigator = navigator;
     }
 
     @Override
@@ -65,43 +63,9 @@ public class MainPresenter implements MainContract.Presenter {
                 throwable -> Log.e(TAG, "An error occurred getting permissions", throwable)
             ));
 
-        disposables.add(mMapRepository.getMaps()
-            .subscribe(
-                this::handleMapsResult,
-                throwable -> Log.e(TAG, "An error occurred map provider stream", throwable)
-            ));
-
-
-        disposables.add(mMapRepository.getGeofences()
-            .subscribe(
-
-
-
-            ));
-    }
-
-    @Override
-    public void onMapSelected(String mapName) {
-        disposables.add(mMapRepository.getMap(mapName)
-                .subscribe(
-                    this::handleBuildingResult,
-                        throwable -> Log.e(TAG, "An error occurred map provider stream", throwable)
-                ));
-    }
-
-    private void handleBuildingResult(Optional<Map> map) {
-        if (mMainView != null && map.isPresent()){
-            Map nMap = map.get();
-            //view.addBuildingList(nMap.getBuildings());
-        }
     }
 
 
-    private void handleMapsResult(List<Map> maps) {
-        if (mMainView != null) {
-            mMainView.addMaps(maps);
-        }
-    }
 
 
     private void handlePermissionsResult(PermissionRequestHandler.PermissionRequestResult result) {

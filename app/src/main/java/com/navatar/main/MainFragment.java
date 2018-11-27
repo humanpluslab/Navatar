@@ -31,9 +31,6 @@ import dagger.android.support.DaggerFragment;
 @ActivityScoped
 public class MainFragment extends DaggerFragment implements MainContract.View {
 
-    @BindView(R.id.mapSpinner)
-    Spinner mapSpinner;
-
     @BindView(R.id.button)
     Button autoLocateButton;
 
@@ -47,7 +44,6 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
     @Named("requestCodes")
     List<Integer> requestCodes;
 
-    private MapListAdapter mListAdapter;
 
     @Inject
     public MainFragment() {
@@ -89,7 +85,7 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View root = inflater.inflate(R.layout.map_select_frag, container, false);
+        View root = inflater.inflate(R.layout.main_frag, container, false);
 
         ButterKnife.bind(this, root);
 
@@ -105,26 +101,6 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
     }
 
 
-    @Override
-    public void addMaps(List<Map> maps) {
-
-        mListAdapter = new MapListAdapter(getContext(), maps);
-        mapSpinner.setAdapter(mListAdapter);
-        mapSpinner.setSelection(mListAdapter.getCount());
-        mapSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position < mListAdapter.getCount()) {
-                    mPresenter.onMapSelected(mapSpinner.getSelectedItem().toString());
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
-    }
 
 
     @Override
@@ -153,43 +129,5 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
 
     }
 
-    private static class MapListAdapter extends ArrayAdapter {
-
-        public MapListAdapter(Context context, List<Map> maps) {
-            super(context, android.R.layout.simple_spinner_item, maps);
-            setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        }
-
-        @Override
-        public int getCount() {
-            return super.getCount();
-        }
-
-        @Override
-        public boolean isEnabled(int position){
-            if(position >= getCount()) {
-                return false;
-            }
-            return true;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-
-            View v = null;
-
-            if (position >= getCount()) {
-                v = super.getView(0, convertView, parent);
-                TextView tv = (TextView) v;
-                tv.setText("");
-                tv.setHint(R.string.mapSpinnerLabel);
-            } else {
-                v = super.getView(position, convertView, parent);
-            }
-            return v;
-        }
-
-
-    }
 
 }

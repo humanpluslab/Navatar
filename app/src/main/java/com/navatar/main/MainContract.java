@@ -1,5 +1,8 @@
 package com.navatar.main;
 
+import android.support.annotation.NonNull;
+
+import com.navatar.BaseNavigator;
 import com.navatar.BasePresenter;
 import com.navatar.BaseView;
 import com.navatar.common.PermissionRequestHandler;
@@ -10,10 +13,6 @@ import java.util.List;
 public interface MainContract {
 
     interface View extends BaseView<Presenter> {
-
-        void addMaps(List<Map> maps);
-
-
 
         void showNoLocationAvailable();
 
@@ -37,10 +36,13 @@ public interface MainContract {
 
         void cleanup();
 
-        void onMapSelected(String mapName);
-
         void setPermissionHandler(PermissionRequestHandler handler);
 
     }
+
+    interface Navigator extends BaseNavigator {
+        void navigate();
+    }
+
 
 }

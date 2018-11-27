@@ -4,6 +4,9 @@ import com.navatar.common.PermissionRequestHandler;
 import com.navatar.common.details.RuntimePermissionRequestHandler;
 import com.navatar.di.ActivityScoped;
 import com.navatar.di.FragmentScoped;
+import com.navatar.maps.MapsContract;
+import com.navatar.maps.MapsFragment;
+import com.navatar.maps.MapsPresenter;
 
 
 import java.util.ArrayList;
@@ -19,7 +22,7 @@ import dagger.android.ContributesAndroidInjector;
 
 /**
  * This is a Dagger module. We use this to pass in the View dependency to the
- * {@link LocationPresenter}.
+ * {@link MainPresenter}.
  */
 @Module
 public abstract class MainModule {
@@ -51,8 +54,20 @@ public abstract class MainModule {
     @ContributesAndroidInjector
     abstract MainFragment mainFragment();
 
+    @FragmentScoped
+    @ContributesAndroidInjector
+    abstract MapsFragment mapsFragment();
+
     @ActivityScoped
     @Binds
     abstract MainContract.Presenter providePresenter(MainPresenter presenter);
+
+    @Binds
+    abstract MainContract.Navigator provideNavigator(MainNavigator navigator);
+
+    @ActivityScoped
+    @Binds
+    abstract MapsContract.Presenter provideMapsPresenter(MapsPresenter presenter);
+
 
 }

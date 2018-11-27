@@ -17,6 +17,7 @@ import io.reactivex.schedulers.Schedulers;
 
 import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationProvider;
+import com.navatar.location.model.Geofence;
 import com.navatar.location.model.GeofenceRequest;
 import com.navatar.location.model.Location;
 import com.patloew.rxlocation.RxLocation;
@@ -71,8 +72,8 @@ public class AndroidLocationProvider implements LocationProvider, GeofencingProv
     }
 
     @Override
-    public Single<GeofenceRequest.Status> addGeoFenceRequest(GeofenceRequest request) {
-        return Single.never();
+    public Single<GeofencingProvider.Status> addGeoFenceRequest(GeofenceRequest request) {
+        return Single.just(new GeofencingProvider.Status());
     }
 
 
