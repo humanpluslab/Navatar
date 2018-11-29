@@ -20,6 +20,7 @@ import java.util.List;
 import javax.inject.Inject;
 
 import butterknife.BindView;
+import butterknife.BindViews;
 import butterknife.ButterKnife;
 import dagger.android.support.DaggerFragment;
 
@@ -28,6 +29,19 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
 
     @BindView(R.id.mapSpinner)
     Spinner mapSpinner;
+
+    @BindView(R.id.buildingSpinner)
+    Spinner buildingSpinner;
+
+    @BindViews({R.id.mapSpinner, R.id.buildingSpinner})
+    List<Spinner> spinnerViews;
+
+    private static final ButterKnife.Action<View> VISIBLE =
+            (v, index) -> v.setVisibility(View.VISIBLE);
+
+    private static final ButterKnife.Action<View> GONE =
+            (v, index) -> v.setVisibility(View.GONE);
+
 
     private MapListAdapter mListAdapter;
 
@@ -81,6 +95,9 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position < mListAdapter.getCount()) {
                     mPresenter.onMapSelected((Map)mapSpinner.getSelectedItem());
+                    ButterKnife.apply(buildingSpinner, VISIBLE);
+                    ButterKnife.apply(mapSpinner, GONE);
+
                 }
             }
 

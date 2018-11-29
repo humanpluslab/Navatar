@@ -9,7 +9,16 @@
         android:id="@+id/mapSpinner"
         style="android:spinnerStyle"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:padding="5dp"/>
+
+    <Spinner
+        android:id="@+id/buildingSpinner"
+        style="android:spinnerStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:visibility="invisible" />
 
 
 </LinearLayout>

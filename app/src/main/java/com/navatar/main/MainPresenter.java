@@ -73,7 +73,7 @@ public class MainPresenter implements MainContract.Presenter {
         if (mMainView != null) {
             switch (result) {
                 case GRANTED:
-                    getLocation();
+                    //getLocation();
                     break;
                 case DENIED_SOFT:
                     mMainView.showSoftDenied();

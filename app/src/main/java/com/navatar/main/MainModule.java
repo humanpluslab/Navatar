@@ -1,16 +1,11 @@
 package com.navatar.main;
 
-import android.support.v7.app.AppCompatActivity;
-
-import com.navatar.common.PermissionRequestHandler;
-import com.navatar.common.details.RuntimePermissionRequestHandler;
 import com.navatar.di.ActivityScoped;
 import com.navatar.di.FragmentScoped;
 import com.navatar.maps.MapsContract;
 import com.navatar.maps.MapsFragment;
 import com.navatar.maps.MapsNavigator;
 import com.navatar.maps.MapsPresenter;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
