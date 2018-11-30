@@ -38,5 +38,6 @@
     <string name="error_accessing_location">There was an error retrieving your location.</string>
     <string name="error_generic">An unexpected error has occurred.</string>
     <string name="navHistoryButton">Navigation History</string>
-
+    <string name="reverseRoute">Reverse Route</string>
+    <string name="direction">Direction</string>
 </resources>

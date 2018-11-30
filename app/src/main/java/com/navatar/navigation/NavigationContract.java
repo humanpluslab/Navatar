@@ -12,6 +12,13 @@ public interface NavigationContract {
 
     interface Presenter extends BasePresenter<View> {
 
+        void startNavigation();
+
+        void reverseRoute();
+
+        void nextStep();
+
+        void addLandmark();
 
     }
 

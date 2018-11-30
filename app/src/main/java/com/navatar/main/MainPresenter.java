@@ -4,16 +4,10 @@ import android.Manifest;
 import android.util.Log;
 import android.support.annotation.Nullable;
 
-import com.google.common.base.Optional;
 import com.navatar.common.PermissionRequestHandler;
-import com.navatar.data.Map;
-import com.navatar.data.source.MapsRepository;
-import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationInteractor;
 import com.navatar.location.model.NoLocationAvailableException;
 import com.navatar.maps.MapsContract;
-
-import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Named;
