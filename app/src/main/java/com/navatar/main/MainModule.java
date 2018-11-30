@@ -70,4 +70,6 @@ public abstract class MainModule {
     @Binds
     abstract MapsContract.Navigator provideMapsNavigator(MapsNavigator navigator);
 
+
+
 }

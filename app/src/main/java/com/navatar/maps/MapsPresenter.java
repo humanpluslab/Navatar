@@ -3,6 +3,8 @@ package com.navatar.maps;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.navatar.data.Building;
+import com.navatar.data.Landmark;
 import com.navatar.data.Map;
 import com.navatar.data.source.MapsRepository;
 import com.navatar.location.GeofencingProvider;
@@ -55,6 +57,11 @@ public class MapsPresenter implements MapsContract.Presenter {
         mMapsView.showMap(map);
     }
 
+    @Override
+    public void onBuildingSelected(Building building) {  }
+
+    @Override
+    public void onLandmarkSelected(Landmark landmark) { }
 
     private void handleMapsResult(List<Map> maps) {
         if (mMapsView != null) {

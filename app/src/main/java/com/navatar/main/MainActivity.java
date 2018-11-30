@@ -44,6 +44,7 @@ public class MainActivity extends DaggerAppCompatActivity {
 
         if (mapsFragment == null) {
             mapsFragment = mapFragmentProvider.get();
+
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), mapsFragment, R.id.spinnerFrame);
         }

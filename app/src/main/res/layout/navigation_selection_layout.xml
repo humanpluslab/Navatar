@@ -8,7 +8,7 @@
 	<TextView  
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content" 
-	    android:text="@string/fromSpinerLabel"
+	    android:text="@string/fromSpinnerLabel"
         android:contentDescription="Select the starting room from the dropdown below"
 		android:textSize="25dp"
 	/>
@@ -16,6 +16,6 @@
 		android:id="@+id/fromSpinner"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-	    android:prompt="@string/fromSpinerLabel"
-	/>	
+	    android:prompt="@string/fromSpinnerLabel"
+	/>
 </LinearLayout>

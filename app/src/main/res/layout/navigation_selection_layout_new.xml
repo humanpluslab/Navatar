@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/toSpinerLabel"
+        android:text="@string/toSpinnerLabel"
         android:contentDescription="Select your destination room from the dropdown below."
         android:textSize="25dp"
 
@@ -18,14 +18,14 @@
         android:id="@+id/toSpinner"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:prompt="@string/toSpinerLabel"
+        android:prompt="@string/toSpinnerLabel"
 
         />
     <Button
         android:id="@+id/startNavigationButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="@string/start_navigation"
+        android:text="@string/startNavigation"
         />
 
 </LinearLayout>

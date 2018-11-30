@@ -12,9 +12,10 @@
     <string name="typeSpinerLabel">Navigation Type:</string>
     <string name="modeSpinerLabel">Navigation Mode:</string>
     <string name="maxDistanceSpinerLabel">Maximum Distance:</string>
-    <string name="fromSpinerLabel">From Room:</string>
-    <string name="toSpinerLabel">To Room:</string>
-    <string name="start_navigation">Start Navigation</string>
+    <string name="fromSpinnerLabel">From Room:</string>
+    <string name="toSpinnerLabel">To Room:</string>
+    <string name="startNavigation">Start Navigation</string>
+    <string name="showNavigation">List Steps</string>
     <string name="map_service_name">Map Service</string>
     <string name="sensing_service_name">Sensing Service</string>
     <string name="pf_service_name">PF Service</string>
