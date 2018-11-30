@@ -40,6 +40,8 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     @Override
     public void startNavigation() {
 
+
+
     }
 
     @Override
