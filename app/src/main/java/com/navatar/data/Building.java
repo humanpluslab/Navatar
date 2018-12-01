@@ -1,6 +1,10 @@
 package com.navatar.data;
 
+import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.particles.ParticleState;
+import com.navatar.particlefilter.ParticleFilter;
+import com.navatar.pathplanning.AStar;
+import com.navatar.pathplanning.Direction;
 import com.navatar.protobufs.BuildingMapProto;
 import com.navatar.protobufs.CoordinatesProto;
 import com.navatar.protobufs.FloorProto;
@@ -219,9 +223,6 @@ public class Building {
 
     /**
      * Returns the tile that contains the given point.
-     *
-     * @param state
-     * @return
      */
     Tile getTile(double x, double y, int floor) {
         Tile[][] floorTiles = minimaps.get(floor);
@@ -255,8 +256,33 @@ public class Building {
         return !(isAccessible(start) && isAccessible(end));
     }
 
+
+    public com.navatar.pathplanning.Path getRoute(Landmark start, Landmark end) {
+
+        BuildingMapWrapper wrapper = new BuildingMapWrapper(getProtobufMap());
+
+        AStar pathFinder = new AStar(wrapper);
+
+        ParticleState startState = getRoomLocation(start.getName());
+        ParticleFilter pf = new ParticleFilter(wrapper, startState);
+        ParticleState endState = getRoomLocation(end.getName());
+        com.navatar.pathplanning.Path path = pathFinder.findPath(startState, start.getLandmark(), endState, end.getLandmark());
+        Direction directionGenerator = new Direction(getProtobufMap());
+
+        if (path != null) {
+            int pathIndex = 0;
+            path = directionGenerator.generateDirections(path);
+
+        }
+
+        return path;
+    }
+
     public String getName() {
         return protoMap.getName();
     }
+
+    @Override
+    public String toString() { return getName(); }
 
 }

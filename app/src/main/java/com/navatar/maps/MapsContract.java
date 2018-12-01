@@ -1,7 +1,5 @@
 package com.navatar.maps;
 
-import android.support.annotation.NonNull;
-
 import com.navatar.BaseNavigator;
 import com.navatar.BasePresenter;
 import com.navatar.BaseView;

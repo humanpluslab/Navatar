@@ -8,9 +8,7 @@ import java.text.SimpleDateFormat;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.JSONArray;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -32,7 +30,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Button;
-import android.util.JsonWriter;
 import android.widget.Toast;
 
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -411,7 +408,7 @@ public class NavigationActivity extends DaggerAppCompatActivity implements Navat
       }
 
       startState = map.getRoomLocation(fromRoom.getName());
-      pf = new ParticleFilter(navatarPath, userName, mapService.getActiveMap(), startState);
+      pf = new ParticleFilter(mapService.getActiveMap(), startState);
       endState = map.getRoomLocation(toRoom.getName());
       path = pathFinder.findPath(startState, fromRoom, endState, toRoom);
       directionGenerator = new Direction(map.getProtobufMap());

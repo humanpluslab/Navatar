@@ -5,7 +5,6 @@ package com.navatar.data;
 
 import com.navatar.math.Distance;
 import com.navatar.protobufs.CoordinatesProto.Coordinates;
-import com.navatar.protobufs.LandmarkProto.Landmark;
 import com.navatar.protobufs.LandmarkProto.Landmark.LandmarkType;
 import com.navatar.protobufs.MinimapProto;
 
@@ -25,7 +24,7 @@ public class Tile {
   /** The original protobuf tile. */
   private MinimapProto.Minimap.Tile tile;
   /** The tile's closest landmarks. */
-  private Map<LandmarkType, List<com.navatar.data.Landmark>> landmarks;
+  private Map<LandmarkType, List<Landmark>> landmarks;
   private static final Double MAX_DISTANCE = 20.0;
   private static final Double MAX_DISTANCE_SQUARED = MAX_DISTANCE * MAX_DISTANCE;
 
@@ -51,8 +50,8 @@ public class Tile {
     for (LandmarkType type : LandmarkType.values())
       this.landmarks.put(type, new LinkedList<>());
     for (int landmarkIndex : tile.getLandmarksList()) {
-      Landmark landmark = landmarks.get(landmarkIndex);
-      this.landmarks.get(landmark.getType()).add(new com.navatar.data.Landmark(landmark));
+      com.navatar.protobufs.LandmarkProto.Landmark landmark = landmarks.get(landmarkIndex);
+      this.landmarks.get(landmark.getType()).add(new Landmark(landmark));
     }
     for (List<Landmark> landmarkGroup : this.landmarks.values()) {
       double totalDistance = 0.0;

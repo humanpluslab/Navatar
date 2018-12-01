@@ -9,6 +9,7 @@ public class Landmark implements Comparable<Landmark> {
 
     /** The original protobuf landmark. */
     private LandmarkProto.Landmark landmark;
+
     /** The landmarks weight which is based on its distance from the tile. */
     private double weight;
 
@@ -60,6 +61,10 @@ public class Landmark implements Comparable<Landmark> {
 
         }catch (IllegalAccessException e){
         }
+    }
+
+    public String getName() {
+        return getLandmark().getName();
     }
 
 }
