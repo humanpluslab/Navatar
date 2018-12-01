@@ -91,7 +91,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     }
 
     @Override
-    public void addMaps(List<Map> maps) {
+    public void showMaps(List<Map> maps) {
 
         MapListAdapter<Map> mListAdapter = new MapListAdapter<>(getContext(), maps, getResources().getString(R.string.mapSpinnerLabel));
         mapSpinner.setAdapter(mListAdapter);
@@ -137,7 +137,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         fromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.onLandmarkSelected((Landmark)fromSpinner.getSelectedItem());
+                mPresenter.onFromLandmarkSelected((Landmark)fromSpinner.getSelectedItem());
             }
 
             @Override

@@ -6,6 +6,7 @@ import android.util.Log;
 import com.navatar.data.Building;
 import com.navatar.data.Landmark;
 import com.navatar.data.Map;
+import com.navatar.data.Route;
 import com.navatar.data.source.MapsRepository;
 import com.navatar.location.GeofencingProvider;
 
@@ -28,6 +29,9 @@ public class MapsPresenter implements MapsContract.Presenter {
     @Nullable
     private MapsContract.View mMapsView;
 
+    private Route mRoute;
+
+
     @Inject
     public MapsPresenter(MapsRepository mapsRepository, GeofencingProvider geofencingProvider, MapsContract.Navigator navigator) {
         this.mMapRepository = mapsRepository;
@@ -42,7 +46,7 @@ public class MapsPresenter implements MapsContract.Presenter {
 
         disposables.add(mMapRepository.getMaps()
                 .subscribe(
-                        this::handleMapsResult,
+                        mMapsView::showMaps,
                         throwable -> Log.e(TAG, "An error occurred map provider stream", throwable)
                 ));
 
@@ -58,15 +62,21 @@ public class MapsPresenter implements MapsContract.Presenter {
     }
 
     @Override
-    public void onBuildingSelected(Building building) {  }
+    public void onBuildingSelected(Building building) {
+        mRoute = new Route(building);
+        mMapsView.showFromLandmark(building.destinations());
+    }
 
     @Override
-    public void onLandmarkSelected(Landmark landmark) { }
+    public void onFromLandmarkSelected(Landmark landmark) {
+        mRoute.setFrom(landmark);
+       // mMapsView.showToLandmark();
+    }
 
-    private void handleMapsResult(List<Map> maps) {
-        if (mMapsView != null) {
-            mMapsView.addMaps(maps);
-        }
+    @Override
+    public void onToLandmarkSelected(Landmark landmark) {
+        mRoute.setTo(landmark);
+        //mMapsView.showNavigate(landmark);
     }
 
     @Override

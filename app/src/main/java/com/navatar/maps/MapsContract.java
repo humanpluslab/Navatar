@@ -13,7 +13,7 @@ public interface MapsContract {
 
     interface View extends BaseView<Presenter> {
 
-        void addMaps(List<Map> maps);
+        void showMaps(List<Map> maps);
 
         void showMap(Map map);
 
@@ -31,7 +31,9 @@ public interface MapsContract {
 
         void onBuildingSelected(Building building);
 
-        void onLandmarkSelected(Landmark landmark);
+        void onFromLandmarkSelected(Landmark landmark);
+
+        void onToLandmarkSelected(Landmark landmark);
 
         void cleanup();
     }

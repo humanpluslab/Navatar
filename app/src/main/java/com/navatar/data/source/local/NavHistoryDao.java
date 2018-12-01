@@ -12,15 +12,15 @@ import java.util.List;
 @Dao
 public interface NavHistoryDao {
 
-    @Query("SELECT * FROM NavHistory")
+    @Query("SELECT * FROM nav_history")
     List<NavHistory> getNavHistory();
 
-    @Query("SELECT * from NavHistory WHERE entryid = :navid")
+    @Query("SELECT * from nav_history WHERE entryid = :navid")
     NavHistory getNavHistoryById(String navid);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertNavHistory(NavHistory navHistory);
 
-    @Query("DELETE FROM NavHistory WHERE entryid = :navid")
+    @Query("DELETE FROM nav_history WHERE entryid = :navid")
     int deleteNavHistoryById(String navid);
 }

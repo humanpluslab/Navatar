@@ -2,6 +2,7 @@ package com.navatar.navigation;
 
 import com.navatar.BasePresenter;
 import com.navatar.BaseView;
+import com.navatar.data.Route;
 
 public interface NavigationContract {
 
@@ -12,7 +13,7 @@ public interface NavigationContract {
 
     interface Presenter extends BasePresenter<View> {
 
-        void startNavigation();
+        void startNavigation(Route route);
 
         void reverseRoute();
 

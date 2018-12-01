@@ -3,6 +3,7 @@ package com.navatar.navigation;
 import android.support.annotation.Nullable;
 
 import com.navatar.common.TextToSpeechProvider;
+import com.navatar.data.Route;
 import com.navatar.data.source.NavHistoryRepository;
 import com.navatar.di.ActivityScoped;
 
@@ -38,9 +39,12 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     }
 
     @Override
-    public void startNavigation() {
+    public void startNavigation(Route route) {
 
-
+        if(route.getPath() == null) {
+            mTTSProvider.speak("No path found");
+            return;
+        }
 
     }
 

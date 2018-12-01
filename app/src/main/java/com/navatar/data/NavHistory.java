@@ -2,6 +2,7 @@ package com.navatar.data;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -41,12 +42,18 @@ public final class NavHistory {
     private final String mEndId;
 
 
-    public NavHistory(@NonNull Date time, @NonNull String mapId, @NonNull String buildingId, @NonNull String fromId, @NonNull String endId) {
-        mId = UUID.randomUUID().toString();
+    @Ignore
+    public NavHistory(@NonNull Date time, @NonNull String mapId, @NonNull String buildingId, @NonNull String startId, @NonNull String endId) {
+        this(UUID.randomUUID().toString(), time, mapId, buildingId, startId, endId);
+    }
+
+
+    public NavHistory(@NonNull String id, @NonNull Date time, @NonNull String mapId, @NonNull String buildingId, @NonNull String startId, @NonNull String endId) {
+        mId = id;
         mTime = time;
         mMapId = mapId;
         mBuildingId = buildingId;
-        mStartId = fromId;
+        mStartId = startId;
         mEndId = endId;
     }
 
