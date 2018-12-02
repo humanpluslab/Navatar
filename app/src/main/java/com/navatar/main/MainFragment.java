@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.navatar.R;
 import com.navatar.common.details.RuntimePermissionRequestHandler;
 import com.navatar.di.ActivityScoped;
+import com.navatar.maps.MapsActivity;
 
 import java.util.List;
 
@@ -25,6 +26,9 @@ import dagger.android.support.DaggerFragment;
 
 @ActivityScoped
 public class MainFragment extends DaggerFragment implements MainContract.View {
+
+    @BindView(R.id.mapSelectButton)
+    Button mapSelectButton;
 
     @BindView(R.id.button)
     Button autoLocateButton;
@@ -84,9 +88,9 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
 
         ButterKnife.bind(this, root);
 
-        autoLocateButton.setOnClickListener(v-> {
-            mPresenter.getLocation();
-        });
+        mapSelectButton.setOnClickListener(v -> { mPresenter.openMaps();});
+
+        autoLocateButton.setOnClickListener(v-> { mPresenter.getLocation(); });
 
         getQrsCodeButton.setOnClickListener(v -> {
             // new IntentIntegrator(self).initiateScan();
@@ -96,7 +100,11 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
     }
 
 
-
+    @Override
+    public void openMapsUI() {
+        Intent intent = new Intent(getContext(), MapsActivity.class);
+        startActivity(intent);
+    }
 
     @Override
     public void showNoLocationAvailable() {

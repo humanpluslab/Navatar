@@ -17,12 +17,7 @@
         android:label="@string/app_name"
         tools:replace="android:icon"
         android:name=".NavatarApplication">
-        <activity
-            android:name=".NavigationActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".NavigationSelectionActivity"
-            android:screenOrientation="portrait" />
+
         <activity
             android:name=".main.MainActivity"
             android:screenOrientation="portrait"
@@ -35,17 +30,19 @@
         </activity>
 
         <activity
-            android:name=".NavigationHistoryActivity"
-            android:label="@string/title_activity_navigation_history" />
+            android:name=".maps.MapsActivity"
+            android:label="@string/selectMapLabel"
+            android:theme="@style/Theme.AppCompat.DayNight"/>
+
+        <activity
+            android:name=".navigation.NavigationActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight"/>
 
         <service
             android:name=".maps.MapService"
             android:icon="@drawable/ic_launcher"
             android:label="@string/map_service_name" />
-        <service
-            android:name=".navigation.NavigationService"
-            android:icon="@drawable/ic_launcher"
-            android:label="@string/nav_service_name" />
         <service
             android:name=".sensing.SensingService"
             android:icon="@drawable/ic_launcher"

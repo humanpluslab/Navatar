@@ -16,35 +16,35 @@
         style="android:spinnerStyle"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 
     <Spinner
         android:id="@+id/fromSpinner"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:prompt="@string/fromSpinnerLabel"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 
     <Spinner
         android:id="@+id/toSpinner"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:prompt="@string/toSpinnerLabel"
-       android:visibility="gone" />
+       android:visibility="invisible" />
 
     <Button
         android:id="@+id/startNavigationButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/startNavigation"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/showNavigationButton"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/showNavigation"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 
 
 </LinearLayout>

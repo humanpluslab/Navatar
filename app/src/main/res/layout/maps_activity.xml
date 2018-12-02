@@ -5,17 +5,12 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="25dp"
-    tools:context=".main.MainActivity">
+    tools:context=".maps.MapsActivity">
 
     <LinearLayout
         android:id="@+id/coordinatorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-        <FrameLayout
-            android:id="@+id/spinnerFrame"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <FrameLayout
             android:id="@+id/contentFrame"

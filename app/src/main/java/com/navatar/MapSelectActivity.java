@@ -24,7 +24,6 @@ import android.os.IBinder;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -32,7 +31,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -94,12 +92,12 @@ public class MapSelectActivity extends Activity {
     super.onCreate(savedInstanceState);
 
     setTitle(R.string.welcome_to_navatar);
-    setContentView(R.layout.map_select);
+    setContentView(R.layout.maps_activity);
 
     // Auto-locate ui items
     autoLocateButton = (Button) findViewById(R.id.button);
     getQrsCodeButton = (Button) findViewById(R.id.qrButton);
-    spinner = (ProgressBar)findViewById(R.id.progressBar);
+    //spinner = (ProgressBar)findViewById(R.id.progressBar);
 
     // Verify storage for route history
     verifyStoragePermissions(this);

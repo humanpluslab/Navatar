@@ -8,11 +8,6 @@
     tools:context=".main.MainActivity">
 
     <FrameLayout
-        android:id="@+id/spinnerFrame"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <FrameLayout
         android:id="@+id/contentFrame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

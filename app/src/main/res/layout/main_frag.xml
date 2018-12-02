@@ -6,6 +6,15 @@
     android:padding="25dp">
 
     <Button
+        android:id="@+id/mapSelectButton"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="178dp"
+        android:layout_height="60dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:text="@string/selectMapLabel"/>
+
+    <Button
         android:id="@+id/button"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="178dp"
@@ -30,7 +39,7 @@
         android:layout_height="60dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="30dp"
-        android:text="Previous Navigations"/>
+        android:text="@string/navigationHistory"/>
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
@@ -40,13 +49,5 @@
         android:layout_marginTop="30dp"
         />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="80dp"
-        android:layout_marginTop="20dp"
-        android:visibility="invisible"
-        />
 
 </LinearLayout>

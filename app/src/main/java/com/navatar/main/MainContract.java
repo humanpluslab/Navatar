@@ -24,6 +24,8 @@ public interface MainContract {
 
         void hidePermissionDeniedWarning();
 
+        void openMapsUI();
+
     }
 
     interface Presenter extends BasePresenter<View> {
@@ -39,6 +41,8 @@ public interface MainContract {
         void setPermissionHandler(PermissionRequestHandler handler);
 
         void getLocation();
+
+        void openMaps();
 
     }
 

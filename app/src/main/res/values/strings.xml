@@ -20,8 +20,9 @@
     <string name="sensing_service_name">Sensing Service</string>
     <string name="pf_service_name">PF Service</string>
     <string name="mapSpinnerLabel">Select a Map:</string>
+    <string name="selectMapLabel">Select a Map</string>
     <string name="mapSelectionDescription">Select a Map to start navigating</string>
-    <string name="title_activity_navigation_history">Navigation History</string>
+    <string name="navigationHistory">Navigation History</string>
     <string name="welcome_to_navatar">Welcome to Navatar</string>
     <string name="cancelled">Cancelled</string>
     <string name="nav_service_name">Navigation Service</string>

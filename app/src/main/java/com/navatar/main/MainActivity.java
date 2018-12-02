@@ -19,9 +19,6 @@ public class MainActivity extends DaggerAppCompatActivity {
     @Inject
     Lazy<MainFragment> mainFragmentProvider;
 
-    @Inject
-    Lazy<MapsFragment> mapFragmentProvider;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
@@ -33,20 +30,10 @@ public class MainActivity extends DaggerAppCompatActivity {
         MainFragment mainFragment =
                 (MainFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
-        MapsFragment mapsFragment =
-                (MapsFragment) getSupportFragmentManager().findFragmentById(R.id.spinnerFrame);
-
         if (mainFragment == null) {
             mainFragment = mainFragmentProvider.get();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), mainFragment, R.id.contentFrame);
-        }
-
-        if (mapsFragment == null) {
-            mapsFragment = mapFragmentProvider.get();
-
-            ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), mapsFragment, R.id.spinnerFrame);
         }
 
     }
