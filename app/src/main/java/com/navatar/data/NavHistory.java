@@ -23,7 +23,7 @@ public final class NavHistory {
 
     @NonNull
     @ColumnInfo(name = "time")
-    private final Date mTime;
+    private final String mTime;
 
     @NonNull
     @ColumnInfo(name = "mapid")
@@ -43,12 +43,12 @@ public final class NavHistory {
 
 
     @Ignore
-    public NavHistory(@NonNull Date time, @NonNull String mapId, @NonNull String buildingId, @NonNull String startId, @NonNull String endId) {
+    public NavHistory(@NonNull String time, @NonNull String mapId, @NonNull String buildingId, @NonNull String startId, @NonNull String endId) {
         this(UUID.randomUUID().toString(), time, mapId, buildingId, startId, endId);
     }
 
 
-    public NavHistory(@NonNull String id, @NonNull Date time, @NonNull String mapId, @NonNull String buildingId, @NonNull String startId, @NonNull String endId) {
+    public NavHistory(@NonNull String id, @NonNull String time, @NonNull String mapId, @NonNull String buildingId, @NonNull String startId, @NonNull String endId) {
         mId = id;
         mTime = time;
         mMapId = mapId;
@@ -62,7 +62,7 @@ public final class NavHistory {
     public String getId() { return mId; }
 
     @NonNull
-    public Date getTime() { return mTime; }
+    public String getTime() { return mTime; }
 
     @NonNull
     public String getMapId() { return mMapId; }

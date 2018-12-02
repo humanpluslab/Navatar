@@ -14,13 +14,13 @@ public class NavigationPresenterTest {
 
 
     @Mock
-    private final TextToSpeechProvider mTextToSpeechProvider;
-
-    //@Mock
-    //private final NavHistoryRepository mNavHistoryRepository;
+    private TextToSpeechProvider mTextToSpeechProvider;
 
     @Mock
-    private final NavigationContract.View mNavView;
+    private NavHistoryRepository mNavHistoryRepository;
+
+    @Mock
+    private NavigationContract.View mNavView;
 
 
     private BaseSchedulerProvider mSchedulerProvider;
@@ -34,7 +34,7 @@ public class NavigationPresenterTest {
 
         mSchedulerProvider = new ImmediateSchedulerProvider();
 
-        mNavigationPresenter = new NavigationPresenter(mTextToSpeechProvider);
+        mNavigationPresenter = new NavigationPresenter(mNavHistoryRepository, mTextToSpeechProvider);
 
     }
 

@@ -61,7 +61,7 @@ public class MapsRepositoryTest {
     }
 
     @Test
-    public void getTasks_requestsAllTasksFromLocalDataSource() {
+    public void getTasks_requestsAllMapsFromLocalDataSource() {
         // Given that the local data source has data available
         setMapsAvailable(mMapsLocalDataSource, MAPS);
         // And the remote data source does not have any data available
@@ -76,7 +76,7 @@ public class MapsRepositoryTest {
     }
 
     @Test
-    public void getTask_requestsSingleTaskFromLocalDataSource() {
+    public void getTask_requestsSingleMapFromLocalDataSource() {
         // Given a stub map with id and name in the local repository
         Map map = new Map(TASK_TITLE, "Some Task Description");
         Optional<Map> mapOptional = Optional.of(map);
