@@ -7,7 +7,7 @@ import android.arch.persistence.room.TypeConverters;
 import com.navatar.data.Route;
 
 @Database(entities = {Route.class}, version = 1, exportSchema = false)
-@TypeConverters({TypeConverter.class})
+@TypeConverters({RouteTypeConverter.class})
 public abstract class RoutesDatabase extends RoomDatabase {
 
     public abstract RoutesDao routesDao();

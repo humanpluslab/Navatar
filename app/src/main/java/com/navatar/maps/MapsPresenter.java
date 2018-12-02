@@ -10,8 +10,6 @@ import com.navatar.data.Route;
 import com.navatar.data.source.MapsRepository;
 import com.navatar.location.GeofencingProvider;
 
-import java.util.List;
-
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;

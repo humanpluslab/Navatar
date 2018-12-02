@@ -12,7 +12,7 @@ import com.navatar.pathplanning.Path;
 import java.util.UUID;
 
 /**
- * Immutable model class for a Navigation History Record
+ * Immutable model class for a Route Record
  */
 @Entity(tableName = "routes")
 public final class Route {
