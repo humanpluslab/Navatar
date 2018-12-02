@@ -4,8 +4,9 @@ import android.support.annotation.Nullable;
 
 import com.navatar.common.TextToSpeechProvider;
 import com.navatar.data.Route;
-import com.navatar.data.source.NavHistoryRepository;
+import com.navatar.data.source.RoutesRepository;
 import com.navatar.di.ActivityScoped;
+import com.navatar.pathplanning.Path;
 
 import javax.inject.Inject;
 
@@ -16,14 +17,15 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private final NavHistoryRepository mNavHistoryRepository;
+    private final RoutesRepository mNavHistoryRepository;
     private final TextToSpeechProvider mTTSProvider;
 
     @Nullable
     private NavigationContract.View mNavView;
 
     @Inject
-    public NavigationPresenter(NavHistoryRepository navHistoryRepository, TextToSpeechProvider textToSpeechProvider) {
+    public NavigationPresenter(RoutesRepository navHistoryRepository,
+                               TextToSpeechProvider textToSpeechProvider) {
         mNavHistoryRepository = navHistoryRepository;
         mTTSProvider = textToSpeechProvider;
     }
@@ -41,7 +43,9 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     @Override
     public void startNavigation(Route route) {
 
-        if(route.getPath() == null) {
+        Path path = route.getPath();
+
+        if(path == null) {
             mTTSProvider.speak("No path found");
             return;
         }

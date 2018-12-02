@@ -1,6 +1,7 @@
 package com.navatar.data.source;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.navatar.data.Map;
 
@@ -20,6 +21,11 @@ public interface MapsDataSource {
 
     void refreshMaps();
 
-    void saveMap(@NonNull Map task);
+    void saveMap(@NonNull Map map);
+
+    void setSelectedMap(@NonNull Map map);
+
+    @Nullable
+    Map getSelectedMap();
 
 }

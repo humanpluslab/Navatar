@@ -13,9 +13,6 @@ public class NavatarApplication extends DaggerApplication {
     @Inject
     MapsRepository mapRepository;
 
-    //@Inject
-    //NavHistoryRepository navHistoryRepository;
-
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
         return DaggerAppComponent.builder().application(this).build();
@@ -29,10 +26,5 @@ public class NavatarApplication extends DaggerApplication {
     public MapsRepository getMapRepository() {
         return mapRepository;
     }
-
-    //@VisibleForTesting
-    //public NavHistoryRepository getNavHistoryRepository() {
-       // return navHistoryRepository;
-   // }
 
 }

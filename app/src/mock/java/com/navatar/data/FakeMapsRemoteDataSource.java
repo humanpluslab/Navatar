@@ -47,5 +47,14 @@ public class FakeMapsRemoteDataSource implements MapsDataSource {
         return Flowable.empty();
     }
 
+    @Override
+    public void setSelectedMap(@NonNull Map map) {
 
+    }
+
+    @Nullable
+    @Override
+    public Map getSelectedMap() {
+        return null;
+    }
 }

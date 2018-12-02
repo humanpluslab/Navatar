@@ -3,6 +3,7 @@ package com.navatar.data.source.local;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.navatar.data.Map;
 import com.navatar.data.source.MapsDataSource;
@@ -136,7 +137,7 @@ public class MapsLocalDataSource implements MapsDataSource {
 
 
     @Override
-    public void saveMap(Map map) {
+    public void saveMap(@NonNull Map map) {
 
     }
 
@@ -145,4 +146,15 @@ public class MapsLocalDataSource implements MapsDataSource {
 
     }
 
+
+    @Override
+    public void setSelectedMap(@NonNull Map map) {
+
+    }
+
+    @Nullable
+    @Override
+    public Map getSelectedMap() {
+        return null;
+    }
 }

@@ -1,6 +1,7 @@
 package com.navatar.data.source.remote;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 import com.google.common.base.Optional;
 import com.navatar.data.Map;
@@ -18,7 +19,7 @@ import io.reactivex.Flowable;
 public class MapsRemoteDataSource implements MapsDataSource {
 
     @Inject
-    public MapsRemoteDataSource() {
+    MapsRemoteDataSource() {
 
     }
 
@@ -50,8 +51,19 @@ public class MapsRemoteDataSource implements MapsDataSource {
     }
 
     @Override
-    public void saveMap(Map map) {
+    public void saveMap(@NonNull Map map) {
 
+    }
+
+    @Override
+    public void setSelectedMap(@NonNull Map map) {
+
+    }
+
+    @Nullable
+    @Override
+    public Map getSelectedMap() {
+        return null;
     }
 
 }

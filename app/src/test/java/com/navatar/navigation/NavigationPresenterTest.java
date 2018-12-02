@@ -1,7 +1,7 @@
 package com.navatar.navigation;
 
 import com.navatar.common.TextToSpeechProvider;
-import com.navatar.data.source.NavHistoryRepository;
+import com.navatar.data.source.RoutesRepository;
 import com.navatar.util.schedulers.BaseSchedulerProvider;
 import com.navatar.util.schedulers.ImmediateSchedulerProvider;
 
@@ -17,7 +17,7 @@ public class NavigationPresenterTest {
     private TextToSpeechProvider mTextToSpeechProvider;
 
     @Mock
-    private NavHistoryRepository mNavHistoryRepository;
+    private RoutesRepository mNavHistoryRepository;
 
     @Mock
     private NavigationContract.View mNavView;

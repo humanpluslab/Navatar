@@ -33,6 +33,11 @@ public class MapsRepository implements MapsDataSource {
     @Nullable
     List<Geofence> mCachedGeofences;
 
+
+    @VisibleForTesting
+    @Nullable
+    Map mSelectedMap;
+
     /**
      * Marks the cache as invalid, to force an update the next time data is requested. This variable
      * has package local visibility so it can be accessed from tests.
@@ -205,4 +210,16 @@ public class MapsRepository implements MapsDataSource {
                 })
                 .firstElement().toFlowable();
     }
+
+    @Nullable
+    @Override
+    public Map getSelectedMap() {
+        return mSelectedMap;
+    }
+
+    @Override
+    public void setSelectedMap(@NonNull Map map) {
+        mSelectedMap = map;
+    }
+
 }
