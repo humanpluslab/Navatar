@@ -2,6 +2,9 @@ package com.navatar.di;
 
 import com.navatar.main.MainModule;
 import com.navatar.main.MainActivity;
+import com.navatar.maps.MapsModule;
+import com.navatar.navigation.NavigationActivity;
+import com.navatar.navigation.NavigationModule;
 
 import dagger.Module;
 import dagger.android.ContributesAndroidInjector;
@@ -19,4 +22,9 @@ public abstract class ActivityBindingModule {
     @ActivityScoped
     @ContributesAndroidInjector(modules = MainModule.class)
     abstract MainActivity mainActivity();
+
+    @ActivityScoped
+    @ContributesAndroidInjector(modules = NavigationModule.class)
+    abstract NavigationActivity navigationActivity();
+
 }

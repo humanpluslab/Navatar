@@ -1,7 +1,9 @@
 package com.navatar;
 
 import android.support.annotation.VisibleForTesting;
+
 import com.navatar.data.source.MapsRepository;
+import com.navatar.data.source.NavHistoryRepository;
 import com.navatar.di.DaggerAppComponent;
 
 import dagger.android.AndroidInjector;
@@ -11,6 +13,9 @@ import javax.inject.Inject;
 public class NavatarApplication extends DaggerApplication {
     @Inject
     MapsRepository mapRepository;
+
+    @Inject
+    NavHistoryRepository navHistoryRepository;
 
     @Override
     protected AndroidInjector<? extends DaggerApplication> applicationInjector() {
@@ -24,6 +29,11 @@ public class NavatarApplication extends DaggerApplication {
     @VisibleForTesting
     public MapsRepository getMapRepository() {
         return mapRepository;
+    }
+
+    @VisibleForTesting
+    public NavHistoryRepository getNavHistoryRepository() {
+        return navHistoryRepository;
     }
 
 }

@@ -16,15 +16,15 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private final NavHistoryRepository mNavHistoryRepository;
+    //private final NavHistoryRepository mNavHistoryRepository;
     private final TextToSpeechProvider mTTSProvider;
 
     @Nullable
     private NavigationContract.View mNavView;
 
     @Inject
-    public NavigationPresenter(NavHistoryRepository navHistoryRepository, TextToSpeechProvider textToSpeechProvider) {
-        mNavHistoryRepository = navHistoryRepository;
+    public NavigationPresenter(TextToSpeechProvider textToSpeechProvider) {
+        //mNavHistoryRepository = navHistoryRepository;
         mTTSProvider = textToSpeechProvider;
     }
 

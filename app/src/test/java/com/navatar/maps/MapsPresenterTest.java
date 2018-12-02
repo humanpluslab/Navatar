@@ -9,8 +9,6 @@ import com.navatar.util.schedulers.ImmediateSchedulerProvider;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -25,7 +23,6 @@ public class MapsPresenterTest {
 
     @Mock
     private MapsRepository mMapsRepository;
-
 
     @Mock
     private GeofencingProvider mGeofencingProvider;

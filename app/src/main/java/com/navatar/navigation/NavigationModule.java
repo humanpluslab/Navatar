@@ -9,6 +9,7 @@ import dagger.android.ContributesAndroidInjector;
 
 @Module
 public abstract class NavigationModule {
+
     @FragmentScoped
     @ContributesAndroidInjector
     abstract NavigationFragment navigationFragment();

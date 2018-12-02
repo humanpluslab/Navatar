@@ -81,7 +81,7 @@ ext {
 allprojects {
     afterEvaluate {
         tasks.withType(JavaCompile.class) {
-            options.compilerArgs << "-Xmaxerrs" << "500"
+            options.compilerArgs << "-Xmaxerrs" << "1000"
         }
     }
 }

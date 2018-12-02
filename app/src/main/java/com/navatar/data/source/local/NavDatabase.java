@@ -5,7 +5,7 @@ import android.arch.persistence.room.RoomDatabase;
 
 import com.navatar.data.NavHistory;
 
-@Database(entities = {NavHistory.class}, version = 1)
+@Database(entities = {NavHistory.class}, version = 1, exportSchema = false)
 public abstract class NavDatabase extends RoomDatabase {
 
     public abstract NavHistoryDao navHistoryDao();
