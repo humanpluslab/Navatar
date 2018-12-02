@@ -3,6 +3,8 @@ package com.navatar.di;
 import android.app.Application;
 import android.content.Context;
 
+import com.navatar.common.TextToSpeechProvider;
+import com.navatar.common.details.AndroidTTSProvider;
 import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationProvider;
 import com.navatar.location.details.AndroidLocationProvider;
@@ -37,6 +39,8 @@ public abstract class ApplicationModule {
     @Binds
     abstract GeofencingProvider provideGeofencingProvider(AndroidLocationProvider geofencingProvider);
 
+    @Binds
+    abstract TextToSpeechProvider provideTextToSpeechProvider(AndroidTTSProvider ttsProvider);
 
     @Provides
     @ElementsIntoSet
