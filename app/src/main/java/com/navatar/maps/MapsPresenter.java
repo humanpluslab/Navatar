@@ -27,8 +27,12 @@ public class MapsPresenter implements MapsContract.Presenter {
     @Nullable
     private MapsContract.View mMapsView;
 
-    private Route mRoute;
+    private Map mSelectedMap;
+    private Building mSelectedBuilding;
+    private Landmark mFromLandmark;
+    private Landmark mToLandmark;
 
+    private Route mRoute;
 
     @Inject
     public MapsPresenter(MapsRepository mapsRepository, GeofencingProvider geofencingProvider, MapsContract.Navigator navigator) {

@@ -40,7 +40,7 @@ public final class Route {
 
     @NonNull
     @ColumnInfo(name = "endid")
-    private final String mEndId;
+    private String mEndId;
 
     @NonNull
     private Building mBuilding;
