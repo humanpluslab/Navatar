@@ -5,11 +5,13 @@ import android.content.res.AssetManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.navatar.data.Building;
 import com.navatar.data.Map;
 import com.navatar.data.source.MapsDataSource;
 import com.navatar.location.model.Geofence;
 import com.navatar.location.model.Point;
 import com.navatar.location.model.Polygon;
+import com.navatar.protobufs.BuildingMapProto;
 import com.navatar.util.schedulers.BaseSchedulerProvider;
 
 import java.io.IOException;
@@ -73,7 +75,19 @@ public class MapsLocalDataSource implements MapsDataSource {
     }
 
     private Map newMap(String path) {
-        return new Map(path, path.replace('_', ' '));
+        List<Building> buildings = new ArrayList<>();
+        try {
+            String[] buildingNames = assetManager.list("maps/" + path);
+            for (String buildingName : buildingNames) {
+                if (!buildingName.endsWith(".json")) {
+                    buildings.add(new Building(BuildingMapProto.BuildingMap.parseFrom(
+                            assetManager.open("maps/" + path + "/" + buildingName))));
+                }
+            }
+        } catch (IOException e) {
+
+        }
+        return new Map(path, path.replace('_', ' '), buildings);
     }
 
     @Override

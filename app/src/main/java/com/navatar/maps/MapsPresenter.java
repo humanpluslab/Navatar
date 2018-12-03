@@ -67,13 +67,13 @@ public class MapsPresenter implements MapsContract.Presenter {
 
     @Override
     public void onFromLandmarkSelected(Landmark landmark) {
-        mRoute.setFromLandmark(landmark);
+        //mRoute.setFromLandmark(landmark);
        // mMapsView.showToLandmark();
     }
 
     @Override
     public void onToLandmarkSelected(Landmark landmark) {
-        mRoute.setToLandmark(landmark);
+        //mRoute.setToLandmark(landmark);
         //mMapsView.showNavigate(landmark);
     }
 

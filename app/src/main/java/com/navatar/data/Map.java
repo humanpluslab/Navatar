@@ -22,6 +22,12 @@ public class Map implements Parcelable {
     @NonNull
     private final List<Building> mBuildings;
 
+
+    public Map(String id, String name, List<Building> buildings) {
+        this(id, name);
+        mBuildings.addAll(buildings);
+    }
+
     public Map(String id, String name) {
         mId = id;
         mName = name;

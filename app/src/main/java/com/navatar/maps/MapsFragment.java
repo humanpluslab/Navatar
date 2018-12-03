@@ -19,6 +19,7 @@ import com.navatar.data.Map;
 import com.navatar.di.ActivityScoped;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.inject.Inject;
 
@@ -26,6 +27,9 @@ import butterknife.BindView;
 import butterknife.BindViews;
 import butterknife.ButterKnife;
 import dagger.android.support.DaggerFragment;
+import io.reactivex.Observable;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.subjects.PublishSubject;
 
 @ActivityScoped
 public class MapsFragment extends DaggerFragment implements MapsContract.View {
@@ -57,6 +61,8 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     private static final ButterKnife.Action<View> GONE =
             (v, index) -> v.setVisibility(View.GONE);
 
+    private final CompositeDisposable disposables = new CompositeDisposable();
+
     @Inject
     MapsContract.Presenter mPresenter;
 
@@ -77,6 +83,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        disposables.clear();
         mPresenter.dropView();
     }
 
@@ -92,57 +99,36 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
 
     @Override
     public void showMaps(List<Map> maps) {
-
-        MapListAdapter<Map> mListAdapter = new MapListAdapter<>(getContext(), maps, getResources().getString(R.string.mapSpinnerLabel));
-        mapSpinner.setAdapter(mListAdapter);
-        mapSpinner.setSelection(mListAdapter.getCount());
-        mapSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position < mListAdapter.getCount()) {
-                    mPresenter.onMapSelected((Map)mapSpinner.getSelectedItem());
-
-                }
-            }
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+        MapListAdapter<Map> listAdapter = new MapListAdapter<>(getContext(), maps, R.string.mapSpinnerLabel);
+        listAdapter.setSpinner(mapSpinner);
+        disposables.add(listAdapter.getSelected()
+                .subscribe(
+                        l -> mPresenter.onMapSelected(l)
+                ));
     }
 
     @Override
     public void showMap(Map map) {
-
-        List<Building> buildings = map.getBuildings();
-        MapListAdapter<Building> mListAdapter = new MapListAdapter<>(getContext(), buildings, getResources().getString(R.string.mapSpinnerLabel));
-
-        buildingSpinner.setAdapter(mListAdapter);
-        buildingSpinner.setSelection(mListAdapter.getCount());
-        buildingSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.onBuildingSelected((Building)buildingSpinner.getSelectedItem());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
         ButterKnife.apply(mapSpinner, GONE);
         ButterKnife.apply(buildingSpinner, VISIBLE);
+
+        List<Building> buildings = map.getBuildings();
+        MapListAdapter<Building> listAdapter = new MapListAdapter<>(getContext(), buildings, R.string.mapSpinnerLabel);
+        listAdapter.setSpinner(buildingSpinner);
+        disposables.add(listAdapter.getSelected()
+                .subscribe(
+                    l -> mPresenter.onBuildingSelected(l)
+                ));
     }
 
     @Override
     public void showFromLandmark(List<Landmark> landmark) {
-        setupLandmarkSpinner(fromSpinner, landmark, getResources().getString(R.string.mapSpinnerLabel));
-        fromSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                mPresenter.onFromLandmarkSelected((Landmark)fromSpinner.getSelectedItem());
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
-        });
+        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(getContext(), landmark, R.string.mapSpinnerLabel);
+        listAdapter.setSpinner(fromSpinner);
+        disposables.add(listAdapter.getSelected()
+                .subscribe(
+                        l -> mPresenter.onFromLandmarkSelected(l)
+                ));
 
         ButterKnife.apply(buildingSpinner, GONE);
         ButterKnife.apply(fromSpinner, VISIBLE);
@@ -150,25 +136,41 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
 
     @Override
     public void showToLandmark(List<Landmark> landmark) {
-        setupLandmarkSpinner(toSpinner, landmark, getResources().getString(R.string.mapSpinnerLabel));
-        ButterKnife.apply(buildingSpinner, GONE);
-        ButterKnife.apply(fromSpinner, VISIBLE);
+        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(getContext(), landmark, R.string.mapSpinnerLabel);
+        listAdapter.setSpinner(toSpinner);
+        disposables.add(listAdapter.getSelected()
+                .subscribe(
+                        l -> mPresenter.onToLandmarkSelected(l)
+                ));
+
+        ButterKnife.apply(fromSpinner, GONE);
+        ButterKnife.apply(toSpinner, VISIBLE);
     }
 
-    private void setupLandmarkSpinner(Spinner spinner, List<Landmark> landmark, String hint) {
-        MapListAdapter<Landmark> mListAdapter = new MapListAdapter<>(getContext(), landmark, hint);
-        spinner.setAdapter(mListAdapter);
-        spinner.setSelection(mListAdapter.getCount());
-    }
+    private static class MapListAdapter<T> extends ArrayAdapter implements AdapterView.OnItemSelectedListener {
 
-    private static class MapListAdapter<T> extends ArrayAdapter {
+        private final String mHint;
 
-        private final String hint;
+        private PublishSubject<T> mSource = PublishSubject.create();
+
+        public MapListAdapter(Context context, List<T> items, int hint) {
+            this(context, items, context.getResources().getString(hint));
+        }
 
         public MapListAdapter(Context context, List<T> items, String hint) {
             super(context, android.R.layout.simple_spinner_item, items);
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            this.hint = hint;
+            mHint = hint;
+        }
+
+        public void setSpinner(Spinner spinner) {
+            spinner.setAdapter(this);
+            spinner.setOnItemSelectedListener(this);
+            spinner.setSelection(getCount());
+        }
+
+        public Observable<T> getSelected() {
+            return mSource;
         }
 
         @Override
@@ -192,11 +194,22 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
                 v = super.getView(0, convertView, parent);
                 TextView tv = (TextView) v;
                 tv.setText("");
-                tv.setHint(hint);
+                tv.setHint(mHint);
             } else {
                 v = super.getView(position, convertView, parent);
             }
             return v;
         }
+
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (position < getCount()) {
+                mSource.onNext((T)getItem(position));
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {}
+
     }
 }
