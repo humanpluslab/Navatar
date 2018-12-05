@@ -4,7 +4,6 @@ import com.navatar.di.ActivityScoped;
 import com.navatar.di.FragmentScoped;
 import com.navatar.maps.MapsContract;
 import com.navatar.maps.MapsFragment;
-import com.navatar.maps.MapsNavigator;
 import com.navatar.maps.MapsPresenter;
 
 import java.util.ArrayList;
@@ -60,16 +59,8 @@ public abstract class MainModule {
     @Binds
     abstract MainContract.Presenter providePresenter(MainPresenter presenter);
 
-    @Binds
-    abstract MainContract.Navigator provideNavigator(MainNavigator navigator);
-
     @ActivityScoped
     @Binds
     abstract MapsContract.Presenter provideMapsPresenter(MapsPresenter presenter);
-
-    @Binds
-    abstract MapsContract.Navigator provideMapsNavigator(MapsNavigator navigator);
-
-
 
 }

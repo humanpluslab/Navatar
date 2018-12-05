@@ -21,6 +21,8 @@ public interface NavigationContract {
 
         void addLandmark();
 
+        void loadData();
+
     }
 
 }

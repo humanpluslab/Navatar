@@ -1,6 +1,7 @@
 package com.navatar.maps;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -12,10 +13,12 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.navatar.navigation.NavigationActivity;
 import com.navatar.R;
 import com.navatar.data.Building;
 import com.navatar.data.Landmark;
 import com.navatar.data.Map;
+import com.navatar.data.Route;
 import com.navatar.di.ActivityScoped;
 
 import java.util.LinkedList;
@@ -96,6 +99,10 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         View root = inflater.inflate(R.layout.map_select_frag, container, false);
         ButterKnife.bind(this, root);
         spinners = new LinkedList<>();
+        startNavigationButton.setOnClickListener(v -> {
+            Intent intent = new Intent(getContext(), NavigationActivity.class);
+            startActivity(intent);
+        });
         return root;
     }
 
@@ -110,7 +117,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ButterKnife.apply(mapSpinner, GONE);
         ButterKnife.apply(buildingSpinner, VISIBLE);
         spinners.add(mapSpinner);
-        MapListAdapter<Building> listAdapter = new MapListAdapter<>(buildingSpinner, map.getBuildings(), R.string.mapSpinnerLabel);
+        MapListAdapter<Building> listAdapter = new MapListAdapter<>(buildingSpinner, map.getBuildings(), R.string.buildingSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onBuildingSelected));
     }
 
@@ -119,7 +126,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ButterKnife.apply(buildingSpinner, GONE);
         ButterKnife.apply(fromSpinner, VISIBLE);
         spinners.add(buildingSpinner);
-        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(fromSpinner, landmark, R.string.mapSpinnerLabel);
+        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(fromSpinner, landmark, R.string.fromSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onFromLandmarkSelected));
     }
 
@@ -128,8 +135,19 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ButterKnife.apply(fromSpinner, GONE);
         ButterKnife.apply(toSpinner, VISIBLE);
         spinners.add(fromSpinner);
-        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(fromSpinner, landmark, R.string.mapSpinnerLabel);
+        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(toSpinner, landmark, R.string.toSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onToLandmarkSelected));
+    }
+
+    @Override
+    public void showNavigation(Route route) {
+        spinners.add(toSpinner);
+        ButterKnife.apply(spinners, GONE);
+        ButterKnife.apply(showButtons, VISIBLE);
+    }
+
+    @Override
+    public void noRouteFound() {
 
     }
 
@@ -152,7 +170,6 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
             super(context, android.R.layout.simple_spinner_item, items);
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mHint = hint;
-
         }
 
         private void setSpinner(Spinner spinner) {

@@ -8,6 +8,8 @@ import com.navatar.data.Route;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Flowable;
+
 @Singleton
 public class RoutesRepository implements RoutesDataSource {
 
@@ -30,4 +32,8 @@ public class RoutesRepository implements RoutesDataSource {
         mRoutesDataSource.setSelectedRoute(route);
     }
 
+    @Override
+    public Flowable<Route> getRoutes() {
+        return mRoutesDataSource.getRoutes();
+    }
 }

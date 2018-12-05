@@ -1,11 +1,14 @@
 package com.navatar.maps;
 
+import android.support.annotation.Nullable;
+
 import com.navatar.BaseNavigator;
 import com.navatar.BasePresenter;
 import com.navatar.BaseView;
-import com.navatar.data.Building;
+ import com.navatar.data.Building;
 import com.navatar.data.Landmark;
 import com.navatar.data.Map;
+import com.navatar.data.Route;
 
 import java.util.List;
 
@@ -20,6 +23,10 @@ public interface MapsContract {
         void showFromLandmark(List<Landmark> landmark);
 
         void showToLandmark(List<Landmark> landmark);
+
+        void showNavigation(@Nullable Route route);
+
+        void noRouteFound();
 
     }
 
@@ -37,11 +44,4 @@ public interface MapsContract {
 
         void cleanup();
     }
-
-    interface Navigator extends BaseNavigator<Presenter> {
-
-        void navigate(Map map);
-
-    }
-
 }

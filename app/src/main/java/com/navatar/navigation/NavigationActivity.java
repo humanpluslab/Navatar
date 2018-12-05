@@ -1,7 +1,6 @@
 package com.navatar.navigation;
 
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -40,13 +39,5 @@ public class NavigationActivity extends DaggerAppCompatActivity {
         }
     }
 
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event){
-        if (mNavigationFragment.onTouchEvent(event)) {
-            return true;
-        }
-        return super.onTouchEvent(event);
-    }
 
 }

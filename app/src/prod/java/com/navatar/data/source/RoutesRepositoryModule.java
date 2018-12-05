@@ -7,6 +7,7 @@ import com.navatar.data.source.local.RoutesDatabase;
 import com.navatar.data.source.local.RoutesDao;
 import com.navatar.data.source.local.RoutesLocalDataSource;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -15,11 +16,14 @@ import dagger.Provides;
 @Module
 public class RoutesRepositoryModule {
 
+    @Inject
+    MapsRepository mapsRepository;
+
     @Singleton
     @Provides
     @Local
-    RoutesDataSource provideNavHistoryLocalDataSource() {
-        return new RoutesLocalDataSource();
+    RoutesDataSource provideNavHistoryLocalDataSource(RoutesDatabase db) {
+        return new RoutesLocalDataSource(db.routesDao(), mapsRepository);
     }
 
     @Singleton
@@ -31,7 +35,7 @@ public class RoutesRepositoryModule {
 
     @Singleton
     @Provides
-    RoutesDao provideTasksDao(RoutesDatabase db) {
+    RoutesDao provideRoutesDao(RoutesDatabase db) {
         return db.routesDao();
     }
 }

@@ -17,16 +17,19 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private final RoutesRepository mNavHistoryRepository;
+    private final RoutesRepository mRoutesRepository;
     private final TextToSpeechProvider mTTSProvider;
 
     @Nullable
     private NavigationContract.View mNavView;
 
+    @Nullable
+    private Route mRoute;
+
     @Inject
     public NavigationPresenter(RoutesRepository navHistoryRepository,
                                TextToSpeechProvider textToSpeechProvider) {
-        mNavHistoryRepository = navHistoryRepository;
+        mRoutesRepository = navHistoryRepository;
         mTTSProvider = textToSpeechProvider;
     }
 
@@ -64,6 +67,12 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     @Override
     public void addLandmark() {
+
+    }
+
+    @Override
+    public void loadData() {
+        mRoute = mRoutesRepository.getSelectedRoute();
 
     }
 }

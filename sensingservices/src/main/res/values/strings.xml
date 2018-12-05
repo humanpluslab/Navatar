@@ -1,5 +1,5 @@
 <resources>
 
-    <string name="app_name">SensingService</string>
+    <string name="appName">SensingService</string>
 
 </resources>

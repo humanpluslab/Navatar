@@ -93,7 +93,7 @@ public class MapsLocalDataSource implements MapsDataSource {
     @Override
     public Flowable<Optional<Map>> getMap(@NonNull String mapId) {
 
-        return Observable.just(Optional.of(new Map("",""))).toFlowable(BackpressureStrategy.LATEST);
+        return Observable.just(Optional.of(newMap(mapId))).toFlowable(BackpressureStrategy.LATEST);
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.arch.persistence.room.TypeConverter;
 
 import com.navatar.data.Building;
 import com.navatar.data.Landmark;
+import com.navatar.data.Map;
 
 public class RouteTypeConverter {
 
@@ -28,5 +29,14 @@ public class RouteTypeConverter {
         return building.getName();
     }
 
+    @TypeConverter
+    public static Map toMap(String name) {
+        return new Map(name, name.replace('_', ' '));
+    }
+
+    @TypeConverter
+    public static String mapToString(Map map) {
+        return map.getId();
+    }
 
 }

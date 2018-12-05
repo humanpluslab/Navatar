@@ -91,7 +91,7 @@ public class MapSelectActivity extends Activity {
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
 
-    setTitle(R.string.welcome_to_navatar);
+    setTitle(R.string.welcomeToNavatar);
     setContentView(R.layout.maps_activity);
 
     // Auto-locate ui items

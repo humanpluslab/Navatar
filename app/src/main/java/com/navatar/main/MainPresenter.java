@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import com.navatar.common.PermissionRequestHandler;
 import com.navatar.location.LocationInteractor;
 import com.navatar.location.model.NoLocationAvailableException;
-import com.navatar.maps.MapsContract;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -22,8 +21,6 @@ public class MainPresenter implements MainContract.Presenter {
     private PermissionRequestHandler permissionRequestHandler;
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private final MapsContract.Navigator mNavigator;
-
     @Nullable
     private MainContract.View mMainView;
 
@@ -36,16 +33,14 @@ public class MainPresenter implements MainContract.Presenter {
     Integer cameraRequestCode;
 
     @Inject
-    public MainPresenter(LocationInteractor interactor, MapsContract.Navigator navigator) {
+    public MainPresenter(LocationInteractor interactor) {
         this.interactor = interactor;
-        this.mNavigator = navigator;
     }
 
     @Override
     public void setPermissionHandler(PermissionRequestHandler handler) {
         permissionRequestHandler = handler;
     }
-
 
     @Override
     public void loadData() {
@@ -59,9 +54,6 @@ public class MainPresenter implements MainContract.Presenter {
             ));
 
     }
-
-
-
 
     private void handlePermissionsResult(PermissionRequestHandler.PermissionRequestResult result) {
         if (mMainView != null) {
@@ -107,12 +99,10 @@ public class MainPresenter implements MainContract.Presenter {
         );
     }
 
-
     @Override
     public void cleanup() {
         disposables.clear();
     }
-
 
     @Override
     public void takeView(MainContract.View view) {
@@ -124,7 +114,6 @@ public class MainPresenter implements MainContract.Presenter {
     public void dropView() {
         mMainView = null;
     }
-
 
     @Override
     public void openMaps() {

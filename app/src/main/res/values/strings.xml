@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Navatar</string>
+    <string name="appName">Navatar</string>
     <string name="modelsDirectory">/sdcard/Navatar/models/</string>
-    <string name="buildingSpinerLabel">Select a building:</string>
+    <string name="buildingSpinnerLabel">Select a building:</string>
     <string name="userNameEditTextLabel">Type user name:</string>
     <string name="selectBuildingButtonLabel">Confirm Selected Building</string>
     <string name="startRoomEditTextLabel">Type start room:</string>
@@ -23,9 +23,9 @@
     <string name="selectMapLabel">Select a Map</string>
     <string name="mapSelectionDescription">Select a Map to start navigating</string>
     <string name="navigationHistory">Navigation History</string>
-    <string name="welcome_to_navatar">Welcome to Navatar</string>
+    <string name="welcomeToNavatar">Welcome to Navatar</string>
     <string name="cancelled">Cancelled</string>
-    <string name="nav_service_name">Navigation Service</string>
+    <string name="navServiceName">Navigation Service</string>
     <string name="permission_rationale">Location permission is required for auto-locating.</string>
     <string name="location_settings_inadequate_warning">The location settings on the device are not
         adequate to run this sample. Fix in Settings.</string>

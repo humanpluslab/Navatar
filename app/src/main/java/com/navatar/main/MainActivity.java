@@ -3,7 +3,6 @@ package com.navatar.main;
 import android.os.Bundle;
 
 import com.navatar.R;
-import com.navatar.maps.MapsFragment;
 import com.navatar.util.ActivityUtils;
 
 import javax.inject.Inject;
@@ -24,7 +23,7 @@ public class MainActivity extends DaggerAppCompatActivity {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
 
-        setTitle(R.string.welcome_to_navatar);
+        setTitle(R.string.welcomeToNavatar);
         setContentView(R.layout.main_activity);
 
         MainFragment mainFragment =
@@ -35,9 +34,5 @@ public class MainActivity extends DaggerAppCompatActivity {
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), mainFragment, R.id.contentFrame);
         }
-
     }
-
-
-
 }

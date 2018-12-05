@@ -108,6 +108,7 @@ dependencies {
     implementation "com.google.guava:guava:$rootProject.guavaVersion"
     implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintVersion"
 
+    implementation "android.arch.persistence.room:rxjava2:$rootProject.roomVersion"
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$rootProject.roomVersion"
 

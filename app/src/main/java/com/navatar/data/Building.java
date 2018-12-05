@@ -264,15 +264,12 @@ public class Building {
         AStar pathFinder = new AStar(wrapper);
 
         ParticleState startState = getRoomLocation(start.getName());
-        ParticleFilter pf = new ParticleFilter(wrapper, startState);
         ParticleState endState = getRoomLocation(end.getName());
         com.navatar.pathplanning.Path path = pathFinder.findPath(startState, start.getLandmark(), endState, end.getLandmark());
         Direction directionGenerator = new Direction(getProtobufMap());
 
         if (path != null) {
-            int pathIndex = 0;
             path = directionGenerator.generateDirections(path);
-
         }
 
         return path;

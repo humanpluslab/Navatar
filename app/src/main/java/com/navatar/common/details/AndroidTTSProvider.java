@@ -15,6 +15,8 @@ public class AndroidTTSProvider implements TextToSpeechProvider, TextToSpeech.On
 
     private final TextToSpeech mTextToSpeech;
 
+    private boolean initialized = false;
+
     @Inject
     public AndroidTTSProvider(Context context) {
         mContext = new WeakReference<>(context);
@@ -23,22 +25,27 @@ public class AndroidTTSProvider implements TextToSpeechProvider, TextToSpeech.On
 
     @Override
     public void onInit(int status) {
-
+        initialized = status == TextToSpeech.SUCCESS;
     }
 
     @Override
     public void speak(String text) {
-        mTextToSpeech.speak(text, TextToSpeech.QUEUE_ADD, null);
+        if (initialized)
+            mTextToSpeech.speak(text, TextToSpeech.QUEUE_ADD, null, "navatar-tts");
     }
 
     @Override
     public void speak(int resource) {
         Context context = mContext.get();
-        if (context != null) {
+        if (context != null && initialized) {
             String str = context.getResources().getString(resource);
-            mTextToSpeech.speak(str, TextToSpeech.QUEUE_ADD, null);
+            mTextToSpeech.speak(str, TextToSpeech.QUEUE_ADD, null, "navatar-tts");
         }
     }
 
-
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        mTextToSpeech.shutdown();
+    }
 }

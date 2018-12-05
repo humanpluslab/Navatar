@@ -1,48 +1,20 @@
 package com.navatar.data;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
-import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.navatar.data.source.RouteData;
 import com.navatar.pathplanning.Path;
 
-import java.util.UUID;
+import java.text.DateFormat;
+import java.util.Date;
 
-/**
- * Immutable model class for a Route Record
- */
-@Entity(tableName = "routes")
 public final class Route {
 
-    @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "entryid")
-    private final String mId;
+    private final Map mMap;
 
-    @NonNull
-    @ColumnInfo(name = "time")
-    private final String mTime;
-
-    @NonNull
-    @ColumnInfo(name = "mapid")
-    private final String mMapId;
-
-    @NonNull
-    @ColumnInfo(name = "buildingid")
-    private final String mBuildingId;
-
-    @NonNull
-    @ColumnInfo(name = "startid")
-    private final String mStartId;
-
-    @NonNull
-    @ColumnInfo(name = "endid")
-    private String mEndId;
-
-    @NonNull
+    @Nullable
     private Building mBuilding;
 
     @Nullable
@@ -52,29 +24,30 @@ public final class Route {
     private Landmark mToLandmark;
 
     @Nullable
-    @Ignore
     private Path mPath;
 
-
-    @Ignore
-    public Route(@NonNull String time, @NonNull String mapId, @NonNull String buildingId, @NonNull String startId, @NonNull String endId) {
-        this(UUID.randomUUID().toString(), time, mapId, buildingId, startId, endId);
+    public Route(Map map) {
+        mMap = map;
     }
 
-    public Route(@NonNull String id, @NonNull String time, @NonNull String mapId, @NonNull String buildingId, @NonNull String startId, @NonNull String endId) {
-        mId = id;
-        mTime = time;
-        mMapId = mapId;
-        mBuildingId = buildingId;
-        mStartId = startId;
-        mEndId = endId;
+    public Route(Map map, RouteData data) {
+        this(map);
+        for(Building building : map.getBuildings()) {
+            if (building.getName().equals(data.getBuildingId())) {
+                mBuilding = building;
+                break;
+            }
+        }
+        for(Landmark landmark : mBuilding.destinations()) {
+            if (landmark.getName().equals(data.getStartId()))
+                mFromLandmark = landmark;
+            else if (landmark.getName().equals(data.getEndId()))
+                mToLandmark = landmark;
+            if (mFromLandmark != null && mToLandmark != null)
+                break;
+        }
+        mPath = mBuilding.getRoute(mFromLandmark, mToLandmark);
     }
-
-
-    //@Ignore
-    //public Route(Building building) {
-    //    mBuilding = building;
-    //}
 
     @NonNull
     public Building getBuilding() {
@@ -112,24 +85,10 @@ public final class Route {
         return mPath;
     }
 
+    public RouteData getRouteData() {
+        String time = DateFormat.getDateInstance().format(new Date());
+        return new RouteData(time, mMap.getId(), mBuilding.getName(), mFromLandmark.getName(), mToLandmark.getName());
 
-
-    @NonNull
-    public String getId() { return mId; }
-
-    @NonNull
-    public String getTime() { return mTime; }
-
-    @NonNull
-    public String getMapId() { return mMapId; }
-
-    @NonNull
-    public String getBuildingId() { return mBuildingId; }
-
-    @NonNull
-    public String getStartId() { return mStartId; }
-
-    @NonNull
-    public String getEndId() { return mEndId; }
+    }
 
 }

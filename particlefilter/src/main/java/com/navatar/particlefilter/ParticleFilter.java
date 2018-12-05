@@ -1,6 +1,5 @@
 package com.navatar.particlefilter;
 
-import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.Collections;
@@ -364,23 +363,7 @@ public class ParticleFilter {
     }
 
     public void finalize() {
-        synchronized (particles) {
-            if (printData || printEstimation) {
-                xml.append("</particles>\n");
-                try {
-                    xml.writeFile(true);
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-            try {
-                logs.writeFile(true);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
+
     }
 
     private double[][] getPFLocations() {

@@ -43,7 +43,6 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
     @Named("requestCodes")
     List<Integer> requestCodes;
 
-
     @Inject
     public MainFragment() {
         // Requires empty public constructor
@@ -77,7 +76,6 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
     }
-
 
     @Nullable
     @Override
@@ -126,11 +124,8 @@ public class MainFragment extends DaggerFragment implements MainContract.View {
 
     }
 
-
     @Override
     public void hidePermissionDeniedWarning() {
 
     }
-
-
 }

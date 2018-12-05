@@ -14,10 +14,8 @@ import dagger.android.support.DaggerAppCompatActivity;
 
 public class MapsActivity extends DaggerAppCompatActivity {
 
-
     @Inject
     Lazy<MapsFragment> mapsFragmentProvider;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -35,7 +33,5 @@ public class MapsActivity extends DaggerAppCompatActivity {
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), mapsFragment, R.id.contentFrame);
         }
-
-
     }
 }
