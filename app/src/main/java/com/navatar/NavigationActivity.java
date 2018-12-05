@@ -37,7 +37,6 @@ import com.navatar.maps.BuildingMapWrapper;
 import com.navatar.maps.MapService;
 import com.navatar.maps.particles.ParticleState;
 import com.navatar.math.Angles;
-import com.navatar.navigation.NavigationService;
 import com.navatar.output.file.XmlFile;
 import com.navatar.particlefilter.ParticleFilter;
 import com.navatar.particlefilter.Transition;
@@ -87,7 +86,6 @@ public class NavigationActivity extends DaggerAppCompatActivity implements Navat
 
   private SensingService sensing;
   private MapService mapService;
-  private NavigationService navService;
   private BuildingMapWrapper map;
 
   private int compassCounter = 0;
@@ -156,12 +154,6 @@ public class NavigationActivity extends DaggerAppCompatActivity implements Navat
     Intent mapIntent = new Intent(this, MapService.class);
     startService(mapIntent);
     bindService(mapIntent, mapConnection, BIND_AUTO_CREATE);
-
-    // Bind with Navigation Service
-    Intent navIntent = new Intent(this, NavigationService.class);
-    startService(navIntent);
-    bindService(navIntent, navConnection, BIND_AUTO_CREATE);
-
 
     compassReadingArray = new double[COMPASS_COUNTER_MAX];
     inputHandler = new InputHandler();
@@ -375,19 +367,6 @@ public class NavigationActivity extends DaggerAppCompatActivity implements Navat
     }
   }
 
-  private ServiceConnection navConnection = new ServiceConnection() {
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-      NavigationService.NavBinder binder = (NavigationService.NavBinder) service;
-      navService = binder.getService();
-
-    }
-
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-
-    }
-  };
 
   private ServiceConnection mapConnection = new ServiceConnection() {
 

@@ -3,6 +3,7 @@ package com.navatar.maps;
 import com.google.common.collect.Lists;
 import com.navatar.data.Map;
 import com.navatar.data.source.MapsRepository;
+import com.navatar.data.source.RoutesRepository;
 import com.navatar.location.GeofencingProvider;
 import com.navatar.util.schedulers.BaseSchedulerProvider;
 import com.navatar.util.schedulers.ImmediateSchedulerProvider;
@@ -28,10 +29,10 @@ public class MapsPresenterTest {
     private GeofencingProvider mGeofencingProvider;
 
     @Mock
-    private MapsContract.Navigator mNavigator;
+    private MapsContract.View mMapsView;
 
     @Mock
-    private MapsContract.View mMapsView;
+    private RoutesRepository mRoutesRepository;
 
     private BaseSchedulerProvider mSchedulerProvider;
 
@@ -44,7 +45,7 @@ public class MapsPresenterTest {
 
         mSchedulerProvider = new ImmediateSchedulerProvider();
 
-        mMapsPresenter = new MapsPresenter(mMapsRepository, mGeofencingProvider, mNavigator);
+        mMapsPresenter = new MapsPresenter(mMapsRepository, mGeofencingProvider, mRoutesRepository);
 
         MAPS = Lists.newArrayList(new Map("Test1", "Test 1"), new Map("Test2", "Test 2"));
     }
@@ -52,7 +53,7 @@ public class MapsPresenterTest {
     @Test
     public void createPresenter_setsThePresenterToView() {
 
-        mMapsPresenter = new MapsPresenter(mMapsRepository, mGeofencingProvider, mNavigator);
+        mMapsPresenter = new MapsPresenter(mMapsRepository, mGeofencingProvider, mRoutesRepository);
 
         // verify(mMapsView).
     }

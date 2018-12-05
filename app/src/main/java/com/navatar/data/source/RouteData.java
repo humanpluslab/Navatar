@@ -76,4 +76,8 @@ public final class RouteData {
 
     public void setEndId(@NonNull String endId) { mEndId = endId; }
 
+    @Override
+    public String toString() {
+        return mStartId + ":" + mEndId;
+    }
 }

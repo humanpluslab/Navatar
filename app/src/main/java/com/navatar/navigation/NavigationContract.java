@@ -8,12 +8,15 @@ public interface NavigationContract {
 
     interface View extends BaseView<Presenter> {
 
+        void setStepCount(int stepCount);
+
+
 
     }
 
     interface Presenter extends BasePresenter<View> {
 
-        void startNavigation(Route route);
+        void startNavigation();
 
         void reverseRoute();
 

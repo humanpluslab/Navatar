@@ -70,12 +70,55 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
 
         ButterKnife.bind(this, root);
 
+        reverseRouteButton.setOnClickListener(v -> { mPresenter.reverseRoute(); });
+
+
+        mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onSingleTapUp(MotionEvent motionEvent) {
+                gestureBox.setText("onSingleTap");
+                return false;
+            }
+
+            @Override
+            public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+                gestureBox.setText("onScroll");
+                return false;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent downEvent, MotionEvent moveEvent, float velocityX, float velocityY) {
+                gestureBox.setText("onFling");
+                return false;
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent event) {
+                gestureBox.setText("onSingleTapConfirmed");
+                mPresenter.nextStep();
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent arg0) {
+                gestureBox.setText("onLongPress");
+                mPresenter.addLandmark();
+            }
+        });
+
+        root.setOnTouchListener((v,e) -> {
+            if(mGestureDetector.onTouchEvent(e)) {
+                return true;
+            }
+            return true;
+        });
+
         return root;
     }
 
 
-    public boolean onTouchEvent(@NonNull MotionEvent event) {
-        return true;
+    @Override
+    public void setStepCount(int stepCount) {
+        viewStepCount.setText(Integer.toString(stepCount));
     }
-
 }

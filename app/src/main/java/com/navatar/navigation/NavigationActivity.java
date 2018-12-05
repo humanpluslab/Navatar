@@ -18,8 +18,6 @@ public class NavigationActivity extends DaggerAppCompatActivity {
     @Inject
     Lazy<NavigationFragment> navFragmentProvider;
 
-    private NavigationFragment mNavigationFragment;
-
     public void onCreate(Bundle savedInstanceState) {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
@@ -29,10 +27,10 @@ public class NavigationActivity extends DaggerAppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.navigation_activity);
 
-        mNavigationFragment =
+        NavigationFragment mNavigationFragment =
                 (NavigationFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
-        if(mNavigationFragment != null) {
+        if(mNavigationFragment == null) {
             mNavigationFragment = navFragmentProvider.get();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), mNavigationFragment, R.id.contentFrame);

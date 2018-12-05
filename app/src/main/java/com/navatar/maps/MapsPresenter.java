@@ -87,6 +87,7 @@ public class MapsPresenter implements MapsContract.Presenter {
             mMapsView.showNavigation(mRoute);
         } else {
             mMapsView.noRouteFound();
+            Log.e(TAG, "No path found");
         }
     }
 

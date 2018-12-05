@@ -474,8 +474,6 @@ public class MapSelectActivity extends Activity {
       // If building is selected
       if (position != 0) {
         mapService.setActiveMap(position - 1);
-        Intent intent = new Intent(MapSelectActivity.this, NavigationSelectionActivity.class);
-        startActivity(intent);
       }
     }
     public void onNothingSelected(AdapterView<?> arg0) {}
@@ -494,10 +492,6 @@ public class MapSelectActivity extends Activity {
     }
   };
 
-  public void navHistory(View view) {
-    Intent intent = new Intent(MapSelectActivity.this, NavigationHistoryActivity.class);
-    startActivity(intent);
-  }
 
   public static void verifyStoragePermissions(Activity activity) {
       // Check if we have write permission
