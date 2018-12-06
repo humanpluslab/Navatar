@@ -1,1 +1,1 @@
-include ':app', ':protobufs', ':time', ':sensingservices', ':preprocessing', ':output', ':math', ':qrs', ':maps', ':particlefilter', ':pathplanning';
+include ':app', ':protobufs', ':time', ':sensingservices', ':preprocessing', ':output', ':math', ':barcodescanner', ':maps', ':particlefilter', ':pathplanning'

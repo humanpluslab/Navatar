@@ -95,8 +95,10 @@ dependencies {
     implementation project(':sensingservices')
     implementation project(':particlefilter')
     implementation project(':pathplanning')
+    implementation project(':barcodescanner')
 
-    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
+    implementation 'com.google.zxing:core:3.3.2'
+    //implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
     implementation 'com.google.protobuf:protobuf-lite:3.0.1'
 
     // App's dependencies, including test
@@ -130,6 +132,7 @@ dependencies {
     // rxjava
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
+
     implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeVersion"
 
