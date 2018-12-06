@@ -8,7 +8,6 @@ import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
-import android.content.res.Configuration;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -18,6 +17,7 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.media.Image;
 import android.media.ImageReader;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -25,12 +25,12 @@ import android.util.Log;
 import android.util.Pair;
 import android.util.Size;
 import android.view.Surface;
-import android.view.TextureView;
 import android.view.WindowManager;
 
-import java.io.File;
 import java.util.Arrays;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -45,13 +45,6 @@ public class CameraController {
 
     @NonNull
     private final Context mContext;
-    @NonNull
-    private final Callback mCallback;
-    private final int mLayoutOrientation;
-    @NonNull
-    private final File mFile;
-    @NonNull
-    private final AutoFitTextureView mTextureView;
     @NonNull
     private final WindowManager mWindowManager;
     @NonNull
@@ -76,135 +69,76 @@ public class CameraController {
 
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
     private final PublishSubject<Object> mOnPauseSubject = PublishSubject.create();
-    private final PublishSubject<Object> mOnShutterClick = PublishSubject.create();
-    private final PublishSubject<Object> mOnSwitchCameraClick = PublishSubject.create();
     private final PublishSubject<SurfaceTexture> mOnSurfaceTextureAvailable = PublishSubject.create();
     private final ConvergeWaiter mAutoFocusConvergeWaiter = ConvergeWaiter.Factory.createAutoFocusConvergeWaiter();
     private final ConvergeWaiter mAutoExposureConvergeWaiter = ConvergeWaiter.Factory.createAutoExposureConvergeWaiter();
 
+    private final PublishSubject<Image> mImageSubject = PublishSubject.create();
 
-    public CameraController(@NonNull Context context, @NonNull Callback callback, @NonNull String photoFileUrl,
-                            @NonNull AutoFitTextureView textureView, int layoutOrientation, @NonNull Lifecycle lifecycle) {
+    private CameraParams mCameraParams;
+
+    public CameraController(@NonNull Context context, @NonNull Lifecycle lifecycle) {
         mContext = context;
-        mCallback = callback;
-        mFile = new File(photoFileUrl);
-        mTextureView = textureView;
-        mLayoutOrientation = layoutOrientation;
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
         lifecycle.addObserver(mLifecycleObserver);
     }
 
-    public void takePhoto() {
-        mOnShutterClick.onNext(this);
+    public Flowable<Image> getImages() {
+        return mImageSubject.toFlowable(BackpressureStrategy.LATEST);
     }
 
-    public void switchCamera() {
-        mOnSwitchCameraClick.onNext(this);
-    }
-
-    private CameraParams mCameraParams;
     private final LifecycleObserver mLifecycleObserver = new DefaultLifecycleObserver(){
 
         @Override
         public void onCreate(@NonNull LifecycleOwner owner) {
 
-            Log.d(TAG, "\tonCreate");
             String cameraId = null;
             try {
-                Log.d(TAG, "\tchoosing default camera");
                 cameraId = CameraStrategy.chooseDefaultCamera(mCameraManager);
 
                 if (cameraId == null) {
-                    mCallback.onException(new IllegalStateException("Can't find any camera"));
+                    mImageSubject.onError(new IllegalStateException("Can't find any cameras"));
                     return;
                 }
-
                 mCameraParams = getCameraParams(cameraId);
-                setTextureAspectRatio(mCameraParams);
             }
             catch (CameraAccessException e) {
-                mCallback.onException(e);
+                mImageSubject.onError(e);
                 return;
             }
-
-            mTextureView.setSurfaceTextureListener(new TextureView.SurfaceTextureListener() {
-
-                @Override
-                public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
-                    Log.d(TAG, "\tonSurfaceTextureAvailable");
-                    mOnSurfaceTextureAvailable.onNext(surface);
-                }
-
-                @Override
-                public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
-                    Log.d(TAG, "\tonSurfaceTextureSizeChanged");
-                    mOnSurfaceTextureAvailable.onNext(surface);
-                    //NO-OP
-                }
-
-                @Override
-                public boolean onSurfaceTextureDestroyed(SurfaceTexture texture) {
-                    Log.d(TAG, "\tonSurfaceTextureDestroyed");
-                    return true;
-                }
-
-                @Override
-                public void onSurfaceTextureUpdated(SurfaceTexture texture) {
-                }
-            });
-
-            // For some reasons onSurfaceSizeChanged is not always called, this is a workaround
-            mTextureView.addOnLayoutChangeListener((v, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom) -> {
-                Log.d(TAG, "\tonLayoutChange");
-                if (mTextureView.isAvailable()) {
-                    Log.d(TAG, "\tmTextureView.isAvailable()");
-                    mOnSurfaceTextureAvailable.onNext(mTextureView.getSurfaceTexture());
-                }
-            });
+            initImageReader();
         }
 
         @Override
         public void onResume(@NonNull LifecycleOwner owner) {
-            Log.d(TAG, "\tonResume");
-
             subscribe();
-
-            // When the screen is turned off and turned back on, the SurfaceTexture is already
-            // available, and "onSurfaceTextureAvailable" will not be called. In that case, we can open
-            // a camera and start preview from here (otherwise, we wait until the surface is ready in
-            // the SurfaceTextureListener).
-            if (mTextureView.isAvailable()) {
-                Log.d(TAG, "\tmTextureView.isAvailable()");
-                mOnSurfaceTextureAvailable.onNext(mTextureView.getSurfaceTexture());
-            }
         }
 
         @Override
         public void onPause(@NonNull LifecycleOwner owner) {
-            Log.d(TAG, "\tonPause");
             mOnPauseSubject.onNext(this);
         }
 
     };
 
+    private void initImageReader() {
+        Size sizeForImageReader = CameraStrategy.getStillImageSize(mCameraParams.cameraCharacteristics, mCameraParams.previewSize);
+        mImageReader = ImageReader.newInstance(sizeForImageReader.getWidth(), sizeForImageReader.getHeight(), ImageFormat.JPEG, 1);
+        mCompositeDisposable.add(
+                ImageSaverRxWrapper.createOnImageAvailableObservable(mImageReader)
+                        .observeOn(Schedulers.io())
+                        .subscribe(this::fromImageReader)
+        );
+    }
+
+
     private CameraParams getCameraParams(@NonNull String cameraId) throws CameraAccessException {
-        Log.d(TAG, "\tsetupPreviewSize");
         CameraCharacteristics cameraCharacteristics = mCameraManager.getCameraCharacteristics(cameraId);
         Size previewSize = CameraStrategy.getPreviewSize(cameraCharacteristics);
         return new CameraParams(cameraId, cameraCharacteristics, previewSize);
     }
 
-    private void setTextureAspectRatio(@NonNull CameraParams cameraParams) {
-        // We fit the aspect ratio of TextureView to the size of preview we picked.
-        // looks like the dimensions we get from camera characteristics are for Landscape layout, so we swap it for portrait
-        if (mLayoutOrientation == Configuration.ORIENTATION_LANDSCAPE) {
-            mTextureView.setAspectRatio(cameraParams.previewSize.getWidth(), cameraParams.previewSize.getHeight());
-        }
-        else {
-            mTextureView.setAspectRatio(cameraParams.previewSize.getHeight(), cameraParams.previewSize.getWidth());
-        }
-    }
 
     /**
      * Flow is configured in this method
@@ -254,46 +188,15 @@ public class CameraController {
 
         Observable<CaptureSessionData> previewObservable = captureSessionConfiguredObservable
             .flatMap(cameraCaptureSession -> {
-                Log.d(TAG, "\tstartPreview");
                 CaptureRequest.Builder previewBuilder = createPreviewBuilder(cameraCaptureSession, mSurface);
                 return CameraRxWrapper.fromSetRepeatingRequest(cameraCaptureSession, previewBuilder.build());
             })
             .share();
 
-        // react to shutter button
-
-        mCompositeDisposable.add(
-            Observable.combineLatest(previewObservable, mOnShutterClick, (captureSessionData, o) -> captureSessionData)
-                .firstElement().toObservable()
-                .doOnNext(__ -> Log.d(TAG, "\ton shutter click"))
-                .doOnNext(__ -> mCallback.onFocusStarted())
-                .flatMap(this::waitForAf)
-                .flatMap(this::waitForAe)
-                .doOnNext(__ -> mCallback.onFocusFinished())
-                .flatMap(captureSessionData -> captureStillPicture(captureSessionData.session))
-                .subscribe(__ -> {
-                }, this::onError)
-        );
-
-        // react to switch camera button
-
-        mCompositeDisposable.add(
-            Observable.combineLatest(previewObservable, mOnSwitchCameraClick, (captureSessionData, o) -> captureSessionData)
-                .firstElement().toObservable()
-                .doOnNext(__ -> Log.d(TAG, "\ton switch camera click"))
-                .doOnNext(captureSessionData -> captureSessionData.session.close())
-                .flatMap(__ -> captureSessionClosedObservable)
-                .doOnNext(cameraCaptureSession -> cameraCaptureSession.getDevice().close())
-                .flatMap(__ -> closeCameraObservable)
-                .doOnNext(__ -> closeImageReader())
-                .subscribe(__ -> switchCameraInternal(), this::onError)
-        );
-
         // react to onPause event
 
         mCompositeDisposable.add(Observable.combineLatest(previewObservable, mOnPauseSubject, (state, o) -> state)
             .firstElement().toObservable()
-            .doOnNext(__ -> Log.d(TAG, "\ton pause"))
             .doOnNext(captureSessionData ->{
                 captureSessionData.session.stopRepeating();
                 captureSessionData.session.abortCaptures();
@@ -310,13 +213,13 @@ public class CameraController {
     private void onError(Throwable throwable) {
         unsubscribe();
         if (throwable instanceof CameraAccessException) {
-            mCallback.onCameraAccessException();
+            //mCallback.onCameraAccessException();
         }
         else if (throwable instanceof OpenCameraException) {
-            mCallback.onCameraOpenException(((OpenCameraException) throwable).getReason());
+            //mCallback.onCameraOpenException(((OpenCameraException) throwable).getReason());
         }
         else {
-            mCallback.onException(throwable);
+            //mCallback.onException(throwable);
         }
     }
 
@@ -330,31 +233,20 @@ public class CameraController {
     }
 
     private void switchCameraInternal() {
-        Log.d(TAG, "\tswitchCameraInternal");
         try {
             unsubscribe();
             String cameraId = CameraStrategy.switchCamera(mCameraManager, mCameraParams.cameraId);
             mCameraParams = getCameraParams(cameraId);
-            setTextureAspectRatio(mCameraParams);
             subscribe();
-            // waiting for textureView to be measured
         }
         catch (CameraAccessException e) {
             onError(e);
         }
     }
 
-    private void initImageReader() {
-        Log.d(TAG, "\tinitImageReader");
-        Size sizeForImageReader = CameraStrategy.getStillImageSize(mCameraParams.cameraCharacteristics, mCameraParams.previewSize);
-        mImageReader = ImageReader.newInstance(sizeForImageReader.getWidth(), sizeForImageReader.getHeight(), ImageFormat.JPEG, 1);
-        mCompositeDisposable.add(
-            ImageSaverRxWrapper.createOnImageAvailableObservable(mImageReader)
-                .observeOn(Schedulers.io())
-                .flatMap(imageReader -> ImageSaverRxWrapper.save(imageReader.acquireLatestImage(), mFile).toObservable())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(file -> mCallback.onPhotoTaken(file.getAbsolutePath(), getLensFacingPhotoType()))
-        );
+
+    private void fromImageReader(ImageReader reader) {
+        mImageSubject.onNext(reader.acquireLatestImage());
     }
 
     @Nullable
@@ -464,25 +356,10 @@ public class CameraController {
     }
 
     private void closeImageReader() {
-        Log.d(TAG, "\tcloseImageReader");
         if (mImageReader != null) {
             mImageReader.close();
             mImageReader = null;
         }
-    }
-
-    public interface Callback {
-        void onFocusStarted();
-
-        void onFocusFinished();
-
-        void onPhotoTaken(@NonNull String photoUrl, @Nullable Integer photoSourceType);
-
-        void onCameraAccessException();
-
-        void onCameraOpenException(@Nullable OpenCameraException.Reason reason);
-
-        void onException(Throwable throwable);
     }
 
 }

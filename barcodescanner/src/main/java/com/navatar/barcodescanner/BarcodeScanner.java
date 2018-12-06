@@ -59,10 +59,6 @@ public class BarcodeScanner extends ScannerService {
 
     private String currentCameraId;
     private boolean cameraClosed;
-    /**
-     * stores a sorted map of (pictureUrlOnDisk, PictureData).
-     */
-    private TreeMap<String, byte[]> picturesTaken;
 
 
     private PublishSubject<String> mSource = PublishSubject.create();
@@ -127,7 +123,6 @@ public class BarcodeScanner extends ScannerService {
 
 
 
-        this.picturesTaken = new TreeMap<>();
         this.cameraIds = new LinkedList<>();
         try {
             final String[] cameraIds = manager.getCameraIdList();
@@ -167,44 +162,29 @@ public class BarcodeScanner extends ScannerService {
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request,
                                        @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            if (picturesTaken.lastEntry() != null) {
                 //capturingListener.onCaptureDone(picturesTaken.lastEntry().getKey(), picturesTaken.lastEntry().getValue());
-                Log.i(TAG, "done taking picture from camera " + cameraDevice.getId());
-            }
             closeCamera();
         }
     };
 
 
-    private final ImageReader.OnImageAvailableListener onImageAvailableListener = (ImageReader imReader) -> {
-        final Image image = imReader.acquireLatestImage();
-        final ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-        final byte[] bytes = new byte[buffer.capacity()];
-        buffer.get(bytes);
-        //saveImageToDisk(bytes);
-        image.close();
-    };
 
     private final CameraDevice.StateCallback stateCallback = new CameraDevice.StateCallback() {
         @Override
         public void onOpened(@NonNull CameraDevice camera) {
             cameraClosed = false;
-            Log.d(TAG, "camera " + camera.getId() + " opened");
             cameraDevice = camera;
-            Log.i(TAG, "Taking picture from camera " + camera.getId());
-            //Take the picture after some delay. It may resolve getting a black dark photos.
             new Handler().postDelayed(() -> {
                 try {
                     takePicture();
                 } catch (final CameraAccessException e) {
-                    Log.e(TAG, " exception occurred while taking picture from " + currentCameraId, e);
+
                 }
             }, 500);
         }
 
         @Override
         public void onDisconnected(@NonNull CameraDevice camera) {
-            Log.d(TAG, " camera " + camera.getId() + " disconnected");
             if (cameraDevice != null && !cameraClosed) {
                 cameraClosed = true;
                 cameraDevice.close();
@@ -214,10 +194,8 @@ public class BarcodeScanner extends ScannerService {
         @Override
         public void onClosed(@NonNull CameraDevice camera) {
             cameraClosed = true;
-            Log.d(TAG, "camera " + camera.getId() + " closed");
-            //once the current camera has been closed, start taking another picture
             if (!cameraIds.isEmpty()) {
-                takeAnotherPicture();
+
             } else {
                 //capturingListener.onDoneCapturingAllPhotos(picturesTaken);
             }
@@ -235,48 +213,51 @@ public class BarcodeScanner extends ScannerService {
 
 
     private void takePicture() throws CameraAccessException {
+
         if (null == cameraDevice) {
             Log.e(TAG, "cameraDevice is null");
             return;
         }
+
         final CameraCharacteristics characteristics = manager.getCameraCharacteristics(cameraDevice.getId());
+
         Size[] jpegSizes = null;
+
         StreamConfigurationMap streamConfigurationMap = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+
         if (streamConfigurationMap != null) {
             jpegSizes = streamConfigurationMap.getOutputSizes(ImageFormat.JPEG);
         }
+
         final boolean jpegSizesNotEmpty = jpegSizes != null && 0 < jpegSizes.length;
         int width = jpegSizesNotEmpty ? jpegSizes[0].getWidth() : 640;
         int height = jpegSizesNotEmpty ? jpegSizes[0].getHeight() : 480;
+
         final ImageReader reader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
+
         final List<Surface> outputSurfaces = new ArrayList<>();
         outputSurfaces.add(reader.getSurface());
+
         final CaptureRequest.Builder captureBuilder = cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
         captureBuilder.addTarget(reader.getSurface());
         captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
         captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation());
-        reader.setOnImageAvailableListener(onImageAvailableListener, null);
+
+        // reader.setOnImageAvailableListener(onImageAvailableListener, null);
+
         cameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
                     @Override
                     public void onConfigured(@NonNull CameraCaptureSession session) {
                         try {
                             session.capture(captureBuilder.build(), captureListener, null);
                         } catch (final CameraAccessException e) {
-                            Log.e(TAG, " exception occurred while accessing " + currentCameraId, e);
+
                         }
                     }
 
                     @Override
-                    public void onConfigureFailed(@NonNull CameraCaptureSession session) {
-                    }
-                }
-                , null);
-    }
-
-
-    private void takeAnotherPicture() {
-        this.currentCameraId = this.cameraIds.poll();
-        openCamera();
+                    public void onConfigureFailed(@NonNull CameraCaptureSession session) { }
+                }, null);
     }
 
     private void closeCamera() {
