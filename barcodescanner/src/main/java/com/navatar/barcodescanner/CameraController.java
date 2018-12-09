@@ -3,13 +3,8 @@ package com.navatar.barcodescanner;
 import com.navatar.barcodescanner.CameraRxWrapper.CaptureSessionData;
 
 import android.annotation.TargetApi;
-import android.arch.lifecycle.DefaultLifecycleObserver;
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.LifecycleOwner;
 import android.content.Context;
 import android.graphics.ImageFormat;
-import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -32,7 +27,6 @@ import java.util.Arrays;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
@@ -49,7 +43,7 @@ public class CameraController {
     private final WindowManager mWindowManager;
     @NonNull
     private final CameraManager mCameraManager;
-    private Surface mSurface;
+
     private ImageReader mImageReader;
 
     private class CameraParams {
@@ -68,63 +62,60 @@ public class CameraController {
     }
 
     private final CompositeDisposable mCompositeDisposable = new CompositeDisposable();
+
     private final PublishSubject<Object> mOnPauseSubject = PublishSubject.create();
-    private final PublishSubject<SurfaceTexture> mOnSurfaceTextureAvailable = PublishSubject.create();
     private final ConvergeWaiter mAutoFocusConvergeWaiter = ConvergeWaiter.Factory.createAutoFocusConvergeWaiter();
     private final ConvergeWaiter mAutoExposureConvergeWaiter = ConvergeWaiter.Factory.createAutoExposureConvergeWaiter();
 
     private final PublishSubject<Image> mImageSubject = PublishSubject.create();
+    private final PublishSubject<Surface> mSurfaceSubject = PublishSubject.create();
+    private final PublishSubject<Pair<CameraRxWrapper.DeviceStateEvents, CameraDevice>> mCameraSubject = PublishSubject.create();
 
     private CameraParams mCameraParams;
 
-    public CameraController(@NonNull Context context, @NonNull Lifecycle lifecycle) {
+    private Surface mSurface;
+
+    public CameraController(@NonNull Context context, @NonNull ImageReader imageReader) {
+        this(context);
+        mImageReader = imageReader;
+        mSurface = imageReader.getSurface();
+    }
+
+    public CameraController(@NonNull Context context) {
         mContext = context;
         mWindowManager = (WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE);
         mCameraManager = (CameraManager) mContext.getSystemService(Context.CAMERA_SERVICE);
-        lifecycle.addObserver(mLifecycleObserver);
     }
 
     public Flowable<Image> getImages() {
         return mImageSubject.toFlowable(BackpressureStrategy.LATEST);
     }
 
-    private final LifecycleObserver mLifecycleObserver = new DefaultLifecycleObserver(){
+    public Observable<Pair<CameraRxWrapper.DeviceStateEvents, CameraDevice>> openCamera() {
 
-        @Override
-        public void onCreate(@NonNull LifecycleOwner owner) {
-
-            String cameraId = null;
-            try {
-                cameraId = CameraStrategy.chooseDefaultCamera(mCameraManager);
-
-                if (cameraId == null) {
-                    mImageSubject.onError(new IllegalStateException("Can't find any cameras"));
-                    return;
-                }
+        try {
+            String cameraId = CameraStrategy.chooseDefaultCamera(mCameraManager);
+            if (cameraId == null) {
+                mCameraSubject.onError(new IllegalStateException("Can't find any cameras"));
+            } else {
                 mCameraParams = getCameraParams(cameraId);
+                subscribe();
+                initImageReader();
+                mSurfaceSubject.onNext(mSurface);
             }
-            catch (CameraAccessException e) {
-                mImageSubject.onError(e);
-                return;
-            }
-            initImageReader();
+        } catch (CameraAccessException err) {
+            mCameraSubject.onError(err);
         }
 
-        @Override
-        public void onResume(@NonNull LifecycleOwner owner) {
-            subscribe();
-        }
-
-        @Override
-        public void onPause(@NonNull LifecycleOwner owner) {
-            mOnPauseSubject.onNext(this);
-        }
-
-    };
+        return mCameraSubject;
+    }
 
     private void initImageReader() {
-        Size sizeForImageReader = CameraStrategy.getStillImageSize(mCameraParams.cameraCharacteristics, mCameraParams.previewSize);
-        mImageReader = ImageReader.newInstance(sizeForImageReader.getWidth(), sizeForImageReader.getHeight(), ImageFormat.JPEG, 1);
+        if (mImageReader == null) {
+            Size sizeForImageReader = CameraStrategy.getStillImageSize(mCameraParams.cameraCharacteristics, mCameraParams.previewSize);
+            mImageReader = ImageReader.newInstance(sizeForImageReader.getWidth(), sizeForImageReader.getHeight(), ImageFormat.JPEG, 1);
+            mSurface = mImageReader.getSurface();
+        }
         mCompositeDisposable.add(
                 ImageSaverRxWrapper.createOnImageAvailableObservable(mImageReader)
                         .observeOn(Schedulers.io())
@@ -139,6 +130,10 @@ public class CameraController {
         return new CameraParams(cameraId, cameraCharacteristics, previewSize);
     }
 
+    private void fromImageReader(ImageReader reader) {
+        mImageSubject.onNext(reader.acquireLatestImage());
+    }
+
 
     /**
      * Flow is configured in this method
@@ -148,15 +143,13 @@ public class CameraController {
 
         // open camera
 
-        Observable<Pair<CameraRxWrapper.DeviceStateEvents, CameraDevice>> cameraDeviceObservable = mOnSurfaceTextureAvailable
+        Observable<Pair<CameraRxWrapper.DeviceStateEvents, CameraDevice>> cameraDeviceObservable = mSurfaceSubject
             .firstElement()
-            .doAfterSuccess(this::setupSurface)
-            .doAfterSuccess(__ -> initImageReader())
             .toObservable()
             .flatMap(__ -> CameraRxWrapper.openCamera(mCameraParams.cameraId, mCameraManager))
             .share();
 
-        Observable<CameraDevice> openCameraObservable = cameraDeviceObservable
+        Observable<CameraDevice> openCameraObservable = mCameraSubject
             .filter(pair -> pair.first == CameraRxWrapper.DeviceStateEvents.ON_OPENED)
             .map(pair -> pair.second)
             .share();
@@ -170,7 +163,7 @@ public class CameraController {
 
         Observable<Pair<CameraRxWrapper.CaptureSessionStateEvents, CameraCaptureSession>> createCaptureSessionObservable = openCameraObservable
             .flatMap(cameraDevice -> CameraRxWrapper
-                .createCaptureSession(cameraDevice, Arrays.asList(mSurface, mImageReader.getSurface()))
+                .createCaptureSession(cameraDevice, Arrays.asList(mSurface))
             )
             .share();
 
@@ -227,27 +220,6 @@ public class CameraController {
         mCompositeDisposable.clear();
     }
 
-    private void setupSurface(@NonNull SurfaceTexture surfaceTexture) {
-        surfaceTexture.setDefaultBufferSize(mCameraParams.previewSize.getWidth(), mCameraParams.previewSize.getHeight());
-        mSurface = new Surface(surfaceTexture);
-    }
-
-    private void switchCameraInternal() {
-        try {
-            unsubscribe();
-            String cameraId = CameraStrategy.switchCamera(mCameraManager, mCameraParams.cameraId);
-            mCameraParams = getCameraParams(cameraId);
-            subscribe();
-        }
-        catch (CameraAccessException e) {
-            onError(e);
-        }
-    }
-
-
-    private void fromImageReader(ImageReader reader) {
-        mImageSubject.onNext(reader.acquireLatestImage());
-    }
 
     @Nullable
     private Integer getLensFacingPhotoType() {
