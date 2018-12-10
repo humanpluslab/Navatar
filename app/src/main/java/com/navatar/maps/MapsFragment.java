@@ -2,17 +2,28 @@ package com.navatar.maps;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.ResultPoint;
+import com.google.zxing.client.android.BeepManager;
+import com.journeyapps.barcodescanner.BarcodeCallback;
+import com.journeyapps.barcodescanner.BarcodeResult;
+import com.journeyapps.barcodescanner.DecoratedBarcodeView;
+import com.journeyapps.barcodescanner.DefaultDecoderFactory;
+import com.navatar.location.details.QRCodeScanner;
 import com.navatar.navigation.NavigationActivity;
 import com.navatar.R;
 import com.navatar.data.Building;
@@ -21,6 +32,8 @@ import com.navatar.data.Map;
 import com.navatar.data.Route;
 import com.navatar.di.ActivityScoped;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,6 +49,8 @@ import io.reactivex.subjects.PublishSubject;
 
 @ActivityScoped
 public class MapsFragment extends DaggerFragment implements MapsContract.View {
+
+    private final static String TAG = MapsFragment.class.getSimpleName();
 
     @BindView(R.id.mapSpinner)
     Spinner mapSpinner;
@@ -55,6 +70,9 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     @BindView(R.id.showNavigationButton)
     Button showNavigationButton;
 
+    @BindView(R.id.barcode_scanner)
+    DecoratedBarcodeView barcodeView;
+
     @BindViews({R.id.startNavigationButton, R.id.showNavigationButton})
     List<Button> showButtons;
 
@@ -65,11 +83,15 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
             (v, index) -> v.setVisibility(View.GONE);
 
     LinkedList<Spinner> spinners;
+    Spinner currentSpinner;
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     @Inject
     MapsContract.Presenter mPresenter;
+
+    @Inject
+    QRCodeScanner qrCodeScanner;
 
     @Inject
     public MapsFragment() { }
@@ -83,6 +105,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     public void onResume() {
         super.onResume();
         mPresenter.takeView(this);
+        barcodeView.resume();
     }
 
     @Override
@@ -90,6 +113,13 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         super.onDestroy();
         disposables.clear();
         mPresenter.dropView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.dropView();
+        barcodeView.pause();
     }
 
     @Nullable
@@ -103,6 +133,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
             Intent intent = new Intent(getContext(), NavigationActivity.class);
             startActivity(intent);
         });
+        qrCodeScanner.setView(barcodeView, getActivity().getIntent());
         return root;
     }
 
@@ -110,6 +141,8 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     public void showMaps(List<Map> maps) {
         MapListAdapter<Map> listAdapter = new MapListAdapter<>(mapSpinner, maps, R.string.mapSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onMapSelected));
+        currentSpinner = mapSpinner;
+
     }
 
     @Override
@@ -117,6 +150,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ButterKnife.apply(mapSpinner, GONE);
         ButterKnife.apply(buildingSpinner, VISIBLE);
         spinners.add(mapSpinner);
+        currentSpinner = mapSpinner;
         MapListAdapter<Building> listAdapter = new MapListAdapter<>(buildingSpinner, map.getBuildings(), R.string.buildingSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onBuildingSelected));
     }
@@ -126,6 +160,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ButterKnife.apply(buildingSpinner, GONE);
         ButterKnife.apply(fromSpinner, VISIBLE);
         spinners.add(buildingSpinner);
+        currentSpinner = fromSpinner;
         MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(fromSpinner, landmark, R.string.fromSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onFromLandmarkSelected));
     }
@@ -135,6 +170,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ButterKnife.apply(fromSpinner, GONE);
         ButterKnife.apply(toSpinner, VISIBLE);
         spinners.add(fromSpinner);
+        currentSpinner = toSpinner;
         MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(toSpinner, landmark, R.string.toSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onToLandmarkSelected));
     }
@@ -149,6 +185,19 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     @Override
     public void noRouteFound() {
 
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        ButterKnife.apply(showButtons, GONE);
+
+        if (spinners.size() > 0) {
+            currentSpinner.setVisibility(View.GONE);
+            currentSpinner = spinners.removeLast();
+            currentSpinner.setVisibility(View.VISIBLE);
+            return true;
+        }
+        return false;
     }
 
     private static class MapListAdapter<T> extends ArrayAdapter implements AdapterView.OnItemSelectedListener {

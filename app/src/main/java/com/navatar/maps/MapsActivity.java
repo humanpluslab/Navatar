@@ -17,6 +17,8 @@ public class MapsActivity extends DaggerAppCompatActivity {
     @Inject
     Lazy<MapsFragment> mapsFragmentProvider;
 
+    MapsFragment mapsFragment;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         AndroidInjection.inject(this);
@@ -25,7 +27,7 @@ public class MapsActivity extends DaggerAppCompatActivity {
         setTitle(R.string.selectMapLabel);
         setContentView(R.layout.maps_activity);
 
-        MapsFragment mapsFragment =
+        mapsFragment =
                 (MapsFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
         if (mapsFragment == null) {
@@ -33,5 +35,14 @@ public class MapsActivity extends DaggerAppCompatActivity {
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), mapsFragment, R.id.contentFrame);
         }
+
     }
+
+    @Override
+    public void onBackPressed() {
+        if (mapsFragment == null || !mapsFragment.onBackPressed()) {
+            super.onBackPressed();
+        }
+    }
+
 }

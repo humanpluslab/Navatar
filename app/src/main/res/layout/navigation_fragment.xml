@@ -38,6 +38,12 @@
         android:textSize="15dp"
         android:layout_weight="0.60" />
 
+    <com.journeyapps.barcodescanner.DecoratedBarcodeView
+        android:id="@+id/barcode_scanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    </com.journeyapps.barcodescanner.DecoratedBarcodeView>
+
     <Button
         android:id="@+id/reverseRouteButton"
         android:layout_width="match_parent"
@@ -45,17 +51,5 @@
         android:text="@string/reverseRoute"
         android:visibility="gone"
         android:layout_weight="0.06" />
-
-    <TextView
-        android:id="@+id/gestureBox"
-        android:layout_width="336dp"
-        android:layout_height="wrap_content"
-        android:paddingTop="14dp"
-        android:clickable="false"
-        android:ems="10"
-        android:longClickable="false"
-        android:textSize="15dp"
-        android:layout_weight="0.05"
-        android:text="Detected gestures will be displayed here."/>
 
 </LinearLayout>

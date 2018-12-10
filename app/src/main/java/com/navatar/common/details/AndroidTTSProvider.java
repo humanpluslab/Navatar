@@ -2,6 +2,7 @@ package com.navatar.common.details;
 
 import android.content.Context;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 
 import com.navatar.common.TextToSpeechProvider;
 
@@ -10,6 +11,8 @@ import java.lang.ref.WeakReference;
 import javax.inject.Inject;
 
 public class AndroidTTSProvider implements TextToSpeechProvider, TextToSpeech.OnInitListener {
+
+    private final static String TAG = AndroidTTSProvider.class.getSimpleName();
 
     private WeakReference<Context> mContext;
 
@@ -31,6 +34,7 @@ public class AndroidTTSProvider implements TextToSpeechProvider, TextToSpeech.On
     @Override
     public void speak(String text) {
         if (initialized)
+            Log.i(TAG, text);
             mTextToSpeech.speak(text, TextToSpeech.QUEUE_ADD, null, "navatar-tts");
     }
 
@@ -39,7 +43,7 @@ public class AndroidTTSProvider implements TextToSpeechProvider, TextToSpeech.On
         Context context = mContext.get();
         if (context != null && initialized) {
             String str = context.getResources().getString(resource);
-            mTextToSpeech.speak(str, TextToSpeech.QUEUE_ADD, null, "navatar-tts");
+            speak(str);
         }
     }
 

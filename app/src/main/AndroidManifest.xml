@@ -22,17 +22,17 @@
             android:name=".main.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
 
         <activity
             android:name=".maps.MapsActivity"
-            android:label="@string/selectMapLabel"
-            android:theme="@style/Theme.AppCompat.DayNight"/>
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.DayNight">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".navigation.NavigationActivity"

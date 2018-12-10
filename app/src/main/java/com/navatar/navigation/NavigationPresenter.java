@@ -8,7 +8,7 @@ import com.navatar.data.Route;
 import com.navatar.data.source.RoutesRepository;
 import com.navatar.di.ActivityScoped;
 import com.navatar.location.GeofencingProvider;
-import com.navatar.location.LocationProvider;
+import com.navatar.location.LocationInteractor;
 import com.navatar.pathplanning.Path;
 
 import javax.inject.Inject;
@@ -22,10 +22,17 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     private final CompositeDisposable disposables = new CompositeDisposable();
 
-    private final RoutesRepository mRoutesRepository;
-    private final TextToSpeechProvider mTTSProvider;
-    private final GeofencingProvider mGeofencingProvider;
-    private final LocationProvider mLocationProvider;
+    @Inject
+    RoutesRepository mRoutesRepository;
+
+    @Inject
+    TextToSpeechProvider mTTSProvider;
+
+    @Inject
+    GeofencingProvider mGeofencingProvider;
+
+    @Inject
+    LocationInteractor mLocationInteractor;
 
     @Nullable
     private NavigationContract.View mNavView;
@@ -34,15 +41,7 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     private Route mRoute;
 
     @Inject
-    public NavigationPresenter(RoutesRepository navHistoryRepository,
-                               TextToSpeechProvider textToSpeechProvider,
-                               GeofencingProvider geofencingProvider,
-                               LocationProvider locationProvider) {
-        mRoutesRepository = navHistoryRepository;
-        mTTSProvider = textToSpeechProvider;
-        mGeofencingProvider = geofencingProvider;
-        mLocationProvider = locationProvider;
-    }
+    public NavigationPresenter() { }
 
     @Override
     public void takeView(NavigationContract.View view) {
@@ -88,9 +87,26 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     public void loadData() {
         mRoute = mRoutesRepository.getSelectedRoute();
 
+        getLocation();
+
         if (mRoute != null)
             startNavigation();
         else
             Log.e(TAG, "No route found");
+    }
+
+
+    private void getLocation() {
+        disposables.add(mLocationInteractor.getLocationUpdates()
+            .subscribe(
+                location -> {
+                    Log.e(TAG, "Lat: " + location.latitude() + " Long: " + location.longitude());
+                },
+                throwable -> {
+                    Log.e(TAG, "Error while getting location", throwable);
+                }
+            )
+        );
+
     }
 }

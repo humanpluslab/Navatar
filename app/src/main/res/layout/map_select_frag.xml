@@ -1,50 +1,73 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="25dp">
 
-    <Spinner
-        android:id="@+id/mapSpinner"
-        style="android:spinnerStyle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Spinner
-        android:id="@+id/buildingSpinner"
-        style="android:spinnerStyle"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:visibility="invisible" />
+        <LinearLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical"
+            android:paddingBottom="25dp">
 
-    <Spinner
-        android:id="@+id/fromSpinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:prompt="@string/fromSpinnerLabel"
-        android:visibility="invisible" />
+            <Spinner
+                android:id="@+id/mapSpinner"
+                style="android:spinnerStyle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" />
 
-    <Spinner
-        android:id="@+id/toSpinner"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:prompt="@string/toSpinnerLabel"
-       android:visibility="invisible" />
+            <Spinner
+                android:id="@+id/buildingSpinner"
+                style="android:spinnerStyle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
-    <Button
-        android:id="@+id/startNavigationButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/startNavigation"
-        android:visibility="invisible" />
+            <Spinner
+                android:id="@+id/fromSpinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:prompt="@string/fromSpinnerLabel"
+                android:visibility="gone" />
 
-    <Button
-        android:id="@+id/showNavigationButton"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/showNavigation"
-        android:visibility="invisible" />
+            <Spinner
+                android:id="@+id/toSpinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:prompt="@string/toSpinnerLabel"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/startNavigationButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/startNavigation"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/showNavigationButton"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/showNavigation"
+                android:visibility="gone" />
+        </LinearLayout>
+
+
+        <com.journeyapps.barcodescanner.DecoratedBarcodeView
+            android:id="@+id/barcode_scanner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@id/buttonsLayout"
+            android:layout_alignParentBottom="true"></com.journeyapps.barcodescanner.DecoratedBarcodeView>
+
+    </RelativeLayout>
 
 
 </LinearLayout>

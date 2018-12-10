@@ -3,6 +3,7 @@ package com.navatar.maps;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.navatar.common.TextToSpeechProvider;
 import com.navatar.data.Building;
 import com.navatar.data.Landmark;
 import com.navatar.data.Map;
@@ -10,6 +11,9 @@ import com.navatar.data.Route;
 import com.navatar.data.source.MapsRepository;
 import com.navatar.data.source.RoutesRepository;
 import com.navatar.location.GeofencingProvider;
+import com.navatar.location.LocationInteractor;
+import com.navatar.location.model.Location;
+import com.navatar.location.model.NoLocationAvailableException;
 import com.navatar.pathplanning.Path;
 
 import java.util.ArrayList;
@@ -24,9 +28,21 @@ public class MapsPresenter implements MapsContract.Presenter {
     private static final String TAG = MapsPresenter.class.getSimpleName();
 
     private final CompositeDisposable disposables = new CompositeDisposable();
-    private final GeofencingProvider mGeofencingProvider;
-    private final MapsRepository mMapRepository;
-    private final RoutesRepository mRoutesRepository;
+
+    @Inject
+    GeofencingProvider mGeofencingProvider;
+
+    @Inject
+    MapsRepository mMapRepository;
+
+    @Inject
+    RoutesRepository mRoutesRepository;
+
+    @Inject
+    LocationInteractor mLocationInteractor;
+
+    @Inject
+    TextToSpeechProvider mTTSProvider;
 
     @Nullable
     private MapsContract.View mMapsView;
@@ -35,11 +51,7 @@ public class MapsPresenter implements MapsContract.Presenter {
     private Route mRoute;
 
     @Inject
-    public MapsPresenter(MapsRepository mapsRepository, GeofencingProvider geofencingProvider, RoutesRepository routes) {
-        mMapRepository = mapsRepository;
-        mGeofencingProvider = geofencingProvider;
-        mRoutesRepository = routes;
-    }
+    public MapsPresenter() { }
 
     @Override
     public void loadData() {
@@ -54,6 +66,18 @@ public class MapsPresenter implements MapsContract.Presenter {
             .subscribe(
 
             ));
+
+        disposables.add(mLocationInteractor.getLocationUpdates()
+            .subscribe(
+                location -> {
+                    Log.e(TAG, "Lat: " + location.latitude() + " Long: " + location.longitude());
+                },
+                throwable -> {
+                    Log.e(TAG, "Error while getting location", throwable);
+                }
+            )
+        );
+
     }
 
     @Override
@@ -86,6 +110,7 @@ public class MapsPresenter implements MapsContract.Presenter {
             mRoutesRepository.setSelectedRoute(mRoute);
             mMapsView.showNavigation(mRoute);
         } else {
+            mTTSProvider.speak("No path found");
             mMapsView.noRouteFound();
             Log.e(TAG, "No path found");
         }

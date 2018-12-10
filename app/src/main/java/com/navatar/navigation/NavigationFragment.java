@@ -1,19 +1,21 @@
 package com.navatar.navigation;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.MotionEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.navatar.R;
 import com.navatar.di.ActivityScoped;
+import com.navatar.location.details.QRCodeScanner;
 
 import javax.inject.Inject;
 
@@ -24,6 +26,8 @@ import dagger.android.support.DaggerFragment;
 @ActivityScoped
 public class NavigationFragment extends DaggerFragment implements NavigationContract.View {
 
+    private final static String TAG = NavigationFragment.class.getSimpleName();
+
     @BindView(R.id.viewStepCount)
     EditText viewStepCount;
 
@@ -33,16 +37,19 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
     @BindView(R.id.reverseRouteButton)
     Button reverseRouteButton;
 
-    @BindView(R.id.gestureBox)
-    TextView gestureBox;
+    @BindView(R.id.barcode_scanner)
+    DecoratedBarcodeView barcodeView;
 
     @Inject
     NavigationContract.Presenter mPresenter;
 
     @Inject
-    public NavigationFragment() {}
+    QRCodeScanner qrCodeScanner;
 
     private GestureDetector mGestureDetector;
+
+    @Inject
+    public NavigationFragment() { }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,12 +60,21 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
     public void onResume() {
         super.onResume();
         mPresenter.takeView(this);
+        barcodeView.resume();
+
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mPresenter.dropView();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.dropView();
+        barcodeView.pause();
     }
 
     @Nullable
@@ -70,52 +86,66 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
 
         ButterKnife.bind(this, root);
 
-        reverseRouteButton.setOnClickListener(v -> { mPresenter.reverseRoute(); });
+        reverseRouteButton.setOnClickListener(v -> {
+            mPresenter.reverseRoute();
+        });
+
+        qrCodeScanner.setView(barcodeView, getActivity().getIntent());
+
+        mGestureDetector = getGestureDetector();
+
+        root.setOnTouchListener((v, e) -> {
+            if (mGestureDetector.onTouchEvent(e)) {
+                v.performClick();
+                return true;
+            }
+            return false;
+        });
+
+        return root;
+    }
 
 
-        mGestureDetector = new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+    private GestureDetector getGestureDetector() {
+        return new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
             @Override
             public boolean onSingleTapUp(MotionEvent motionEvent) {
-                gestureBox.setText("onSingleTap");
+                Log.i(TAG,"onSingleTap");
                 return false;
             }
 
             @Override
             public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-                gestureBox.setText("onScroll");
+                Log.i(TAG,"onScroll");
                 return false;
             }
 
             @Override
             public boolean onFling(MotionEvent downEvent, MotionEvent moveEvent, float velocityX, float velocityY) {
-                gestureBox.setText("onFling");
+                Log.i(TAG,"onFling");
                 return false;
             }
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent event) {
-                gestureBox.setText("onSingleTapConfirmed");
+                Log.i(TAG,"onSingleTapConfirmed");
                 mPresenter.nextStep();
                 return true;
             }
 
             @Override
             public void onLongPress(MotionEvent arg0) {
-                gestureBox.setText("onLongPress");
+                Log.i(TAG, "onLongPress");
                 mPresenter.addLandmark();
             }
         });
-
-        root.setOnTouchListener((v,e) -> {
-            if(mGestureDetector.onTouchEvent(e)) {
-                return true;
-            }
-            return true;
-        });
-
-        return root;
     }
-
 
     @Override
     public void setStepCount(int stepCount) {

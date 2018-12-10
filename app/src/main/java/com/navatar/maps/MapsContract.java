@@ -28,6 +28,8 @@ public interface MapsContract {
 
         void noRouteFound();
 
+        boolean onBackPressed();
+
     }
 
     interface Presenter extends BasePresenter<View> {
