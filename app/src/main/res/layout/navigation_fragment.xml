@@ -1,55 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding = "25dp"
-    android:weightSum="1">
+    android:orientation="vertical"
+    android:padding="25dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Number of Steps"
-        android:textSize="20dp"/>
-
-    <EditText
-        android:id="@+id/viewStepCount"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="false"
-        android:ems="10"
-        android:longClickable="false"
-        android:textSize="15dp"
-        android:enabled="false"/>
+        android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/direction"
-        android:textSize="20dp"/>
+        <LinearLayout
+            android:id="@+id/buttonsLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical"
+            android:paddingBottom="25dp">
 
-    <TextView
-        android:id="@+id/viewDirection"
-        android:layout_width="match_parent"
-        android:layout_height="205dp"
-        android:clickable="false"
-        android:ems="10"
-        android:longClickable="false"
-        android:textSize="15dp"
-        android:layout_weight="0.60" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Number of Steps"
+                android:textSize="20sp" />
 
-    <com.journeyapps.barcodescanner.DecoratedBarcodeView
-        android:id="@+id/barcode_scanner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </com.journeyapps.barcodescanner.DecoratedBarcodeView>
+            <EditText
+                android:id="@+id/viewStepCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:ems="10"
+                android:enabled="false"
+                android:longClickable="false"
+                android:textSize="15sp" />
 
-    <Button
-        android:id="@+id/reverseRouteButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/reverseRoute"
-        android:visibility="gone"
-        android:layout_weight="0.06" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/direction"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/viewDirection"
+                android:layout_width="match_parent"
+                android:layout_height="205dp"
+                android:clickable="false"
+                android:ems="10"
+                android:longClickable="false"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/reverseRouteButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/reverseRoute"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+        <com.journeyapps.barcodescanner.DecoratedBarcodeView
+            android:id="@+id/barcode_scanner"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@id/buttonsLayout"
+            android:layout_alignParentBottom="true"/>
+
+    </RelativeLayout>
 
 </LinearLayout>

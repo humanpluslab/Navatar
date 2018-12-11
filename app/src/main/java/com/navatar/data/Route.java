@@ -60,6 +60,7 @@ public final class Route {
 
     public void setFromLandmark(@NonNull Landmark landmark) {
         mFromLandmark = landmark;
+        mPath = mBuilding.getRoute(mFromLandmark, mToLandmark);
     }
 
     @Nullable
@@ -74,6 +75,7 @@ public final class Route {
 
     public void setToLandmark(@NonNull Landmark landmark) {
         mToLandmark = landmark;
+        mPath = mBuilding.getRoute(mFromLandmark, mToLandmark);
     }
 
     public void setPath(@NonNull Path path) {

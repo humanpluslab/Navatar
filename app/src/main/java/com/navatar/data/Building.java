@@ -259,6 +259,9 @@ public class Building {
 
     public com.navatar.pathplanning.Path getRoute(Landmark start, Landmark end) {
 
+        if (start == null || end == null)
+            return null;
+
         BuildingMapWrapper wrapper = new BuildingMapWrapper(getProtobufMap());
 
         AStar pathFinder = new AStar(wrapper);

@@ -41,9 +41,6 @@ public class MapsPresenter implements MapsContract.Presenter {
     @Inject
     LocationInteractor mLocationInteractor;
 
-    @Inject
-    TextToSpeechProvider mTTSProvider;
-
     @Nullable
     private MapsContract.View mMapsView;
 
@@ -103,16 +100,12 @@ public class MapsPresenter implements MapsContract.Presenter {
     @Override
     public void onToLandmarkSelected(Landmark landmark) {
         mRoute.setToLandmark(landmark);
-        Path path = mRoute.getBuilding().getRoute(mRoute.getFromLandmark(), landmark);
-
+        Path path = mRoute.getPath();
         if (path != null) {
-            mRoute.setPath(path);
             mRoutesRepository.setSelectedRoute(mRoute);
             mMapsView.showNavigation(mRoute);
         } else {
-            mTTSProvider.speak("No path found");
             mMapsView.noRouteFound();
-            Log.e(TAG, "No path found");
         }
     }
 

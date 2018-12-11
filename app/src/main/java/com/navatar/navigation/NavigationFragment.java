@@ -1,6 +1,8 @@
 package com.navatar.navigation;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.navatar.R;
+import com.navatar.common.TextToSpeechProvider;
 import com.navatar.di.ActivityScoped;
 import com.navatar.location.details.QRCodeScanner;
 
@@ -46,7 +49,15 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
     @Inject
     QRCodeScanner qrCodeScanner;
 
+    @Inject
+    TextToSpeechProvider mTTSProvider;
+
+    @Inject
+    Context context;
+
     private GestureDetector mGestureDetector;
+
+    Vibrator vibrator;
 
     @Inject
     public NavigationFragment() { }
@@ -61,6 +72,11 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
         super.onResume();
         mPresenter.takeView(this);
         barcodeView.resume();
+        try {
+            vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        } catch(Exception e){
+            Log.e(TAG, "Could not initialize vibrator", e);
+        }
 
     }
 
@@ -87,6 +103,7 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
         ButterKnife.bind(this, root);
 
         reverseRouteButton.setOnClickListener(v -> {
+            reverseRouteButton.setVisibility(View.GONE);
             mPresenter.reverseRoute();
         });
 
@@ -105,6 +122,16 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
         return root;
     }
 
+    @Override
+    public void showDirection(String direction) {
+        viewDirection.setText(direction);
+        mTTSProvider.speak(direction);
+    }
+
+    @Override
+    public void showReachedDestination() {
+        reverseRouteButton.setVisibility(View.VISIBLE);
+    }
 
     private GestureDetector getGestureDetector() {
         return new GestureDetector(getContext(), new GestureDetector.SimpleOnGestureListener() {
@@ -134,7 +161,8 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
 
             @Override
             public boolean onSingleTapConfirmed(MotionEvent event) {
-                Log.i(TAG,"onSingleTapConfirmed");
+                if(vibrator != null)
+                    vibrator.vibrate(200);
                 mPresenter.nextStep();
                 return true;
             }
@@ -148,7 +176,7 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
     }
 
     @Override
-    public void setStepCount(int stepCount) {
-        viewStepCount.setText(Integer.toString(stepCount));
+    public void showStepCount(int stepNum, int totalSteps) {
+        viewStepCount.setText(Integer.toString(stepNum) + " / " + Integer.toString(totalSteps));
     }
 }
