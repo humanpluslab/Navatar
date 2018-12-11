@@ -3,6 +3,7 @@ package com.navatar.navigation;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.navatar.common.SensorDataProvider;
 import com.navatar.data.Landmark;
 import com.navatar.data.Route;
 import com.navatar.data.source.RoutesRepository;
@@ -32,6 +33,9 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     @Inject
     LocationInteractor mLocationInteractor;
 
+    @Inject
+    SensorDataProvider mSensorDataProvider;
+
     @Nullable
     private NavigationContract.View mNavView;
 
@@ -49,6 +53,7 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     @Override
     public void takeView(NavigationContract.View view) {
+        disposables.clear();
         mNavView = view;
         loadData();
     }
@@ -56,6 +61,7 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     @Override
     public void dropView() {
         mNavView = null;
+        disposables.clear();
     }
 
     @Override
@@ -110,6 +116,7 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
         mRoute = mRoutesRepository.getSelectedRoute();
 
         getLocation();
+        getSensorData();
 
         if (mRoute != null)
             onStartNavigation();
@@ -157,6 +164,11 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
                 }
             )
         );
+    }
 
+    private void getSensorData() {
+        disposables.add(mSensorDataProvider.onSensorChanged()
+            .subscribe(sd -> Log.i(TAG, sd.toString()))
+        );
     }
 }

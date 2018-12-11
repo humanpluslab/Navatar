@@ -9,7 +9,9 @@ import com.navatar.common.TextToSpeechProvider;
 import java.lang.ref.WeakReference;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class AndroidTTSProvider implements TextToSpeechProvider, TextToSpeech.OnInitListener {
 
     private final static String TAG = AndroidTTSProvider.class.getSimpleName();

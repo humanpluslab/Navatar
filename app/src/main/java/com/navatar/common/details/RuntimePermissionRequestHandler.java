@@ -19,7 +19,9 @@ import io.reactivex.Observable;
 import io.reactivex.subjects.AsyncSubject;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class RuntimePermissionRequestHandler implements PermissionRequestHandler {
 
     private static final String TAG = RuntimePermissionRequestHandler.class.getSimpleName();

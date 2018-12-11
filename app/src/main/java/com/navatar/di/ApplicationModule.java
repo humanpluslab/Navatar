@@ -3,8 +3,11 @@ package com.navatar.di;
 import android.app.Application;
 import android.content.Context;
 
+import com.navatar.common.SensorData;
+import com.navatar.common.SensorDataProvider;
 import com.navatar.common.TextToSpeechProvider;
 import com.navatar.common.details.AndroidTTSProvider;
+import com.navatar.common.details.NavatarSensorProvider;
 import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationProvider;
 import com.navatar.location.details.AndroidLocationProvider;
@@ -41,6 +44,9 @@ public abstract class ApplicationModule {
 
     @Binds
     abstract TextToSpeechProvider provideTextToSpeechProvider(AndroidTTSProvider ttsProvider);
+
+    @Binds
+    abstract SensorDataProvider provideSensorDataProvider(NavatarSensorProvider sensorProvider);
 
     @Provides
     @ElementsIntoSet
