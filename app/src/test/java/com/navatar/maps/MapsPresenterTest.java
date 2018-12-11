@@ -45,7 +45,7 @@ public class MapsPresenterTest {
 
         mSchedulerProvider = new ImmediateSchedulerProvider();
 
-        mMapsPresenter = new MapsPresenter(mMapsRepository, mGeofencingProvider, mRoutesRepository);
+        mMapsPresenter = new MapsPresenter();
 
         MAPS = Lists.newArrayList(new Map("Test1", "Test 1"), new Map("Test2", "Test 2"));
     }
@@ -53,7 +53,7 @@ public class MapsPresenterTest {
     @Test
     public void createPresenter_setsThePresenterToView() {
 
-        mMapsPresenter = new MapsPresenter(mMapsRepository, mGeofencingProvider, mRoutesRepository);
+        mMapsPresenter = new MapsPresenter();
 
         // verify(mMapsView).
     }

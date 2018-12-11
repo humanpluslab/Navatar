@@ -34,7 +34,7 @@ public class NavigationPresenterTest {
 
         mSchedulerProvider = new ImmediateSchedulerProvider();
 
-        mNavigationPresenter = new NavigationPresenter(mNavHistoryRepository, mTextToSpeechProvider);
+        mNavigationPresenter = new NavigationPresenter();
 
     }
 
