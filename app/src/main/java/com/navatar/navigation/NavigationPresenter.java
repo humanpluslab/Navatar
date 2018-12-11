@@ -3,7 +3,6 @@ package com.navatar.navigation;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.navatar.common.TextToSpeechProvider;
 import com.navatar.data.Landmark;
 import com.navatar.data.Route;
 import com.navatar.data.source.RoutesRepository;
@@ -26,9 +25,6 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     @Inject
     RoutesRepository mRoutesRepository;
-
-    @Inject
-    TextToSpeechProvider mTTSProvider;
 
     @Inject
     GeofencingProvider mGeofencingProvider;
@@ -63,13 +59,13 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     }
 
     @Override
-    public void startNavigation() {
+    public void onStartNavigation() {
 
         mPathIndex = 0;
         mPath = mRoute.getPath();
 
         if(mPath == null) {
-            mNavView.showDirection("No path found");
+            mNavView.showNoRouteFound();
             return;
         }
 
@@ -77,11 +73,12 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     }
 
     @Override
-    public void reverseRoute() {
+    public void onReverseRoute() {
         Landmark lmTo = mRoute.getToLandmark();
         mRoute.setToLandmark(mRoute.getFromLandmark());
         mRoute.setFromLandmark(lmTo);
-        startNavigation();
+        mNavView.showDirection("");
+        onStartNavigation();
     }
 
     @Override
@@ -93,6 +90,7 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
         }
 
         if (mPathIndex >= mPath.getLength()) {
+            mNavView.showStepCount(mPath.getLength(), mPath.getLength());
             mNavView.showReachedDestination();
         } else {
             mNavView.showStepCount(mPathIndex, mPath.getLength());
@@ -114,9 +112,9 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
         getLocation();
 
         if (mRoute != null)
-            startNavigation();
+            onStartNavigation();
         else
-            mNavView.showDirection("No route found");
+            mNavView.showNoRouteFound();
     }
 
     private String getNextDirection() {

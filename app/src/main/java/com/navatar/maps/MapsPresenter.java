@@ -3,7 +3,6 @@ package com.navatar.maps;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.navatar.common.TextToSpeechProvider;
 import com.navatar.data.Building;
 import com.navatar.data.Landmark;
 import com.navatar.data.Map;
@@ -12,9 +11,8 @@ import com.navatar.data.source.MapsRepository;
 import com.navatar.data.source.RoutesRepository;
 import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationInteractor;
-import com.navatar.location.model.Location;
-import com.navatar.location.model.NoLocationAvailableException;
 import com.navatar.pathplanning.Path;
+import com.navatar.pathplanning.Step;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,8 +103,27 @@ public class MapsPresenter implements MapsContract.Presenter {
             mRoutesRepository.setSelectedRoute(mRoute);
             mMapsView.showNavigation(mRoute);
         } else {
-            mMapsView.noRouteFound();
+            mMapsView.showNoRouteFound();
         }
+    }
+
+    @Override
+    public void onShowStepsSelected() {
+
+        Path path = mRoute.getPath();
+
+        if(path == null) {
+            mMapsView.showNoRouteFound();
+            return;
+        }
+
+        List<Step> steps = new ArrayList<>();
+
+        for (int i = 0; i < path.getLength(); ++i) {
+            steps.add(path.getStep(i));
+        }
+
+        mMapsView.showSteps(steps);
     }
 
     @Override

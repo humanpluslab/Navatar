@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.DefaultDecoderFactory;
+import com.navatar.common.TextToSpeechProvider;
 import com.navatar.location.details.QRCodeScanner;
 import com.navatar.navigation.NavigationActivity;
 import com.navatar.R;
@@ -31,6 +33,7 @@ import com.navatar.data.Landmark;
 import com.navatar.data.Map;
 import com.navatar.data.Route;
 import com.navatar.di.ActivityScoped;
+import com.navatar.pathplanning.Step;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -73,6 +76,9 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     @BindView(R.id.barcode_scanner)
     DecoratedBarcodeView barcodeView;
 
+    @BindView(R.id.showStepsListView)
+    ListView showStepsListView;
+
     @BindViews({R.id.startNavigationButton, R.id.showNavigationButton})
     List<Button> showButtons;
 
@@ -92,6 +98,9 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
 
     @Inject
     QRCodeScanner qrCodeScanner;
+
+    @Inject
+    TextToSpeechProvider mTextToSpeechProvider;
 
     @Inject
     public MapsFragment() { }
@@ -129,10 +138,16 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         View root = inflater.inflate(R.layout.map_select_frag, container, false);
         ButterKnife.bind(this, root);
         spinners = new LinkedList<>();
+
         startNavigationButton.setOnClickListener(v -> {
             Intent intent = new Intent(getContext(), NavigationActivity.class);
             startActivity(intent);
         });
+
+        showNavigationButton.setOnClickListener(v -> {
+            mPresenter.onShowStepsSelected();
+        });
+
         qrCodeScanner.setView(barcodeView, getActivity().getIntent());
         return root;
     }
@@ -183,13 +198,24 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     }
 
     @Override
-    public void noRouteFound() {
+    public void showNoRouteFound() {
+        mTextToSpeechProvider.speak(R.string.noRouteFound);
+    }
 
+    @Override
+    public void showSteps(List<Step> steps) {
+        ArrayAdapter<Step> list = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, steps);
+        showStepsListView.setAdapter(list);
+        showStepsListView.setVisibility(View.VISIBLE);
     }
 
     @Override
     public boolean onBackPressed() {
-        ButterKnife.apply(showButtons, GONE);
+
+        if (spinners.size() == 4) {
+            ButterKnife.apply(showButtons, GONE);
+            showStepsListView.setVisibility(View.GONE);
+        }
 
         if (spinners.size() > 0) {
             currentSpinner.setVisibility(View.GONE);

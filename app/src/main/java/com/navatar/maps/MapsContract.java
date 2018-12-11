@@ -2,13 +2,13 @@ package com.navatar.maps;
 
 import android.support.annotation.Nullable;
 
-import com.navatar.BaseNavigator;
 import com.navatar.BasePresenter;
 import com.navatar.BaseView;
- import com.navatar.data.Building;
+import com.navatar.data.Building;
 import com.navatar.data.Landmark;
 import com.navatar.data.Map;
 import com.navatar.data.Route;
+import com.navatar.pathplanning.Step;
 
 import java.util.List;
 
@@ -26,7 +26,9 @@ public interface MapsContract {
 
         void showNavigation(@Nullable Route route);
 
-        void noRouteFound();
+        void showNoRouteFound();
+
+        void showSteps(List<Step> steps);
 
         boolean onBackPressed();
 
@@ -43,6 +45,8 @@ public interface MapsContract {
         void onFromLandmarkSelected(Landmark landmark);
 
         void onToLandmarkSelected(Landmark landmark);
+
+        void onShowStepsSelected();
 
         void cleanup();
     }

@@ -119,7 +119,7 @@ public class Direction {
             StringBuilder directionStringBuilder = new StringBuilder();
             directionStringBuilder.append("Follow the wall ");
             directionStringBuilder.append("on your " + side);
-            directionStringBuilder.append(" until you find " + getOrdinalnumber(landmarkList.size()));
+            directionStringBuilder.append(" until you find the " + getOrdinalnumber(landmarkList.size()));
             directionStringBuilder.append(getLandMarkName(nextStep.getlandmark().getType()));
             currentStep.setDirectionString(directionStringBuilder.toString());
         }

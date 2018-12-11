@@ -42,7 +42,7 @@
             <TextView
                 android:id="@+id/viewDirection"
                 android:layout_width="match_parent"
-                android:layout_height="205dp"
+                android:layout_height="135dp"
                 android:clickable="false"
                 android:ems="10"
                 android:longClickable="false"

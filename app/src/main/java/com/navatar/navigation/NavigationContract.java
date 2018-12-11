@@ -13,13 +13,14 @@ public interface NavigationContract {
 
         void showReachedDestination();
 
+        void showNoRouteFound();
     }
 
     interface Presenter extends BasePresenter<View> {
 
-        void startNavigation();
+        void onStartNavigation();
 
-        void reverseRoute();
+        void onReverseRoute();
 
         void nextStep();
 

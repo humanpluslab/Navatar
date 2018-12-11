@@ -85,6 +85,11 @@ public class Step {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return getDirectionString();
+    }
+
     public boolean isFollowLeft() {
         return followLeft;
     }

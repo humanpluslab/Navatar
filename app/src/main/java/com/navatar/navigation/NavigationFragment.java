@@ -104,7 +104,7 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
 
         reverseRouteButton.setOnClickListener(v -> {
             reverseRouteButton.setVisibility(View.GONE);
-            mPresenter.reverseRoute();
+            mPresenter.onReverseRoute();
         });
 
         qrCodeScanner.setView(barcodeView, getActivity().getIntent());
@@ -131,6 +131,11 @@ public class NavigationFragment extends DaggerFragment implements NavigationCont
     @Override
     public void showReachedDestination() {
         reverseRouteButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void showNoRouteFound() {
+        mTTSProvider.speak(R.string.noRouteFound);
     }
 
     private GestureDetector getGestureDetector() {

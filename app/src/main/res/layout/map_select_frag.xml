@@ -57,6 +57,13 @@
                 android:layout_height="wrap_content"
                 android:text="@string/showNavigation"
                 android:visibility="gone" />
+
+            <ListView
+                android:id="@+id/showStepsListView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
+
         </LinearLayout>
 
 
