@@ -20,8 +20,6 @@ import com.navatar.data.source.MapsRepository;
 import com.navatar.location.LocationProvider;
 import com.navatar.location.model.Location;
 
-
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 

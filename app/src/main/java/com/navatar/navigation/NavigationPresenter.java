@@ -7,6 +7,7 @@ import com.navatar.common.SensorData;
 import com.navatar.common.SensorDataProvider;
 import com.navatar.data.Landmark;
 import com.navatar.data.Route;
+import com.navatar.data.source.LandmarkProvider;
 import com.navatar.data.source.RoutesRepository;
 import com.navatar.di.ActivityScoped;
 import com.navatar.location.GeofencingProvider;
@@ -38,6 +39,9 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     @Inject
     SensorDataProvider mSensorDataProvider;
 
+    @Inject
+    LandmarkProvider mLandmarkProvider;
+
     @Nullable
     private NavigationContract.View mNavView;
 
@@ -47,8 +51,6 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     private int mPathIndex;
 
     private Path mPath;
-
-    private int mOrientation;
 
     private final PublishSubject<SensorData> sensorDataPublishSubject = PublishSubject.create();
 
@@ -130,6 +132,7 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
         getLocation();
         getSensorData();
+        setupLandmarkProvider();
         onStartNavigation();
     }
 
@@ -170,5 +173,18 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     private void stepSensorCorrection(SensorData data) {
         Log.i(TAG, data.toString());
+    }
+
+    private void setupLandmarkProvider() {
+        disposables.add(mLandmarkProvider
+            .getLandmarks()
+            .subscribe(l -> {
+                Log.i(TAG,l.toString());
+                if(mRoute.getToLandmark().equals(l)) {
+                    mPathIndex = mPath.getLength()-1;
+                    nextStep();
+                }
+            })
+        );
     }
 }

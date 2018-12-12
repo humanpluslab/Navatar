@@ -7,6 +7,7 @@ import com.navatar.data.Building;
 import com.navatar.data.Landmark;
 import com.navatar.data.Map;
 import com.navatar.data.Route;
+import com.navatar.data.source.LandmarkProvider;
 import com.navatar.data.source.MapsRepository;
 import com.navatar.data.source.RoutesRepository;
 import com.navatar.location.GeofencingProvider;
@@ -38,6 +39,9 @@ public class MapsPresenter implements MapsContract.Presenter {
 
     @Inject
     LocationInteractor mLocationInteractor;
+
+    @Inject
+    LandmarkProvider mLandmarkProvider;
 
     @Nullable
     private MapsContract.View mMapsView;
@@ -73,6 +77,12 @@ public class MapsPresenter implements MapsContract.Presenter {
             )
         );
 
+        disposables.add(mLandmarkProvider.getLandmarks()
+            .subscribe(
+                landmark -> {
+                    mRoute.setFromLandmark(landmark);
+                }
+            ));
     }
 
     @Override

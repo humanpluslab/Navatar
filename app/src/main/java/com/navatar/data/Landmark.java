@@ -42,6 +42,14 @@ public class Landmark implements Comparable<Landmark> {
         return 1;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        Landmark ol = (Landmark)o;
+        if(ol != null && ol.getName().equals(getName())) {
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public String toString() {
@@ -56,11 +64,9 @@ public class Landmark implements Comparable<Landmark> {
             Field f = landmark.getClass().getDeclaredField("name_");
             f.setAccessible(true);
             f.set(landmark,newName);
-            //Log.i("NavatarLogs",(String)f.get(landmark));
-        }catch(NoSuchFieldException e){
+        } catch(NoSuchFieldException e){
 
-        }catch (IllegalAccessException e){
-        }
+        } catch (IllegalAccessException e){ }
     }
 
     public String getName() {
