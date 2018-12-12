@@ -8,6 +8,7 @@ import com.navatar.common.SensorDataProvider;
 import com.navatar.common.TextToSpeechProvider;
 import com.navatar.common.details.AndroidTTSProvider;
 import com.navatar.common.details.NavatarSensorProvider;
+import com.navatar.data.source.LandmarkProvider;
 import com.navatar.location.GeofencingProvider;
 import com.navatar.location.LocationProvider;
 import com.navatar.location.details.AndroidLocationProvider;
@@ -47,6 +48,9 @@ public abstract class ApplicationModule {
 
     @Binds
     abstract SensorDataProvider provideSensorDataProvider(NavatarSensorProvider sensorProvider);
+
+    @Binds
+    abstract LandmarkProvider provideLandmarkProvider(QRCodeScanner qrs);
 
     @Provides
     @ElementsIntoSet

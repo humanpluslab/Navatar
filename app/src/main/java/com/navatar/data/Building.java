@@ -14,6 +14,7 @@ import com.navatar.protobufs.NavigableSpaceProto;
 import com.navatar.protobufs.NavigableSpaceProto.NavigableSpace;
 
 import android.graphics.Path;
+import android.support.annotation.Nullable;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -132,6 +133,16 @@ public class Building {
             }
         }
         return rooms;
+    }
+
+    @Nullable
+    public Landmark getLandmark(String landmarkId) {
+        for (Landmark landmark : destinations()) {
+            if (landmark.getName().equals(landmarkId)) {
+                return landmark;
+            }
+        }
+        return null;
     }
 
     /**

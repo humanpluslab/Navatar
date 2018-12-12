@@ -12,9 +12,18 @@ import com.journeyapps.barcodescanner.BarcodeCallback;
 import com.journeyapps.barcodescanner.BarcodeResult;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
 import com.journeyapps.barcodescanner.DefaultDecoderFactory;
+import com.navatar.data.Building;
+import com.navatar.data.Landmark;
+import com.navatar.data.Map;
+import com.navatar.data.source.LandmarkProvider;
+import com.navatar.data.source.MapsRepository;
 import com.navatar.location.LocationProvider;
 import com.navatar.location.model.Location;
 
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,12 +34,14 @@ import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.subjects.PublishSubject;
 
 @Singleton
-public class QRCodeScanner implements LocationProvider {
+public class QRCodeScanner implements LocationProvider, LandmarkProvider {
 
     private static final String TAG = QRCodeScanner.class.getSimpleName();
 
@@ -43,6 +54,11 @@ public class QRCodeScanner implements LocationProvider {
     private final CompositeDisposable disposables = new CompositeDisposable();
 
     PublishSubject<Location> mLocationSource = PublishSubject.create();
+
+    PublishSubject<Landmark> mLandmarkSource = PublishSubject.create();
+
+    @Inject
+    MapsRepository mMapsRepository;
 
     @Inject
     public QRCodeScanner() {
@@ -74,8 +90,9 @@ public class QRCodeScanner implements LocationProvider {
 
     private void process(String data) {
         lastText = data;
+
         if(lastText.startsWith("geo:")) {
-            Pattern pattern = Pattern.compile("geo:([\\d.-]+),([\\d-.]+)[?]*(.*)");
+            Pattern pattern = Pattern.compile("geo:([\\d.-]+),([\\d-.]+)[?]*(.*)", Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(lastText);
 
             while (matcher.find()) {
@@ -86,13 +103,39 @@ public class QRCodeScanner implements LocationProvider {
 
         } else if (lastText.startsWith("BEGIN:VEVENT")) {
 
+        } else if (lastText.startsWith("{\"landmark\":")) {
+            try {
+                JSONObject obj = new JSONObject(data);
+                JSONObject landmark = obj.getJSONObject("landmark");
+                String lmName = landmark.getString("map");
+                String bldgName = landmark.getString("building");
+                String lName = landmark.getString("name");
+
+                disposables.add(mMapsRepository
+                        .getMap(lmName)
+                        .doOnNext(mapOptional -> {
+                            if (mapOptional.isPresent()) {
+                                Map map = mapOptional.get();
+                                Building building = map.getBuilding(bldgName);
+                                Landmark lm = building.getLandmark(lName);
+                                mLandmarkSource.onNext(lm);
+                            }
+                        }).subscribe(l -> { Log.i(TAG, l.toString());})
+                );
+            } catch (JSONException e) {
+                Log.e(TAG, "An error occurred while decoding the landmark", e);
+            }
         }
     }
-
 
     @NonNull
     @Override
     public Observable<Location> getLocationUpdates() {
         return mLocationSource;
+    }
+
+    @Override
+    public Flowable<Landmark> getLandmarks() {
+        return mLandmarkSource.toFlowable(BackpressureStrategy.LATEST);
     }
 }

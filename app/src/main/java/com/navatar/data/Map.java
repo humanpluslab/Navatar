@@ -54,6 +54,16 @@ public class Map implements Parcelable {
         return mBuildings;
     }
 
+    @Nullable
+    public Building getBuilding(String buildingId) {
+        for (Building building : mBuildings) {
+            if (building.getName().equals(buildingId)) {
+                return building;
+            }
+        }
+        return  null;
+    }
+
     public boolean isEmpty() {
         return Strings.isNullOrEmpty(mName);
     }
