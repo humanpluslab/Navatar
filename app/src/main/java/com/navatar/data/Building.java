@@ -110,9 +110,7 @@ public class Building {
         for (FloorProto.Floor floor : protoMap.getFloorsList()) {
             for (LandmarkProto.Landmark landmark : floor.getLandmarksList()) {
                 if (landmark.getName().equals(room)) {
-                    // Can throw an IndexOutOfBounds error
                     CoordinatesProto.Coordinates particle = landmark.getParticles(0);
-
                     return new ParticleState(0, particle.getX(), particle.getY(), floor.getNumber());
                 }
             }

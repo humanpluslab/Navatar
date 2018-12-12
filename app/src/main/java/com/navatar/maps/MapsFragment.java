@@ -103,6 +103,9 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
     TextToSpeechProvider mTextToSpeechProvider;
 
     @Inject
+    Context mContext;
+
+    @Inject
     public MapsFragment() { }
 
     @Override
@@ -154,7 +157,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
 
     @Override
     public void showMaps(List<Map> maps) {
-        MapListAdapter<Map> listAdapter = new MapListAdapter<>(mapSpinner, maps, R.string.mapSpinnerLabel);
+        MapListAdapter<Map> listAdapter = new MapListAdapter<>(mContext, mapSpinner, maps, R.string.mapSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onMapSelected));
         currentSpinner = mapSpinner;
 
@@ -166,7 +169,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ButterKnife.apply(buildingSpinner, VISIBLE);
         spinners.add(mapSpinner);
         currentSpinner = mapSpinner;
-        MapListAdapter<Building> listAdapter = new MapListAdapter<>(buildingSpinner, map.getBuildings(), R.string.buildingSpinnerLabel);
+        MapListAdapter<Building> listAdapter = new MapListAdapter<>(mContext, buildingSpinner, map.getBuildings(), R.string.buildingSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onBuildingSelected));
     }
 
@@ -176,7 +179,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ButterKnife.apply(fromSpinner, VISIBLE);
         spinners.add(buildingSpinner);
         currentSpinner = fromSpinner;
-        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(fromSpinner, landmark, R.string.fromSpinnerLabel);
+        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(mContext, fromSpinner, landmark, R.string.fromSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onFromLandmarkSelected));
     }
 
@@ -186,7 +189,7 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
         ButterKnife.apply(toSpinner, VISIBLE);
         spinners.add(fromSpinner);
         currentSpinner = toSpinner;
-        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(toSpinner, landmark, R.string.toSpinnerLabel);
+        MapListAdapter<Landmark> listAdapter = new MapListAdapter<>(mContext, toSpinner, landmark, R.string.toSpinnerLabel);
         disposables.add(listAdapter.getSelected().subscribe(mPresenter::onToLandmarkSelected));
     }
 
@@ -232,8 +235,8 @@ public class MapsFragment extends DaggerFragment implements MapsContract.View {
 
         private PublishSubject<T> mSource = PublishSubject.create();
 
-        public MapListAdapter(Spinner spinner, List<T> items, int hint) {
-            this(spinner.getPopupContext(), items, hint);
+        public MapListAdapter(Context context, Spinner spinner, List<T> items, int hint) {
+            this(context, items, hint);
             setSpinner(spinner);
         }
 

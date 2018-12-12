@@ -3,6 +3,7 @@ package com.navatar.navigation;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.navatar.common.SensorData;
 import com.navatar.common.SensorDataProvider;
 import com.navatar.data.Landmark;
 import com.navatar.data.Route;
@@ -16,6 +17,7 @@ import com.navatar.pathplanning.Path;
 import javax.inject.Inject;
 
 import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.subjects.PublishSubject;
 
 @ActivityScoped
 public final class NavigationPresenter implements NavigationContract.Presenter {
@@ -47,6 +49,8 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     private Path mPath;
 
     private int mOrientation;
+
+    private final PublishSubject<SensorData> sensorDataPublishSubject = PublishSubject.create();
 
     @Inject
     public NavigationPresenter() { }
@@ -90,7 +94,8 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
     @Override
     public void nextStep() {
 
-        String navigationCommand = getNextDirection();
+        String navigationCommand = mPath.getNextDirection(mPathIndex);
+
         if(!navigationCommand.matches("(?i:Turn.*)")){
             mPathIndex++;
         }
@@ -113,45 +118,20 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     @Override
     public void loadData() {
+
+        disposables.clear();
+
         mRoute = mRoutesRepository.getSelectedRoute();
+
+        if (mRoute == null) {
+            mNavView.showNoRouteFound();
+            return;
+        }
 
         getLocation();
         getSensorData();
-
-        if (mRoute != null)
-            onStartNavigation();
-        else
-            mNavView.showNoRouteFound();
+        onStartNavigation();
     }
-
-    private String getNextDirection() {
-
-        if (mPathIndex >= mPath.getLength() - 1)
-            return mPath.getStep(mPath.getLength() - 1).getDirectionString();
-
-        double x1 = mPath.getStep(mPathIndex).getParticleState().getX();
-        double y1 = mPath.getStep(mPathIndex).getParticleState().getY();
-        double x2 = mPath.getStep(mPathIndex + 1).getParticleState().getX();
-        double y2 = mPath.getStep(mPathIndex + 1).getParticleState().getY();
-        Double angle = Math.atan(y2 - y1 / x2 - x1) * 180.0 / Math.PI;
-        angle = Angles.polarToCompass(angle);
-        angle = angle - mOrientation;
-
-        if (angle > 180.0)
-            angle = 360.0 - angle;
-        else if (angle < -180.0)
-            angle = -360.0 - angle;
-        if (angle <= 45.0 && angle >= -45.0) {
-            return mPath.getStep(mPathIndex).getDirectionString();
-        } else if (angle > 45.0 && angle <= 135.0) {
-            return "Turn right";
-        } else if (angle < -45.0 && angle >= -135.0) {
-            return "Turn left";
-        } else {
-            return "Turn around";
-        }
-    }
-
 
     private void getLocation() {
         disposables.add(mLocationInteractor.getLocationUpdates()
@@ -168,7 +148,27 @@ public final class NavigationPresenter implements NavigationContract.Presenter {
 
     private void getSensorData() {
         disposables.add(mSensorDataProvider.onSensorChanged()
-            .subscribe(sd -> Log.i(TAG, sd.toString()))
+            .subscribe(sensorDataPublishSubject::onNext)
         );
+
+        disposables.add(sensorDataPublishSubject
+            .filter(s -> s.getSensorType() == SensorData.SensorType.COMPASS)
+            .subscribe(this::compassCorrection)
+        );
+
+        disposables.add(sensorDataPublishSubject
+            .filter(s -> s.getSensorType() == SensorData.SensorType.PEDOMETER)
+            .subscribe(this::stepSensorCorrection)
+        );
+    }
+
+    private void compassCorrection(SensorData data) {
+        if(mPath != null) {
+            mPath.setOrientation(Angles.discretizeAngle(Angles.compassToScreen(Math.toDegrees(data.getValues()[0]))));
+        }
+    }
+
+    private void stepSensorCorrection(SensorData data) {
+        Log.i(TAG, data.toString());
     }
 }

@@ -1,6 +1,7 @@
 package com.navatar.pathplanning;
 
 import com.navatar.maps.particles.ParticleState;
+import com.navatar.math.Angles;
 
 import java.util.ArrayList;
 
@@ -16,6 +17,8 @@ public class Path {
 
     private int floor;
 
+    private int mOrientation;
+
     /**
      * Create an empty path
      */
@@ -29,6 +32,14 @@ public class Path {
 
     public void setFloor(int floor) {
         this.floor = floor;
+    }
+
+    public int getOrientation() {
+        return mOrientation;
+    }
+
+    public void setOrientation(int orientation) {
+        this.mOrientation = orientation;
     }
 
     /**
@@ -61,7 +72,34 @@ public class Path {
         return distance(particlestate.getX(), particlestate.getY());
     }
 
-    public double distance(double x, double y) {
+    public String getNextDirection(int startPathIndex) {
+        if (startPathIndex >= this.getLength() - 1)
+            return this.getStep(this.getLength() - 1).getDirectionString();
+
+        double x1 = this.getStep(startPathIndex).getParticleState().getX();
+        double y1 = this.getStep(startPathIndex).getParticleState().getY();
+        double x2 = this.getStep(startPathIndex + 1).getParticleState().getX();
+        double y2 = this.getStep(startPathIndex + 1).getParticleState().getY();
+        Double angle = Math.atan(y2 - y1 / x2 - x1) * 180.0 / Math.PI;
+        angle = Angles.polarToCompass(angle);
+        angle = angle - mOrientation;
+
+        if (angle > 180.0)
+            angle = 360.0 - angle;
+        else if (angle < -180.0)
+            angle = -360.0 - angle;
+        if (angle <= 45.0 && angle >= -45.0) {
+            return this.getStep(startPathIndex).getDirectionString();
+        } else if (angle > 45.0 && angle <= 135.0) {
+            return "Turn right";
+        } else if (angle < -45.0 && angle >= -135.0) {
+            return "Turn left";
+        } else {
+            return "Turn around";
+        }
+    }
+
+    private double distance(double x, double y) {
 
         double tempDistance = 0;
         double minDistance = Double.MAX_VALUE;
