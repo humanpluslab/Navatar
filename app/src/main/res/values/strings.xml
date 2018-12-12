@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="appName">Navatar</string>
+    <string name="appName">Reference Point Navigation</string>
     <string name="modelsDirectory">/sdcard/Navatar/models/</string>
     <string name="buildingSpinnerLabel">Select a building:</string>
     <string name="userNameEditTextLabel">Type user name:</string>
@@ -23,7 +23,7 @@
     <string name="selectMapLabel">Select a Map</string>
     <string name="mapSelectionDescription">Select a Map to start navigating</string>
     <string name="navigationHistory">Navigation History</string>
-    <string name="welcomeToNavatar">Welcome to Navatar</string>
+    <string name="welcomeToNavatar">Welcome to Reference Point Navigation</string>
     <string name="cancelled">Cancelled</string>
     <string name="navServiceName">Navigation Service</string>
     <string name="permission_rationale">Location permission is required for auto-locating.</string>

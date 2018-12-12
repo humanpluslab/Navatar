@@ -27,7 +27,7 @@
         <activity
             android:name=".maps.MapsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.DayNight">
+            android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
