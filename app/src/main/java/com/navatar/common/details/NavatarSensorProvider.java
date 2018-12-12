@@ -39,7 +39,7 @@ public final class NavatarSensorProvider implements SensorDataProvider, NavatarS
         }
 
         @Override
-        public void onServiceDisconnected(ComponentName arg0) {
+        public void onServiceDisconnected(ComponentName componentName) {
             mSensingService = null;
         }
     };
